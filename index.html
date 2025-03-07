@@ -88,19 +88,6 @@
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    /* "About Me" Section */
-    #about {
-      margin-bottom: 30px;
-    }
-    #about h2 {
-      font-size: 1.75rem;
-      margin-bottom: 10px;
-      color: #000;
-    }
-    #about p {
-      text-align: justify;
-      margin-bottom: 15px;
-    }
     /* Blogs (Table of Contents) */
     .table-of-contents {
       margin-bottom: 30px;
@@ -184,49 +171,6 @@
       color: #777;
       margin-bottom: 15px;
     }
-    /* Contact Section */
-    #contact h2 {
-      font-size: 1.75rem;
-      margin-bottom: 10px;
-      color: #000;
-    }
-    #contact form {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-    }
-    #contact label {
-      font-weight: bold;
-    }
-    #contact input[type="text"],
-    #contact input[type="email"],
-    #contact textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      resize: vertical;
-    }
-    #contact button[type="submit"] {
-      width: 120px;
-      padding: 10px;
-      background-color: #e8491d;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-      align-self: flex-start;
-    }
-    #contact button[type="submit"]:hover {
-      background-color: #c74300;
-    }
-    footer {
-      text-align: center;
-      margin-top: 20px;
-      color: #777;
-      font-size: 0.9rem;
-    }
     /* Back-to-Top Button Styles */
     #back-to-top {
       position: fixed;
@@ -241,7 +185,82 @@
       display: none;
       z-index: 1001;
     }
-    /* Responsive Styles */
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      color: #777;
+      font-size: 0.9rem;
+    }
+    /* Modal Overlay & Content */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 2000; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 5% auto;
+      padding: 20px;
+      max-width: 600px;
+      position: relative;
+      border-radius: 5px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+    }
+    .modal h2 {
+      font-size: 1.75rem;
+      margin-bottom: 15px;
+      color: #000;
+    }
+    .modal p {
+      margin-bottom: 15px;
+      text-align: justify;
+    }
+    /* Contact Form in Modal */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    label {
+      font-weight: bold;
+    }
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    button[type="submit"] {
+      width: 120px;
+      padding: 10px;
+      background-color: #e8491d;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      align-self: flex-start;
+    }
+    button[type="submit"]:hover {
+      background-color: #c74300;
+    }
     @media (max-width: 600px) {
       .menu-icon {
         display: block;
@@ -269,10 +288,8 @@
         font-size: 1.75rem;
       }
       .post h2,
-      .blog-post .post-content h2 {
-        font-size: 1.5rem;
-      }
-      #contact h2 {
+      .blog-post .post-content h2,
+      .modal h2 {
         font-size: 1.5rem;
       }
     }
@@ -290,28 +307,16 @@
     <label for="menu-toggle" class="menu-icon">&#9776;</label>
     <div class="nav-links">
       <a href="#top">Home</a>
-      <a href="#about">About Me</a>
+      <!-- Instead of linking to a section, we open a modal for About Me -->
+      <a href="#" onclick="openAboutModal()">About Me</a>
       <a href="https://chirchirp.github.io/Pharaoh_portfolio/" target="_blank">Portfolio</a>
-      <a href="#contact">Contact</a>
+      <!-- Instead of linking to a section, we open a modal for Contact -->
+      <a href="#" onclick="openContactModal()">Contact</a>
     </div>
   </nav>
 
   <!-- Main Container -->
   <div class="container" id="top">
-    <!-- About Me Section -->
-    <section id="about">
-      <h2>About Me</h2>
-      <p>
-        Hello! I'm John Doe, a passionate data analyst with a strong background in statistical analysis, 
-        data visualization, and problem-solving. I enjoy turning complex datasets into actionable insights 
-        that help organizations make smarter decisions. 
-      </p>
-      <p>
-        Whether it's exploring new machine learning techniques or diving into a messy dataset, 
-        I thrive on the challenge of uncovering patterns and telling a story through data.
-      </p>
-    </section>
-
     <!-- Blogs (Table of Contents) -->
     <div class="table-of-contents">
       <h2>Blogs</h2>
@@ -405,10 +410,30 @@
         <p>Mastering these techniques not only improves your query performance but also empowers you to extract deeper insights...</p>
       </div>
     </article>
+  </div>
+  
+  <!-- MODAL for About Me -->
+  <div id="aboutModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeAboutModal()">&times;</span>
+      <h2>About Pharaoh Chirchir</h2>
+      <p>
+        Hello! I'm <strong>Pharaoh Chirchir</strong>, a passionate data analyst with a strong background in 
+        statistical analysis, data visualization, and problem-solving. I enjoy turning complex datasets into 
+        actionable insights that help organizations make smarter decisions.
+      </p>
+      <p>
+        Whether it's exploring new machine learning techniques or diving into a messy dataset, 
+        I thrive on the challenge of uncovering patterns and telling a story through data.
+      </p>
+    </div>
+  </div>
 
-    <!-- Contact Section with Interactive Form -->
-    <section id="contact">
-      <h2>Contact</h2>
+  <!-- MODAL for Contact -->
+  <div id="contactModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeContactModal()">&times;</span>
+      <h2>Contact Pharaoh Chirchir</h2>
       <form onsubmit="handleContactForm(event)">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required />
@@ -421,9 +446,9 @@
         
         <button type="submit">Send</button>
       </form>
-    </section>
+    </div>
   </div>
-  
+
   <!-- Back-to-Top Button -->
   <button id="back-to-top" onclick="scrollToTop()">Back to Top</button>
   
@@ -447,7 +472,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Handle contact form submission
+    // Contact Form Handler
     function handleContactForm(e) {
       e.preventDefault(); // Prevent default form submission
       const name = document.getElementById('name').value.trim();
@@ -458,9 +483,27 @@
         alert(`Thank you, ${name}! Your message has been sent.\nWe'll get back to you at ${email}.`);
         // Reset form
         e.target.reset();
+        // Close the contact modal
+        closeContactModal();
       } else {
         alert('Please fill out all required fields.');
       }
+    }
+
+    // About Modal Functions
+    function openAboutModal() {
+      document.getElementById('aboutModal').style.display = 'block';
+    }
+    function closeAboutModal() {
+      document.getElementById('aboutModal').style.display = 'none';
+    }
+
+    // Contact Modal Functions
+    function openContactModal() {
+      document.getElementById('contactModal').style.display = 'block';
+    }
+    function closeContactModal() {
+      document.getElementById('contactModal').style.display = 'none';
     }
   </script>
 </body>
