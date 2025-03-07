@@ -88,7 +88,20 @@
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    /* Blogs (formerly Table of Contents) */
+    /* "About Me" Section */
+    #about {
+      margin-bottom: 30px;
+    }
+    #about h2 {
+      font-size: 1.75rem;
+      margin-bottom: 10px;
+      color: #000;
+    }
+    #about p {
+      text-align: justify;
+      margin-bottom: 15px;
+    }
+    /* Blogs (Table of Contents) */
     .table-of-contents {
       margin-bottom: 30px;
       padding: 15px;
@@ -171,6 +184,43 @@
       color: #777;
       margin-bottom: 15px;
     }
+    /* Contact Section */
+    #contact h2 {
+      font-size: 1.75rem;
+      margin-bottom: 10px;
+      color: #000;
+    }
+    #contact form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    #contact label {
+      font-weight: bold;
+    }
+    #contact input[type="text"],
+    #contact input[type="email"],
+    #contact textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+    #contact button[type="submit"] {
+      width: 120px;
+      padding: 10px;
+      background-color: #e8491d;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      align-self: flex-start;
+    }
+    #contact button[type="submit"]:hover {
+      background-color: #c74300;
+    }
     footer {
       text-align: center;
       margin-top: 20px;
@@ -222,6 +272,9 @@
       .blog-post .post-content h2 {
         font-size: 1.5rem;
       }
+      #contact h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -236,13 +289,29 @@
     <input type="checkbox" id="menu-toggle">
     <label for="menu-toggle" class="menu-icon">&#9776;</label>
     <div class="nav-links">
-      <a href="#">Home</a>
-      <a href="#">About Me</a>
+      <a href="#top">Home</a>
+      <a href="#about">About Me</a>
       <a href="https://chirchirp.github.io/Pharaoh_portfolio/" target="_blank">Portfolio</a>
-      <a href="#">Contact</a>
+      <a href="#contact">Contact</a>
     </div>
   </nav>
-  <div class="container">
+
+  <!-- Main Container -->
+  <div class="container" id="top">
+    <!-- About Me Section -->
+    <section id="about">
+      <h2>About Me</h2>
+      <p>
+        Hello! I'm John Doe, a passionate data analyst with a strong background in statistical analysis, 
+        data visualization, and problem-solving. I enjoy turning complex datasets into actionable insights 
+        that help organizations make smarter decisions. 
+      </p>
+      <p>
+        Whether it's exploring new machine learning techniques or diving into a messy dataset, 
+        I thrive on the challenge of uncovering patterns and telling a story through data.
+      </p>
+    </section>
+
     <!-- Blogs (Table of Contents) -->
     <div class="table-of-contents">
       <h2>Blogs</h2>
@@ -255,16 +324,16 @@
         <li><a href="#blog6">6. Advanced SQL Techniques</a></li>
       </ul>
     </div>
-    
+
     <!-- Blog Post 1: The Journey of a Data Analyst -->
     <article class="post" id="blog1">
       <h2>Blog #1: The Journey of a Data Analyst</h2>
       <time datetime="2025-03-07">March 7, 2025</time>
       <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" alt="Data analysis journey" />
-      <p>My journey into the world of data analysis started with an insatiable curiosity for patterns hidden within numbers. I vividly remember the thrill of dissecting a dataset for the first time, when every row and column held a secret waiting to be revealed.</p>
-      <p>Early on, I spent countless hours learning the fundamentals of statistical analysis and programming, experimenting with tools like Excel, SQL, and Python. It was in these moments of exploration that I began to appreciate how data could be transformed into powerful narratives.</p>
-      <p>Over the years, I have worked on projects ranging from market analysis to predicting consumer behavior. Each project was a learning curve—a blend of technical challenges and creative problem solving. The constant evolution of data tools and techniques has made this journey both dynamic and deeply rewarding.</p>
-      <p>Today, I see data analysis as not just a career, but a lifelong passion. It is about curiosity, continuous learning, and the joy of unearthing insights that drive smarter decisions.</p>
+      <p>My journey into the world of data analysis started with an insatiable curiosity for patterns hidden within numbers...</p>
+      <p>Early on, I spent countless hours learning the fundamentals of statistical analysis and programming...</p>
+      <p>Over the years, I have worked on projects ranging from market analysis to predicting consumer behavior...</p>
+      <p>Today, I see data analysis as not just a career, but a lifelong passion...</p>
     </article>
     
     <!-- Blog Post 2: Embracing the Power of Data Visualization -->
@@ -272,10 +341,10 @@
       <h2>Blog #2: Embracing the Power of Data Visualization</h2>
       <time datetime="2025-02-20">February 20, 2025</time>
       <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80" alt="Data visualization" />
-      <p>Data visualization is where creativity meets analytics. When I first encountered the concept of turning raw numbers into interactive charts and dashboards, I was captivated by the way visuals could make complex data instantly understandable.</p>
-      <p>Using tools such as Tableau, Power BI, and even open-source libraries like D3.js and Matplotlib, I began to experiment with different visualization techniques. Each graph and chart became a medium to tell a story—a narrative that communicated trends, anomalies, and forecasts in an accessible manner.</p>
-      <p>One of my most memorable projects involved visualizing the impact of seasonal trends on sales data. By carefully selecting color palettes and chart types, I was able to present insights that not only resonated with stakeholders but also inspired strategic changes in marketing and product development.</p>
-      <p>Beyond the technical aspect, data visualization is about empathy. It’s about designing visuals that consider the audience’s perspective, ensuring that every data point is clear and every trend is communicated with precision and beauty.</p>
+      <p>Data visualization is where creativity meets analytics. When I first encountered the concept...</p>
+      <p>Using tools such as Tableau, Power BI, and even open-source libraries like D3.js...</p>
+      <p>One of my most memorable projects involved visualizing the impact of seasonal trends on sales data...</p>
+      <p>Beyond the technical aspect, data visualization is about empathy...</p>
     </article>
     
     <!-- Blog Post 3: Tips and Tricks for Aspiring Data Analysts -->
@@ -283,16 +352,15 @@
       <h2>Blog #3: Tips and Tricks for Aspiring Data Analysts</h2>
       <time datetime="2025-01-15">January 15, 2025</time>
       <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80" alt="Data analysis tips" />
-      <p>For those embarking on the exciting journey of data analysis, I have a few expert tips that have guided my career:</p>
+      <p>For those embarking on the exciting journey of data analysis, I have a few expert tips...</p>
       <ul>
-        <li><strong>Stay Curious:</strong> Every dataset has a story. Ask questions, and let your curiosity guide you to uncover hidden insights.</li>
-        <li><strong>Master the Basics:</strong> A strong foundation in statistics, programming, and data manipulation is essential for tackling more complex challenges.</li>
-        <li><strong>Experiment and Practice:</strong> Engage with real-world datasets. Participate in online challenges and projects to apply your skills in a practical setting.</li>
-        <li><strong>Embrace Continuous Learning:</strong> The field of data science evolves rapidly. Stay updated with the latest tools, frameworks, and methodologies through courses, blogs, and webinars.</li>
-        <li><strong>Network with Peers:</strong> Join data communities, attend meetups, and collaborate on projects. Learning from others’ experiences is invaluable.</li>
+        <li><strong>Stay Curious:</strong> Every dataset has a story...</li>
+        <li><strong>Master the Basics:</strong> A strong foundation in statistics, programming...</li>
+        <li><strong>Experiment and Practice:</strong> Engage with real-world datasets...</li>
+        <li><strong>Embrace Continuous Learning:</strong> The field of data science evolves rapidly...</li>
+        <li><strong>Network with Peers:</strong> Join data communities, attend meetups...</li>
       </ul>
-      <p>Every seasoned data analyst started as a beginner. Remember that every mistake is a learning opportunity. Dedicate time to understand the underlying concepts, and never hesitate to ask for help or seek feedback from the community.</p>
-      <p>Invest in developing both your technical and communication skills. Being able to explain your findings in a clear and engaging manner is as important as the analysis itself. Your ability to tell a story with data will set you apart in this competitive field.</p>
+      <p>Every seasoned data analyst started as a beginner. Remember that every mistake is a learning opportunity...</p>
     </article>
     
     <!-- Blog Post 4: Reflections on the Future of Data Science -->
@@ -300,10 +368,10 @@
       <h2>Blog #4: Reflections on the Future of Data Science</h2>
       <time datetime="2024-12-01">December 1, 2024</time>
       <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Future of data science" />
-      <p>Looking toward the future, data science is poised to become even more integral to business, technology, and society. With the exponential growth in data generation, the role of a data analyst is evolving from merely reporting historical insights to predicting future trends and driving proactive decisions.</p>
-      <p>Emerging technologies like artificial intelligence, machine learning, and automation are reshaping the landscape. These tools not only enable more sophisticated analyses but also open up new avenues for creativity in problem solving. The fusion of advanced analytics with real-time data is set to revolutionize industries from healthcare to finance.</p>
-      <p>However, with great power comes great responsibility. As data scientists and analysts, we must advocate for ethical data practices, ensuring transparency, fairness, and privacy in every project we undertake. The human element—our judgment, creativity, and ethical considerations—remains at the core of this transformation.</p>
-      <p>My vision for the future is one where data is not only a tool for insight but also a catalyst for positive change. By harnessing data effectively and responsibly, we can drive innovations that make our world smarter, more efficient, and ultimately, more humane.</p>
+      <p>Looking toward the future, data science is poised to become even more integral to business, technology, and society...</p>
+      <p>Emerging technologies like artificial intelligence, machine learning, and automation are reshaping the landscape...</p>
+      <p>However, with great power comes great responsibility. As data scientists and analysts, we must advocate for ethical data practices...</p>
+      <p>My vision for the future is one where data is not only a tool for insight but also a catalyst for positive change...</p>
     </article>
     
     <!-- Blog Post 5: The Art of Data Cleaning -->
@@ -316,13 +384,13 @@
           <time datetime="2025-03-20">March 20, 2025</time>
         </div>
         <h2>Blog #5: The Art of Data Cleaning</h2>
-        <p>Data cleaning is one of the most crucial—and often overlooked—aspects of data analysis. In my experience, a well-cleaned dataset is like a blank canvas, ready to be transformed into compelling insights. The process involves handling missing values, correcting errors, and ensuring that your data is consistent and reliable.</p>
-        <p>Throughout my career, I’ve encountered datasets riddled with duplicate entries, inconsistent formats, and hidden outliers. Each challenge has taught me the value of meticulous attention to detail and the importance of validating data before diving into in-depth analysis.</p>
-        <p>In this post, I share some of my best practices for data cleaning, including leveraging Python’s Pandas library, regular expressions, and even specialized data wrangling tools. Embrace the art of cleaning and prepare your data for the analytical journey ahead.</p>
+        <p>Data cleaning is one of the most crucial—and often overlooked—aspects of data analysis...</p>
+        <p>Throughout my career, I’ve encountered datasets riddled with duplicate entries, inconsistent formats...</p>
+        <p>In this post, I share some of my best practices for data cleaning, including leveraging Python’s Pandas library...</p>
       </div>
     </article>
     
-    <!-- Blog Post 6: Advanced SQL Techniques (updated image) -->
+    <!-- Blog Post 6: Advanced SQL Techniques -->
     <article class="blog-post" id="blog6">
       <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80" 
            alt="Advanced SQL Techniques" 
@@ -332,12 +400,28 @@
           <time datetime="2025-03-15">March 15, 2025</time>
         </div>
         <h2>Blog #6: Advanced SQL Techniques</h2>
-        <p>SQL remains one of the most powerful tools in a data analyst’s arsenal. Beyond simple querying, advanced SQL techniques allow you to tackle complex data challenges with efficiency and precision.</p>
-        <p>In this post, I delve into topics such as window functions, common table expressions (CTEs), and query optimization strategies. These advanced methods enable you to analyze large datasets, perform complex joins, and generate insights that might otherwise remain hidden.</p>
-        <p>Mastering these techniques not only improves your query performance but also empowers you to extract deeper, more actionable insights from your data. Whether you’re optimizing a financial model or analyzing customer behavior, advanced SQL can be the key to unlocking your data’s full potential.</p>
+        <p>SQL remains one of the most powerful tools in a data analyst’s arsenal. Beyond simple querying, advanced SQL techniques...</p>
+        <p>In this post, I delve into topics such as window functions, common table expressions (CTEs), and query optimization strategies...</p>
+        <p>Mastering these techniques not only improves your query performance but also empowers you to extract deeper insights...</p>
       </div>
     </article>
-    
+
+    <!-- Contact Section with Interactive Form -->
+    <section id="contact">
+      <h2>Contact</h2>
+      <form onsubmit="handleContactForm(event)">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+        
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+        
+        <label for="message">Message:</label>
+        <textarea id="message" name="message" rows="5" required></textarea>
+        
+        <button type="submit">Send</button>
+      </form>
+    </section>
   </div>
   
   <!-- Back-to-Top Button -->
@@ -361,6 +445,22 @@
     
     function scrollToTop() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Handle contact form submission
+    function handleContactForm(e) {
+      e.preventDefault(); // Prevent default form submission
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const message = document.getElementById('message').value.trim();
+      
+      if (name && email && message) {
+        alert(`Thank you, ${name}! Your message has been sent.\nWe'll get back to you at ${email}.`);
+        // Reset form
+        e.target.reset();
+      } else {
+        alert('Please fill out all required fields.');
+      }
     }
   </script>
 </body>
