@@ -16,7 +16,9 @@
       background-color: #f4f4f4;
       color: #333;
       line-height: 1.8;
+      /* Add top padding to avoid overlap with fixed nav */
       padding: 20px;
+      padding-top: 120px;
     }
     /* Professional Header with Background Image and Overlay */
     header {
@@ -34,12 +36,13 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.7);
       z-index: 0;
     }
     header h1, header p {
       position: relative;
       z-index: 1;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
     }
     header h1 {
       font-size: 2.5rem;
@@ -48,10 +51,14 @@
     header p {
       font-size: 1.1rem;
     }
-    /* Navigation Styles with Responsive Hamburger Menu */
+    /* Navigation Styles with Fixed Position and Hamburger Menu */
     nav {
       background-color: #e8491d;
-      position: relative;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     #menu-toggle {
@@ -83,13 +90,13 @@
     /* Container for Main Content */
     .container {
       max-width: 800px;
-      margin: auto;
+      margin: 20px auto 0;
       background: #fff;
       padding: 20px 30px;
       border-radius: 5px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    /* Table of Contents */
+    /* Table of Contents renamed to Blogs */
     .table-of-contents {
       margin-bottom: 30px;
       padding: 15px;
@@ -145,7 +152,7 @@
       margin-left: 20px;
       margin-bottom: 15px;
     }
-    /* Blog Post Styles for Posts Using Provided Snippet */
+    /* Blog Post Styles for Provided Snippet Posts */
     .blog-post {
       margin-bottom: 50px;
     }
@@ -199,6 +206,7 @@
       }
       body {
         padding: 10px;
+        padding-top: 120px;
       }
       .container {
         padding: 15px;
@@ -219,7 +227,7 @@
     <h1>Data Insights Blog</h1>
     <p>Uncovering trends, insights, and expert narratives from the world of data analysis</p>
   </header>
-  <!-- Navigation with Hamburger Menu and Portfolio Link -->
+  <!-- Navigation with Hamburger Menu and Portfolio Link (Archive removed) -->
   <nav>
     <input type="checkbox" id="menu-toggle">
     <label for="menu-toggle" class="menu-icon">&#9776;</label>
@@ -228,13 +236,12 @@
       <a href="#">About Me</a>
       <a href="https://chirchirp.github.io/Pharaoh_portfolio/" target="_blank">Portfolio</a>
       <a href="#">Contact</a>
-      <a href="#">Archives</a>
     </div>
   </nav>
   <div class="container">
-    <!-- Creative Table of Contents -->
+    <!-- Creative Table of Contents renamed to Blogs -->
     <div class="table-of-contents">
-      <h2>Table of Contents</h2>
+      <h2>Blogs</h2>
       <ul>
         <li><a href="#blog1">1. The Journey of a Data Analyst</a></li>
         <li><a href="#blog2">2. Embracing the Power of Data Visualization</a></li>
@@ -311,10 +318,10 @@
       </div>
     </article>
     
-    <!-- Blog Post 6: Advanced SQL Techniques -->
+    <!-- Blog Post 6: Advanced SQL Techniques (updated image) -->
     <article class="blog-post" id="blog6">
-      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80" 
-           alt="SQL code on laptop" 
+      <img src="https://images.unsplash.com/photo-1581091870621-7d9988b46e27?auto=format&fit=crop&w=800&q=80" 
+           alt="Advanced SQL Techniques" 
            class="post-image">
       <div class="post-content">
         <div class="post-meta">
