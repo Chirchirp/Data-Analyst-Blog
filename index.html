@@ -14,7 +14,7 @@
   <meta name="author" content="Pharaoh Chirchir">
   <meta name="robots" content="index, follow">
   <title>Data Insights Blog | Pharaoh Chirchir</title>
-
+  
   <!-- Google Analytics (Sample GA4 Integration - replace with your tracking ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
@@ -23,23 +23,24 @@
     gtag('js', new Date());
     gtag('config', 'G-XXXXXXXXXX');
   </script>
-
+  
   <style>
     /* Use Poppins for all text */
-    body { font-family: 'Poppins', sans-serif; }
-    h1, h2, h3, h4, h5, h6 { font-family: 'Poppins', sans-serif; }
-
-    /* Default Light Mode Variables */
+    body, h1, h2, h3, h4, h5, h6, p, a { font-family: 'Poppins', sans-serif; }
+    
+    /* Default Light Mode Variables – Blue Palette */
     :root {
-      --background: #f1f1f1;
-      --primary: #f1f1f1;
-      --secondary: #ffffff;
+      --background: #fafafa;
+      --primary: #ffffff;
+      --secondary: #f9f9f9;
       --tile-bg: #ffffff;
-      --tile-text: #000000;
-      --accent: #e63946;
-      --nav-text-color: #000000;
-      --hover-bg: #e6f7ff;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --tile-text: #333333;
+      --accent: #3498db;
+      --nav-text-color: #222222;
+      --hover-bg: #f5f5f5;
+      --border-color: #e0e0e0;
+      --heading-color: #2c3e50;
+      --transition: all 0.3s ease;
     }
     /* Dark Mode Variables */
     body.dark {
@@ -47,10 +48,12 @@
       --primary: #222222;
       --secondary: #333333;
       --tile-bg: #333333;
-      --tile-text: #ffffff;
-      --accent: #cc5500;
-      --nav-text-color: #ffffff;
-      --hover-bg: #555555;
+      --tile-text: #f1f1f1;
+      --accent: #2980b9;
+      --nav-text-color: #f1f1f1;
+      --hover-bg: #444444;
+      --border-color: #444444;
+      --heading-color: #bdc3c7;
     }
     
     /* Global Reset */
@@ -64,20 +67,23 @@
       transition: var(--transition);
     }
     
-    /* Skip Navigation Link for Accessibility */
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 { color: var(--heading-color); }
+    
+    /* Skip Navigation Link */
     .skip-link {
       position: absolute;
       top: -40px;
       left: 0;
       background: var(--accent);
-      color: white;
+      color: #ffffff;
       padding: 8px;
       z-index: 1001;
       transition: var(--transition);
     }
     .skip-link:focus { top: 0; }
-
-    /* Sticky Header with Separator */
+    
+    /* Header */
     header {
       position: fixed;
       top: 0;
@@ -91,7 +97,7 @@
     .header-ribbon {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 10px 20px;
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -99,7 +105,7 @@
     .site-title a {
       text-decoration: none;
       color: var(--nav-text-color);
-      font-size: 1.8rem;
+      font-size: 1.9rem;
       font-weight: 600;
     }
     .nav-ribbon {
@@ -112,16 +118,19 @@
       text-decoration: none;
       font-size: 1rem;
       font-weight: 500;
+      text-transform: uppercase;
       transition: var(--transition);
     }
     .nav-ribbon a:hover { color: var(--accent); }
-    /* Portfolio link triggers modal */
-    .nav-ribbon a.portfolio-link { cursor: pointer; }
-    /* Dark Mode Toggle Button */
+    /* Adding icons to navigation links */
+    .nav-ribbon a i { margin-right: 6px; }
+    /* Portfolio & About links trigger modals */
+    .nav-ribbon a.portfolio-link,
+    .nav-ribbon a.about-link { cursor: pointer; }
     .theme-toggle {
       padding: 5px 12px;
       background: var(--accent);
-      color: white;
+      color: #ffffff;
       border: none;
       border-radius: 4px;
       font-size: 0.9rem;
@@ -130,41 +139,30 @@
     }
     .theme-toggle:hover { opacity: 0.9; }
 
-    /* Introduction Section (Compact) */
+    /* Intro Section */
     .intro {
       background: var(--secondary);
-      color: var(--nav-text-color);
-      padding: 10px 20px;
-      margin: 40px auto 10px;
+      color: #050934;
+      padding: 15px 20px;
+      margin: 20px auto 5px;
       border-radius: 8px;
       text-align: center;
       font-size: 1rem;
       max-width: 1000px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    /* Minutes Read & Difficulty Badge */
-    .minutes-read { font-size: 0.9rem; margin-bottom: 8px; font-style: italic; }
-    .difficulty {
-      background: var(--accent);
-      color: white;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      display: inline-block;
-      margin-bottom: 8px;
-    }
-
-    /* Main Container & Optimal Reading Width */
+    /* Main Container */
     .container {
       width: 90%;
       max-width: 1200px;
-      margin: 20px auto;
+      margin: 5px auto;
       padding: 20px;
     }
     .blog-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 10px;
+      gap: 20px;
     }
 
     /* Blog Tiles */
@@ -172,35 +170,36 @@
       background: var(--tile-bg);
       color: var(--tile-text);
       padding: 20px;
+      border: 1px solid var(--border-color);
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
       transition: var(--transition);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
     .blog-tile:hover {
-      transform: scale(1.03);
+      transform: translateY(-3px);
       background: var(--hover-bg);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
-    .blog-tile h2 { font-size: 1.3rem; margin-bottom: 10px; }
+    .blog-tile h2 { font-size: 1.4rem; margin-bottom: 10px; }
     .blog-tile p { flex-grow: 1; margin-bottom: 15px; }
     .tags { margin-bottom: 8px; }
     .tag {
       display: inline-block;
-      background: #ccc;
-      color: #333;
-      padding: 2px 6px;
+      background: #c8dbe9e4;
+      color: #0a0a0a;
+      padding: 3px 8px;
       border-radius: 4px;
       font-size: 0.8rem;
       margin-right: 4px;
     }
     .blog-tile a {
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 600;
       background: var(--accent);
-      color: white;
+      color: #ffffff;
       padding: 8px 12px;
       border-radius: 4px;
       transition: var(--transition);
@@ -208,7 +207,7 @@
     }
     .blog-tile a:hover { opacity: 0.9; }
 
-    /* Blog Posts (Detailed) with Optimal Width */
+    /* Blog Posts (Detailed) */
     .posts-container {
       width: 90%;
       max-width: 800px;
@@ -220,83 +219,37 @@
       background: var(--tile-bg);
       color: var(--tile-text);
       margin-bottom: 40px;
-      padding: 20px;
+      padding: 30px;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
       display: none;
     }
     .post img, .blog-post img {
       width: 100%;
       border-radius: 8px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       loading: lazy;
     }
-    .post h2, .blog-post h2 { font-size: 1.8rem; margin-bottom: 10px; }
-    .post time, .blog-post time { font-size: 0.9rem; margin-bottom: 8px; display: block; }
-    .post p, .blog-post p { margin-bottom: 15px; line-height: 1.7; }
-    pre { background: #e0e0e0; padding: 10px; overflow-x: auto; border-radius: 4px; font-family: monospace; }
+    .post h2, .blog-post h2 { font-size: 1.9rem; margin-bottom: 10px; }
+    .post time, .blog-post time { font-size: 0.9rem; margin-bottom: 10px; display: block; }
+    .post p, .blog-post p { margin-bottom: 15px; line-height: 1.8; max-width: 750px; }
+    pre { background: #f5f5f5; padding: 10px; overflow-x: auto; border-radius: 4px; font-family: monospace; }
     code { font-family: monospace; }
-    /* Bullet and Ordered List Spacing */
     .post ul, .blog-post ul,
     .post ol, .blog-post ol { margin-left: 20px; margin-bottom: 15px; }
     .post li, .blog-post li { margin-bottom: 8px; line-height: 1.6; }
     .back-to-home {
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 15px;
       text-decoration: none;
       color: var(--accent);
-      font-weight: bold;
+      font-weight: 600;
       transition: var(--transition);
     }
     .back-to-home:hover { opacity: 0.9; }
+    
 
-    /* Related Posts Section */
-    .related-posts {
-      margin-top: 30px;
-      padding-top: 10px;
-      border-top: 1px solid #ccc;
-    }
-    .related-posts h4 { margin-bottom: 10px; }
-    .related-posts ul { margin-left: 20px; }
-    .related-posts li { margin-bottom: 5px; }
-
-    /* Resources Section */
-    .resources {
-      margin-top: 30px;
-      padding-top: 10px;
-      border-top: 1px solid #ccc;
-    }
-    .resources h4 { margin-bottom: 10px; }
-    .resources ul { margin-left: 20px; }
-    .resources li { margin-bottom: 5px; }
-
-    /* Feedback Section */
-    .feedback {
-      margin-top: 30px;
-      padding-top: 10px;
-      border-top: 1px solid #ccc;
-    }
-    .feedback h4 { margin-bottom: 10px; }
-    .feedback form { display: flex; flex-direction: column; }
-    .feedback form textarea {
-      margin-bottom: 10px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      resize: vertical;
-    }
-    .feedback form button {
-      align-self: flex-start;
-      padding: 8px 12px;
-      background: var(--accent);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    .feedback form button:hover { opacity: 0.9; }
-
+    
     /* Footer with Separator and Useful Links */
     footer {
       text-align: center;
@@ -314,7 +267,7 @@
       font-size: 0.9rem;
     }
     footer nav a:hover { color: var(--accent); }
-
+    
     /* Modal Styles */
     .modal {
       display: none;
@@ -365,12 +318,12 @@
       background: var(--accent);
       border: none;
       border-radius: 4px;
-      color: white;
+      color: #ffffff;
       cursor: pointer;
       transition: var(--transition);
     }
     .modal-content form button:hover { opacity: 0.9; }
-
+    
     /* Responsive Design */
     @media (max-width:768px) {
       .header-ribbon { flex-direction: column; align-items: flex-start; }
@@ -388,20 +341,19 @@
   <header id="home" role="banner">
     <div class="header-ribbon">
       <div class="site-title">
-        <a href="#home">Data Insights Blog</a>
+        <a href="#home"><i class="fas fa-home"></i> Data Insights Blog</a>
       </div>
       <nav class="nav-ribbon" role="navigation" aria-label="Main Navigation">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <!-- Portfolio link triggers modal -->
-        <a href="#" class="portfolio-link footer-link" data-modal="modal-portfolio">Portfolio</a>
-        <a href="#" class="footer-link" data-modal="modal-contact">Contact</a>
+        <a hre.introf="#home"><i class="fas fa-home"></i> Home</a>
+        <a href="#" class="footer-link about-link" data-modal="modal-about"><i class="fas fa-info-circle"></i> About</a>
+        <a href="#" class="portfolio-link footer-link" data-modal="modal-portfolio"><i class="fas fa-briefcase"></i> Portfolio</a>
+        <a href="#" class="footer-link" data-modal="modal-contact"><i class="fas fa-envelope"></i> Contact</a>
       </nav>
       <button class="theme-toggle" id="toggle-theme" aria-label="Toggle dark mode">Toggle Dark Mode</button>
     </div>
   </header>
 
-  <!-- Introduction Section (Compact) -->
+  <!-- Introduction Section -->
   <div class="intro">
     <p>
       Welcome to Data Insights Blog – your resource for expert insights and actionable tips in data analysis. Empowering analysts to transform raw data into decisions.
@@ -411,7 +363,7 @@
   <!-- Blog Grid Container -->
   <div class="container" id="blogs">
     <div class="blog-grid">
-      <!-- Blog Tile 1 with Tags, Difficulty Badge -->
+      <!-- Blog Tile 1 -->
       <div class="blog-tile">
         <h2>The Journey of a Data Analyst</h2>
         <p class="minutes-read">5 min read</p>
@@ -473,9 +425,9 @@
       <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" alt="Data analysis journey" loading="lazy" />
       
       <h3>From Excel Sheets to Machine Learning: A 7-Year Evolution</h3>
-      
+      <ul></ul>
       <h4>Starting with Excel – The Foundation</h4>
-      <p><q>Data analysis begins with curiosity – finding solutions.</q></p>
+      <p><em>Data analysis begins with curiosity – finding solutions.</em></p>
       <p>My journey began with Microsoft Excel, many years down the line, when I joined formal employment after campus. This is a go-to tool I have always used because of its dynamic and easy-to-use features for simple analytics and visuals. Over the first year, I focused on:</p>
       <ul>
         <li><strong>Formulas and Functions:</strong> SUMIFS, VLOOKUP, INDEX-MATCH (still my favorite!).</li>
@@ -485,7 +437,7 @@
       <p><strong>Practical Tip:</strong> Practice with real datasets (e.g., personal budgets, Kaggle’s free datasets) to perform simple analytics. Focus on accuracy—messy data leads to flawed insights.</p>
       
       <h4>Discovering SQL – Speaking to Databases</h4>
-      <p><q>If Excel is a bicycle, SQL is a sports car.</q></p>
+      <p><em>If Excel is a bicycle, SQL is a sports car.</em></p>
       <p>Driven by curiosity in data analytics, I moved to learning SQL, which is used to analyze larger datasets stored in databases. Key milestones included:</p>
       <ul>
         <li>Writing queries with JOINS, GROUP BY, and CTEs.</li>
@@ -497,7 +449,7 @@
       <p><strong>Focus Area:</strong> Always validate your query logic. One wrong JOIN can skew results. Keep practicing SQL queries to steadily improve your analytics skills.</p>
       
       <h4>Visualization with Tableau &amp; Power BI – Storytelling</h4>
-      <p><q>A dashboard is a data story waiting to be told.</q></p>
+      <p><em>A dashboard is a data story waiting to be told.</em></p>
       <p>Sometimes, data needs to be presented visually so end users can quickly interpret trends and features. I learned Tableau and Power BI to make insights accessible by:</p>
       <ul>
         <li>Building interactive dashboards for stakeholders.</li>
@@ -508,7 +460,7 @@
       <p><strong>Pro Tip:</strong> Start with a clear question: "What decision will this visualization support?"</p>
       
       <h4>Statistical Analysis – The "Why" Behind Numbers</h4>
-      <p><q>Data without context is just noise.</q></p>
+      <p><em>Data without context is just noise.</em></p>
       <p>Delving into statistics helped me uncover deeper patterns and perform more complex calculations beyond traditional Excel functions. I focused on:</p>
       <ul>
         <li>Hypothesis testing (p-values, confidence intervals).</li>
@@ -518,7 +470,7 @@
       <p><strong>Key Lesson:</strong> Statistics isn’t about perfection—it’s about reducing uncertainty.</p>
       
       <h4>Automation &amp; Advanced Tools – Working Smarter</h4>
-      <p><q>Let the machines handle repetition.</q></p>
+      <p><em>Let the machines handle repetition.</em></p>
       <p>Automating repetitive tasks and documenting every step saved me significant time. This phase focused on efficiency through:</p>
       <ul>
         <li>Python Scripting: Automating Excel/SQL workflows.</li>
@@ -528,7 +480,7 @@
       <p><strong>Golden Rule:</strong> If you perform a task manually 3+ times, automate it.</p>
       
       <h4>Machine Learning – The Frontier</h4>
-      <p><q>Predicting the future starts with understanding the past.</q></p>
+      <p><em>Predicting the future starts with understanding the past.</em></p>
       <p>Fueled by passion and AI, I expanded into machine learning with Python. This allowed me to build models and algorithms addressing current challenges and future uncertainties. I explored:</p>
       <ul>
         <li>Basics: Linear regression, decision trees.</li>
@@ -555,24 +507,6 @@
           <li><a href="#blog2" class="read-more" data-target="blog2">Embracing the Power of Data Visualization</a></li>
           <li><a href="#blog3" class="read-more" data-target="blog3">Tips and Tricks for Aspiring Data Analysts</a></li>
         </ul>
-      </div>
-      
-      <!-- Resources Section -->
-      <div class="resources">
-        <h4>Resources</h4>
-        <ul>
-          <li><a href="#">Downloadable Dataset</a></li>
-          <li><a href="#">Interactive Exercise</a></li>
-        </ul>
-      </div>
-      
-      <!-- Feedback Section -->
-      <div class="feedback">
-        <h4>Leave a Comment</h4>
-        <form id="feedback-form">
-          <textarea placeholder="Your comment..." rows="3" required></textarea>
-          <button type="submit">Submit</button>
-        </form>
       </div>
       
       <a class="back-to-home" href="#home">← Return to Home</a>
@@ -655,15 +589,27 @@
     </article>
   </div>
 
-  <!-- Footer with Separator and Useful Links -->
+  <!-- Footer with Separator and Useful Links (Contact removed from footer) -->
   <footer role="contentinfo">
     <p>&copy; 2025 Data Insights Blog. All rights reserved.</p>
     <nav>
-      <a href="#" class="footer-link" data-modal="modal-contact">Contact</a>
       <a href="#" class="footer-link" data-modal="modal-privacy">Privacy Policy</a>
       <a href="#" class="footer-link" data-modal="modal-terms">Terms of Service</a>
     </nav>
   </footer>
+
+  <!-- Modal for About -->
+  <div id="modal-about" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-about-title">
+    <div class="modal-content">
+      <span class="modal-close" aria-label="Close">&times;</span>
+      <h2 id="modal-about-title">About Pharaoh Chirchir</h2>
+      <p>
+        I am a dedicated data analyst and educator who transforms complex data into actionable insights.
+        Through my educational blogs, I share practical tips, interactive exercises, and resources designed to empower professionals and students alike.
+        I am also actively involved in knowledge management to ensure that valuable insights are captured and shared.
+      </p>
+    </div>
+  </div>
 
   <!-- Modal for Portfolio -->
   <div id="modal-portfolio" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-portfolio-title">
@@ -719,12 +665,11 @@
       document.body.classList.toggle('dark');
     });
 
-    // Hide/Reveal Blog Posts Functionality
     document.addEventListener("DOMContentLoaded", function() {
       const postsContainer = document.querySelector('.posts-container');
       const blogGrid = document.querySelector('.blog-grid');
       
-      // "Read More" click: hide grid, show detailed post
+      // "Read More" click: show detailed post
       document.querySelectorAll('.read-more').forEach(function(link) {
         link.addEventListener('click', function(e) {
           e.preventDefault();
@@ -739,7 +684,7 @@
         });
       });
       
-      // "Return to Home" click: hide detailed post, show grid
+      // "Return to Home" click: hide post and show grid
       document.querySelectorAll('.back-to-home').forEach(function(link) {
         link.addEventListener('click', function(e) {
           e.preventDefault();
@@ -749,8 +694,18 @@
         });
       });
 
-      // Modal Functionality for Footer and Portfolio Links
-      const modalLinks = document.querySelectorAll('.footer-link, .portfolio-link');
+      // Home link in header – dynamic scroll and closing open posts
+      document.querySelectorAll('header .nav-ribbon a[href="#home"]').forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          postsContainer.style.display = 'none';
+          blogGrid.style.display = 'grid';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+
+      // Modal functionality for About, Portfolio, and Footer Links
+      const modalLinks = document.querySelectorAll('.footer-link, .portfolio-link, .about-link');
       modalLinks.forEach(link => {
         link.addEventListener('click', function(e) {
           e.preventDefault();
@@ -759,7 +714,7 @@
         });
       });
       
-      // Close Modals when clicking on close button or outside modal content
+      // Close modals on clicking close or outside content
       const modals = document.querySelectorAll('.modal');
       modals.forEach(modal => {
         modal.addEventListener('click', function(e) {
@@ -776,11 +731,11 @@
         this.reset();
         document.getElementById('modal-contact').style.display = 'none';
       });
-
-      // Handle Feedback Form Submission (if present)
+      
+      // Handle Feedback Form Submission (if exists)
       const feedbackForm = document.getElementById('feedback-form');
-      if(feedbackForm){
-        feedbackForm.addEventListener('submit', function(e){
+      if (feedbackForm) {
+        feedbackForm.addEventListener('submit', function(e) {
           e.preventDefault();
           alert('Thank you for your feedback!');
           this.reset();
