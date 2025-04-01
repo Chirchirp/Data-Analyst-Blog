@@ -459,8 +459,34 @@
       }
       body {
         padding-top: 110px;
+        font-size: 14px;
       }
-    }
+      .container {
+        flex-direction: column; /* Stack elements on smaller screens */
+        padding: 10px;
+      }
+      .nav-menu {
+        display: none; /* Hide large nav menus */
+      }
+      .mobile-menu {
+          display: block; /* Show mobile navigation */
+      }
+      .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      }
+
+      @media (min-width: 768px) {
+          .container {
+              grid-template-columns: 1fr 1fr; /* Two-column layout for tablets */
+          }
+      }
+
+      @media (min-width: 1024px) {
+      .container {
+          grid-template-columns: repeat(3, 1fr); /* Three-column layout for desktops */
+      }
+      }
 
     /* ============================= */
     /*     Next-Generation Animations  */
