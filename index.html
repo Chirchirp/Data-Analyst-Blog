@@ -1,866 +1,1013 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google Fonts & Font Awesome -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  
-  <!-- Essential Meta Tags for SEO -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="description" content="Data Insights Blog - Expert analysis and narratives in data science. Explore topics from Excel to machine learning and more.">
-  <meta name="keywords" content="data analysis, analytics, data insights, machine learning, SQL, Excel, Tableau, Power BI, Poppins, Font Awesome, knowledge management">
-  <meta name="author" content="Pharaoh Chirchir">
-  <meta name="robots" content="index, follow">
-  <title>Data Insights Blog | Pharaoh Chirchir</title>
-  
-  <!-- Google Analytics (Sample GA4 Integration - replace with your tracking ID) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pharaoh's Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="text/javascript" src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+
+  <!-- EmailJS (Optional: for sending emails directly from the client) -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script type="text/javascript">
+    // Initialize EmailJS with your user ID (replace 'YOUR_USER_ID' with your actual EmailJS user id)
+    (function(){
+      emailjs.init("Z5IfVlRtBYqwWMLSM");
+    })();
   </script>
-  
+
+
   <style>
-    /* Use Poppins for all text */
-    body, h1, h2, h3, h4, h5, h6, p, a { font-family: 'Poppins', sans-serif; }
-    
-    /* Default Light Mode Variables – Blue Palette */
     :root {
-      --background: #fafafa;
-      --primary: #ffffff;
-      --secondary: #f9f9f9;
-      --tile-bg: #ffffff;
-      --tile-text: #333333;
-      --accent: #3498db;
-      --nav-text-color: #222222;
-      --hover-bg: #f5f5f5;
-      --border-color: #e0e0e0;
-      --heading-color: #2c3e50;
-      --transition: all 0.3s ease;
+      --primary: #00f7ff;
+      --secondary: #ff4d8f;
+      --bg-gradient: linear-gradient(45deg, #0a0a2e, #1a1a4a);
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --text-primary: #f0f0f0;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --neon-shadow: 0 0 15px var(--primary);
     }
-    /* Dark Mode Variables */
-    body.dark {
-      --background: #222222;
-      --primary: #222222;
-      --secondary: #333333;
-      --tile-bg: #333333;
-      --tile-text: #f1f1f1;
-      --accent: #2980b9;
-      --nav-text-color: #f1f1f1;
-      --hover-bg: #444444;
-      --border-color: #444444;
-      --heading-color: #bdc3c7;
+    /* Global Reset and Smooth Scrolling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, sans-serif;
+      scroll-behavior: smooth;
     }
-    
-    /* Global Reset */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    @supports (font-variation-settings: normal) {
+      * { font-family: 'Inter var', system-ui, sans-serif; }
+    }
     body {
-      background: var(--background);
-      color: var(--tile-text);
-      line-height: 1.6;
-      padding-top: 70px;
-      transition: var(--transition);
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      line-height: 1.7;
+      overflow-x: hidden;
     }
-    
-    /* Headings */
-    h1, h2, h3, h4, h5, h6 { color: var(--heading-color); }
-    
-    /* Skip Navigation Link */
-    .skip-link {
-      position: absolute;
-      top: -40px;
-      left: 0;
-      background: var(--accent);
-      color: #ffffff;
-      padding: 8px;
-      z-index: 1001;
-      transition: var(--transition);
+    section {
+      scroll-margin-top: 100px;
     }
-    .skip-link:focus { top: 0; }
-    
-    /* Header */
+    /* Header with Glass Morphism */
     header {
+      backdrop-filter: blur(16px);
+      background: var(--glass-bg);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5rem 5%;
       position: fixed;
-      top: 0;
-      left: 0;
       width: 100%;
-      background: var(--primary);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       z-index: 1000;
-      border-bottom: 2px solid var(--accent);
-    }
-    .header-ribbon {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .site-title a {
-      text-decoration: none;
-      color: var(--nav-text-color);
-      font-size: 1.9rem;
-      font-weight: 600;
+    .logo a {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .nav-ribbon {
+    nav {
       display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+      gap: 2rem;
     }
-    .nav-ribbon a {
-      color: var(--nav-text-color);
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 500;
-      text-transform: uppercase;
+    nav a {
+      position: relative;
+      padding: 0.5rem 1rem;
       transition: var(--transition);
-    }
-    .nav-ribbon a:hover { color: var(--accent); }
-    /* Adding icons to navigation links */
-    .nav-ribbon a i { margin-right: 6px; }
-    /* Portfolio & About links trigger modals */
-    .nav-ribbon a.portfolio-link,
-    .nav-ribbon a.about-link { cursor: pointer; }
-    .theme-toggle {
-      padding: 5px 12px;
-      background: var(--accent);
-      color: #ffffff;
-      border: none;
-      border-radius: 4px;
-      font-size: 0.9rem;
       cursor: pointer;
-      transition: var(--transition);
+      color: #fff;
     }
-    .theme-toggle:hover { opacity: 0.9; }
-
-    /* Intro Section */
-    .intro {
-      background: var(--secondary);
-      color: #050934;
-      padding: 15px 20px;
-      margin: 20px auto 5px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 1rem;
-      max-width: 1000px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-
-    /* Main Container */
-    .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 5px auto;
-      padding: 20px;
-    }
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-    }
-
-    /* Blog Tiles */
-    .blog-tile {
-      background: var(--tile-bg);
-      color: var(--tile-text);
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .blog-tile:hover {
-      transform: translateY(-3px);
-      background: var(--hover-bg);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-    .blog-tile h2 { font-size: 1.4rem; margin-bottom: 10px; }
-    .blog-tile p { flex-grow: 1; margin-bottom: 15px; }
-    .tags { margin-bottom: 8px; }
-    .tag {
-      display: inline-block;
-      background: #c8dbe9e4;
-      color: #0a0a0a;
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      margin-right: 4px;
-    }
-    .blog-tile a {
-      text-decoration: none;
-      font-weight: 600;
-      background: var(--accent);
-      color: #ffffff;
-      padding: 8px 12px;
-      border-radius: 4px;
-      transition: var(--transition);
-      align-self: flex-start;
-    }
-    .blog-tile a:hover { opacity: 0.9; }
-
-    /* Blog Posts (Detailed) */
-    .posts-container {
-      width: 90%;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      display: none;
-    }
-    .post, .blog-post {
-      background: var(--tile-bg);
-      color: var(--tile-text);
-      margin-bottom: 40px;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-      display: none;
-    }
-    .post img, .blog-post img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      loading: lazy;
-    }
-    .post h2, .blog-post h2 { font-size: 1.9rem; margin-bottom: 10px; }
-    .post time, .blog-post time { font-size: 0.9rem; margin-bottom: 10px; display: block; }
-    .post p, .blog-post p { margin-bottom: 15px; line-height: 1.8; max-width: 750px; }
-    pre { background: #f5f5f5; padding: 10px; overflow-x: auto; border-radius: 4px; font-family: monospace; }
-    code { font-family: monospace; }
-    .post ul, .blog-post ul,
-    .post ol, .blog-post ol { margin-left: 20px; margin-bottom: 15px; }
-    .post li, .blog-post li { margin-bottom: 8px; line-height: 1.6; }
-    .back-to-home {
-      display: inline-block;
-      margin-top: 15px;
-      text-decoration: none;
-      color: var(--accent);
-      font-weight: 600;
-      transition: var(--transition);
-    }
-    .back-to-home:hover { opacity: 0.9; }
-    
-
-    
-    /* Footer with Separator and Useful Links */
-    footer {
-      text-align: center;
-      padding: 20px 0;
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
       background: var(--primary);
-      color: var(--nav-text-color);
-      margin-top: 40px;
-      border-top: 2px solid var(--accent);
+      transition: var(--transition);
     }
-    footer nav { margin: 10px 0; }
-    footer nav a {
-      margin: 0 10px;
-      text-decoration: none;
-      color: var(--nav-text-color);
-      font-size: 0.9rem;
+    nav a:hover::after {
+      width: 100%;
     }
-    footer nav a:hover { color: var(--accent); }
-    
-    /* Modal Styles */
-    .modal {
+    .mobile-hamburger {
+      display: none;
+      cursor: pointer;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .mobile-hamburger span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: #fff;
+      transition: var(--transition);
+    }
+    .mobile-nav {
       display: none;
       position: fixed;
-      z-index: 2000;
-      left: 0;
       top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.9);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1500;
     }
-    .modal-content {
-      background-color: var(--tile-bg);
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 600px;
-      position: relative;
-    }
-    .modal-content h2 { margin-bottom: 15px; }
-    .modal-close {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      color: var(--accent);
+    .mobile-nav a {
+      color: #fff;
       font-size: 1.5rem;
-      font-weight: bold;
-      cursor: pointer;
+      margin: 1rem 0;
     }
-    .modal-close:hover { color: var(--accent); }
-    /* Modal Form Styles for Contact */
-    .modal-content form {
+    /* Updated Hero Section – Two Columns */
+    .hero {
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      padding: 8rem 5% 4rem;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
     }
-    .modal-content form label { margin-top: 10px; font-weight: bold; }
-    .modal-content form input,
-    .modal-content form textarea {
-      margin-top: 5px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 200vw;
+      height: 200vh;
+      background: radial-gradient(circle, rgba(0,247,255,0.1) 0%, transparent 70%);
+      animation: float 20s infinite linear;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: -1; /* Keep background behind all content */
     }
-    .modal-content form button {
-      margin-top: 15px;
-      padding: 10px;
-      background: var(--accent);
+
+    @keyframes float {
+      0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+      50% { transform: translate(-50%, -50%) translateY(-20px); }
+    }
+
+    .profile-container {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      width: 100%;
+    }
+
+    /* Left Column: Photo Section (30%) */
+    .photo-section {
+      flex: 0 0 30%;
+      display: flex;
+      justify-content: center;
+    }
+
+    /* Right Column: Info Section (70%) */
+    .info-section {
+      flex: 0 0 70%;
+      text-align: left;
+    }
+
+    /* Adjusted Profile Image */
+    .profile-image {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 0 40px rgba(0,247,255,0.2);
+      transition: transform 0.3s;
+    }
+    .profile-image:hover {
+      transform: scale(1.05);
+    }
+
+    /* Name and Role Styling */
+    .name-section h1 {
+      font-size: 3.5rem;
+      background: linear-gradient(45deg, var(--primary), var(--secondary) 70%, #ff70b8 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+    }
+    .name-section p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Education Styling */
+    .education {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.1rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
+    .education h3 {
+      font-size: 2.3rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    /* Hero Buttons – Retain Awesome Animations */
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cta-btn {
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
       border: none;
-      border-radius: 4px;
-      color: #ffffff;
+      padding: 1rem 2.5rem;
+      border-radius: 2rem;
+      font-weight: 600;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
       cursor: pointer;
+    }
+    .cta-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,247,255,0.3);
+    }
+    .cta-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2));
+      opacity: 0;
       transition: var(--transition);
     }
-    .modal-content form button:hover { opacity: 0.9; }
-    
-    /* Responsive Design */
-    @media (max-width:768px) {
-      .header-ribbon { flex-direction: column; align-items: flex-start; }
-      .nav-ribbon { margin-top: 10px; gap: 15px; }
-      .site-title a { font-size: 1.6rem; }
-      body { padding-top: 110px; }
+    .cta-btn:hover::after {
+      opacity: 1;
+    }
+
+    /* Responsive: Stack Columns on Mobile */
+    @media (max-width: 768px) {
+      .profile-container {
+        flex-direction: column;
+        text-align: center;
+      }
+      .photo-section,
+      .info-section {
+        flex: 1 1 100%;
+      }
+      .name-section h1 {
+        font-size: 2.5rem;
+      }
+      .info-section {
+        text-align: center;
+      }
+    }
+    /* Projects Section */
+    .projects {
+      padding: 4rem 5%;
+      background: transparent;
+      color: #e0e0e0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .projects .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .project-card {
+      background: var(--glass-bg);
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    .project-card:hover {
+      transform: translateY(-10px) rotateX(10deg) rotateY(5deg);
+      box-shadow: var(--neon-shadow, 0 25px 50px -12px rgba(0, 247, 255, 0.25));
+    }
+    .project-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(45deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .project-card p {
+      margin-bottom: 1rem;
+    }
+    .project-skills {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+    .project-link {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: underline;
+      transition: var(--transition);
+    }
+    .project-link:active,
+    .project-link:focus {
+      color: var(--secondary);
+      transform: scale(0.95);
+    }
+    .project-card::after {
+      pointer-events: none;
+    }
+    /* Resources Section */
+    .resources {
+      padding: 4rem 5%;
+      background: transparent;
+      color: var(--text-primary);
+    }
+    .resources .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+    .resources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .resource-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: var(--transition);
+      transform-style: preserve-3d;
+    }
+    .resource-card:hover {
+      transform: translateY(-0.5rem) rotateX(5deg) rotateY(5deg);
+      box-shadow: 0 25px 50px -12px rgba(0, 247, 255, 0.25);
+    }
+    .resource-card h3 {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    .resource-card p {
+      margin-bottom: 1rem;
+    }
+    .resource-link {
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    /* Modal Shared Styles – Centered in Viewport and Above Header */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(10px);
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    /* Improved Modal Appearance */
+    .modal {
+      background: #fff;
+      color: #333;
+      width: 50%;
+      max-height: 75%;
+      overflow-y: auto;
+      border-radius: 1rem;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+    .about-modal, .terms-modal, .privacy-modal, .skills-modal {
+      font-size: 0.9rem;
+      animation: modalFloat 0.5s ease-out;
+    }
+    @keyframes modalFloat {
+      0% { opacity: 0; transform: translateY(-20px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .modal h2 {
+      margin-bottom: 1.5rem;
+    }
+    .modal h3 {
+      margin: 1.5rem 0 1rem;
+    }
+    .modal p {
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .modal ul {
+      list-style: disc;
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .modal .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      color: #000;
+      transition: var(--transition);
+    }
+    .modal .close-btn:hover {
+      background: var(--secondary);
+    }
+    /* Contact Form Styles – Compact and Visible */
+    .modal form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .modal form label {
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+      color: #040005fa;
+    }
+    .modal form input,
+    .modal form textarea {
+      padding: 0.8rem 0.75rem;
+      border: 1px solid #c608cd;
+      border-radius: 0.5rem;
+      background: #e5d4e0;
+      color: #7e66ab;
+      font-size: 0.9rem;
+      transition: border 0.3s, box-shadow 0.5s;
+    }
+    .modal form input:focus,
+    .modal form textarea:focus {
+      outline: rgb(179, 17, 149);
+      border-color: var(--primary);
+      box-shadow: 0 0 5px rgba(0, 247, 255, 0.5);
+    }
+    /* Footer Section – Uniform with Header Theme */
+    footer {
+      backdrop-filter: blur(16px);
+      background: var(--glass-bg);
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1.5rem 5%;
+      text-align: center;
+      color: #fff;
+    }
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-left, .footer-right {
+      margin: 0.5rem 0;
+    }
+    .footer-nav a {
+      margin: 0 1rem;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .footer-nav a:hover {
+      text-decoration: underline;
+    }
+    .footer-right a {
+      margin: 0 0.5rem;
+      color: #fff;
+      display: inline-block;
+    }
+    .footer-right a svg {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.5rem; }
+      nav { display: none; }
+      .mobile-hamburger { display: flex; }
+      .modal { width: 90%; max-height: 80%; }
+      .footer-container { flex-direction: column; }
+    }
+    nav a.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    nav a.active::after {
+      width: 100%;
+    }
+    .cta-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 20%, rgba(255,255,255,0.2) 50%, transparent 80%);
+      animation: shine 3s infinite;
+    }
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(45deg); }
+      100% { transform: translateX(100%) rotate(45deg); }
+    }
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .modal form input,
+    .modal form textarea {
+      transition: var(--transition);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .modal form input:focus,
+    .modal form textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(0, 247, 255, 0.2);
+    }
+    /* Skills Modal – Two Column Layout */
+    .skills-columns {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .skills-columns > div {
+      flex: 1 1 300px;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <!-- Skip Navigation Link -->
-  <a class="skip-link" href="#blogs">Skip to content</a>
-
-  <!-- Header Ribbon with Navigation & Dark Mode Toggle Button -->
-  <header id="home" role="banner">
-    <div class="header-ribbon">
-      <div class="site-title">
-        <a href="#home"><i class="fas fa-home"></i> Data Insights Blog</a>
-      </div>
-      <nav class="nav-ribbon" role="navigation" aria-label="Main Navigation">
-        <a hre.introf="#home"><i class="fas fa-home"></i> Home</a>
-        <a href="#" class="footer-link about-link" data-modal="modal-about"><i class="fas fa-info-circle"></i> About</a>
-        <a href="#" class="portfolio-link footer-link" data-modal="modal-portfolio"><i class="fas fa-briefcase"></i> Portfolio</a>
-        <a href="#" class="footer-link" data-modal="modal-contact"><i class="fas fa-envelope"></i> Contact</a>
-      </nav>
-      <button class="theme-toggle" id="toggle-theme" aria-label="Toggle dark mode">Toggle Dark Mode</button>
+  <!-- Header / Navigation -->
+  <header>
+    <div class="logo"><a href="#home">Pharaoh</a></div>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <nav>
+      <a href="#home">Home</a>
+      <a id="aboutNav">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#resources">Resources</a>
+      <a id="contactNav">Contact</a>
+    </nav>
+    <!-- Mobile Hamburger Icon -->
+    <div class="mobile-hamburger" id="mobileHamburger">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
   </header>
 
-  <!-- Introduction Section -->
-  <div class="intro">
-    <p>
-      Welcome to Data Insights Blog – your resource for expert insights and actionable tips in data analysis. Empowering analysts to transform raw data into decisions.
-    </p>
+  <!-- Mobile Navigation Menu -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#home" class="mobile-nav-link">Home</a>
+    <a id="mobileAboutNav" class="mobile-nav-link">About</a>
+    <a href="#projects" class="mobile-nav-link">Projects</a>
+    <a href="#resources" class="mobile-nav-link">Resources</a>
+    <a id="mobileContactNav" class="mobile-nav-link">Contact</a>
   </div>
 
-  <!-- Blog Grid Container -->
-  <div class="container" id="blogs">
-    <div class="blog-grid">
-      <!-- Blog Tile 1 -->
-      <div class="blog-tile">
-        <h2>The Journey of a Data Analyst</h2>
-        <p class="minutes-read">5 min read</p>
-        <div class="tags">
-          <span class="tag">Excel</span>
-          <span class="tag">SQL</span>
-          <span class="tag">Power BI</span>
-          <span class="tag">Tableau</span>
-          <span class="tag">Python</span>
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="profile-container">
+      <div class="photo-section">
+        <img class="profile-image" src="images/pharaoh-photo.jpg" alt="Profile Picture">
+      </div>
+      <div class="info-section">
+        <div class="name-section">
+          <h1>Pharaoh Kipkirui Chirchir</h1>
+          <p>Data Analyst | BI Specialist | ML and Tech Innovator</p>
         </div>
-        <p>A glimpse into my journey into the world of data analysis, from learning statistics to uncovering insights...</p>
-        <a href="#blog1" class="read-more" data-target="blog1">Read More</a>
-      </div>
-      <!-- Blog Tile 2 -->
-      <div class="blog-tile">
-        <h2>Embracing the Power of Data Visualization</h2>
-        <p class="minutes-read">6 min read</p>
-        <div class="tags">
-          <span class="tag">Excel</span>
-          <span class="tag">Tableau</span>
-          <span class="tag">Power BI</span>
-          <span class="tag">Data Storytelling</span>
-          <span class="tag">Plotly and Scikit-learn</span>
+        <div class="education">
+          <h3>Education</h3>
+          <p><strong>Master of Science in Data Analytics</strong><br></em>Nexford University | Nov 2023 – Dec 2024</em></p>
+          <br>
+          <p><strong>Bachelor of Economics and Statistics</strong><br></em>Chuka University | Sep 2012 – Nov 2016</em></p>
         </div>
-        <p>Discover how data visualization can transform raw numbers into compelling stories...</p>
-        <a href="#blog2" class="read-more" data-target="blog2">Read More</a>
       </div>
-      <!-- Blog Tile 3 -->
-      <div class="blog-tile">
-        <h2>Tips and Tricks for Aspiring Data Analysts</h2>
-        <p class="minutes-read">7 min read</p>
-        <p>Expert advice and practical tips for those starting out in data analysis...</p>
-        <a href="#blog3" class="read-more" data-target="blog3">Read More</a>
+    </div>
+    <div class="hero-buttons">
+      <button class="cta-btn" id="openAbout">About Me</button>
+      <a href="#projects" class="cta-btn">Projects</a>
+      <button class="cta-btn" id="openSkills">Skills</button>
+    </div>
+  </section>
+
+  <!-- Projects Section -->
+  <section class="projects" id="projects">
+    <div class="container">
+      <h2 class="section-title">Projects</h2>
+      <div class="projects-grid">
+        <div class="project-card">
+          <h3>Sales Data Analysis</h3>
+          <p>Analysis of sales data to identify trends, track revenue, and understand customer behavior.</p>
+          <p class="project-skills"><strong>Skills:</strong> SQL, Excel, Power BI</p>
+          <a href="https://github.com/Chirchirp/Sales-Data-Analysis" target="_blank" rel="noopener" class="project-link">View Project</a>
+        </div>
+        <div class="project-card">
+          <h3>AI Trends &amp; Insights</h3>
+          <p>Analysis of global AI growth and its impact on industries.</p>
+          <p class="project-skills"><strong>Skills:</strong> Python, Pandas, Data Viz, Stats</p>
+          <a href="https://github.com/Chirchirp/The-Rise-of-Artificial-Intelligence-Trends-Impact-and-Insights.ipynb" target="_blank" rel="noopener" class="project-link">View Project</a>
+        </div>
+        <div class="project-card">
+          <h3>Consumer Insights for Beats</h3>
+          <p>Segmentation and trend analysis with interactive visualizations.</p>
+          <p class="project-skills"><strong>Skills:</strong> Python, Pandas, Matplotlib</p>
+          <a href="https://colab.research.google.com/drive/1XNxkdTQ6K0fG2OkM0QLvi35e9zQ_1ODe?usp=sharing" target="_blank" class="project-link">View Project</a>
+        </div>
+        <div class="project-card">
+          <h3>Customer Churn Prediction</h3>
+          <p>XGBoost model with 89% accuracy and a Flask API for deployment.</p>
+          <p class="project-skills"><strong>Skills:</strong> Python, XGBoost, Flask</p>
+          <a href="https://github.com/Chirchirp/Final-Project--Model-Deployment" target="_blank" class="project-link">View Project</a>
+        </div>
+        <div class="project-card">
+          <h3>Fraud Detection Model</h3>
+          <p>ML models identifying fraudulent transactions with a 97% recall rate..</p>
+          <p class="project-skills"><strong>Skills:</strong> Python, Logistic Regression, Isolation Fores</p>
+          <a href="https://colab.research.google.com/drive/1ISRR1X1zJjAfEP9fE-_q_JMjLkc1YIa3?usp=sharing" target="_blank" class="project-link">View Project</a>
+        </div>
+        <div class="project-card">
+           <h3>HR Analytics Dashboard</h3>
+           <p>Interactive Power BI dashboard tracking key HR metrics.</p>
+           <p class="project-skills"><strong>Skills:</strong> Power BI, DAX</p>
+           <a href="https://github.com/Chirchirp/Power-BI-Project-on-Employee-Attrition" target="_blank" class="project-link">View Project</a>
+        </div>
+        <div class="project-card">
+          <h3>SQL Data Mining</h3>
+          <p>Complex queries for cleaning, transforming and reporting data.</p>
+          <p class="project-skills"><strong>Skills:</strong> SQL, Data Mining</p>
+          <a href="https://github.com/Chirchirp/Data-Analysis-with-SSMS" target="_blank" class="project-link">View Project</a
+        </div>
       </div>
-      <!-- Blog Tile 4 -->
-      <div class="blog-tile">
-        <h2>Reflections on the Future of Data Science</h2>
-        <p class="minutes-read">5 min read</p>
-        <p>Insights and predictions on how data science will evolve in the coming years...</p>
-        <a href="#blog4" class="read-more" data-target="blog4">Read More</a>
+    </div>
+  </section>
+
+  <!-- Resources Section -->
+  <section class="resources" id="resources">
+    <div class="container">
+      <h2 class="section-title">Resources</h2>
+      <div class="resources-grid">
+        <div class="resource-card">
+          <h3>Blog</h3>
+          <p>Read my latest posts on data analysis and storytelling.</p>
+          <a href="https://chirchirp.github.io/Data-Analyst-Blog/#" target="_blank" class="resource-link">Visit Blog</a>
+        </div>
+        <div class="resource-card">
+          <h3>Resume</h3>
+          <p>Download my resume to learn more about my background and expertise.</p>
+          <a href="https://chirchirp.github.io/resume/" target="_blank" class="resource-link">View Resume</a>
+        </div>
+        <div class="resource-card">
+          <h3>Certifications</h3>
+          <p>Check out my certifications to verify my professional skills.</p>
+          <a href="https://www.linkedin.com/in/pharaoh-chirchir-m-sc-0b600b138/details/certifications/" target="_blank" class="resource-link">See Certifications</a>
+        </div>
       </div>
-      <!-- Blog Tile 5 -->
-      <div class="blog-tile">
-        <h2>The Art of Data Cleaning</h2>
-        <p class="minutes-read">4 min read</p>
-        <p>Master the crucial process of data cleaning to ensure quality insights...</p>
-        <a href="#blog5" class="read-more" data-target="blog5">Read More</a>
-      </div>
-      <!-- Blog Tile 6 -->
-      <div class="blog-tile">
-        <h2>Advanced SQL Techniques</h2>
-        <p class="minutes-read">8 min read</p>
-        <p>Dive deep into advanced SQL practices to optimize your data queries...</p>
-        <a href="#blog6" class="read-more" data-target="blog6">Read More</a>
+    </div>
+  </section>
+
+  <!-- Skills Modal (Dynamic Floating Window) -->
+  <div class="modal-overlay" id="skillsModalOverlay">
+    <div class="modal skills-modal">
+      <button class="close-btn" id="closeSkillsModal">Close</button>
+      <h2>Skills</h2>
+      <div class="skills-columns">
+        <div class="technical-skills">
+          <h3>Technical Skills</h3>
+          <ul>
+            <li>Python (Pandas, NumPy, Scikit-learn)</li>
+            <li>SQL &amp; Database Management</li>
+            <li>Data Visualization (Tableau, Power BI)</li>
+            <li>Statistical Analysis (R, Excel)</li>
+            <li>Data Cleaning &amp; Transformation</li>
+            <li>Machine Learning Algorithms</li>
+            <li>Data Modeling &amp; Reporting</li>
+          </ul>
+        </div>
+        <div class="soft-skills">
+          <h3>Soft Skills</h3>
+          <ul>
+            <li>Effective Communication</li>
+            <li>Critical Thinking</li>
+            <li>Problem Solving</li>
+            <li>Time Management</li>
+            <li>Adaptability</li>
+            <li>Collaboration &amp; Teamwork</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Blog Posts Content Container -->
-  <div class="posts-container">
-    <!-- Blog Post 1 -->
-    <article class="post" id="blog1">
-      <h2>Blog #1: The Journey of a Data Analyst</h2>
-      <time datetime="2025-03-07">March 7, 2025</time>
-      <p class="minutes-read">5 min read</p>
-      <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80" alt="Data analysis journey" loading="lazy" />
-      
-      <h3>From Excel Sheets to Machine Learning: A 7-Year Evolution</h3>
-      <ul></ul>
-      <h4>Starting with Excel – The Foundation</h4>
-      <p><em>Data analysis begins with curiosity – finding solutions.</em></p>
-      <p>My journey began with Microsoft Excel, many years down the line, when I joined formal employment after campus. This is a go-to tool I have always used because of its dynamic and easy-to-use features for simple analytics and visuals. Over the first year, I focused on:</p>
-      <ul>
-        <li><strong>Formulas and Functions:</strong> SUMIFS, VLOOKUP, INDEX-MATCH (still my favorite!).</li>
-        <li><strong>Pivot Tables:</strong> Transforming raw data into summaries. This revolutionary Excel feature simplifies complex problems in tables.</li>
-        <li><strong>Data Cleaning:</strong> Removing duplicates, fixing formats, and handling blanks. With years on Excel, you'll discover the powerful features of Power Query to clean and transform your data!</li>
-      </ul>
-      <p><strong>Practical Tip:</strong> Practice with real datasets (e.g., personal budgets, Kaggle’s free datasets) to perform simple analytics. Focus on accuracy—messy data leads to flawed insights.</p>
-      
-      <h4>Discovering SQL – Speaking to Databases</h4>
-      <p><em>If Excel is a bicycle, SQL is a sports car.</em></p>
-      <p>Driven by curiosity in data analytics, I moved to learning SQL, which is used to analyze larger datasets stored in databases. Key milestones included:</p>
-      <ul>
-        <li>Writing queries with JOINS, GROUP BY, and CTEs.</li>
-        <li>Understanding database structures (tables, schemas).</li>
-        <li>Optimizing queries for speed.</li>
-        <li>Performing powerful data optimizations, cleaning, and transformation.</li>
-      </ul>
-      <p><strong>Lightbulb Moment:</strong> I automated a monthly operations report that once took 8 hours, reducing it to just 10 minutes!</p>
-      <p><strong>Focus Area:</strong> Always validate your query logic. One wrong JOIN can skew results. Keep practicing SQL queries to steadily improve your analytics skills.</p>
-      
-      <h4>Visualization with Tableau &amp; Power BI – Storytelling</h4>
-      <p><em>A dashboard is a data story waiting to be told.</em></p>
-      <p>Sometimes, data needs to be presented visually so end users can quickly interpret trends and features. I learned Tableau and Power BI to make insights accessible by:</p>
-      <ul>
-        <li>Building interactive dashboards for stakeholders.</li>
-        <li>Using color theory and design principles for clarity.</li>
-        <li>Connecting live data sources for real-time updates.</li>
-        <li>Automating monthly reports to keep them dynamic.</li>
-      </ul>
-      <p><strong>Pro Tip:</strong> Start with a clear question: "What decision will this visualization support?"</p>
-      
-      <h4>Statistical Analysis – The "Why" Behind Numbers</h4>
-      <p><em>Data without context is just noise.</em></p>
-      <p>Delving into statistics helped me uncover deeper patterns and perform more complex calculations beyond traditional Excel functions. I focused on:</p>
-      <ul>
-        <li>Hypothesis testing (p-values, confidence intervals).</li>
-        <li>Regression analysis for trend prediction.</li>
-        <li>Using tools like Python (Pandas, NumPy) and R.</li>
-      </ul>
-      <p><strong>Key Lesson:</strong> Statistics isn’t about perfection—it’s about reducing uncertainty.</p>
-      
-      <h4>Automation &amp; Advanced Tools – Working Smarter</h4>
-      <p><em>Let the machines handle repetition.</em></p>
-      <p>Automating repetitive tasks and documenting every step saved me significant time. This phase focused on efficiency through:</p>
-      <ul>
-        <li>Python Scripting: Automating Excel/SQL workflows.</li>
-        <li>APIs: Pulling live data (e.g., weather, stock prices).</li>
-        <li>Cloud Tools: AWS and BigQuery for scalable analysis.</li>
-      </ul>
-      <p><strong>Golden Rule:</strong> If you perform a task manually 3+ times, automate it.</p>
-      
-      <h4>Machine Learning – The Frontier</h4>
-      <p><em>Predicting the future starts with understanding the past.</em></p>
-      <p>Fueled by passion and AI, I expanded into machine learning with Python. This allowed me to build models and algorithms addressing current challenges and future uncertainties. I explored:</p>
-      <ul>
-        <li>Basics: Linear regression, decision trees.</li>
-        <li>Advanced: Neural networks, NLP.</li>
-        <li>Libraries: Scikit-learn, TensorFlow.</li>
-      </ul>
-      <p><strong>Ah-Ha Moment:</strong> Machine learning isn’t magic—it’s pattern recognition at scale.</p>
-      
-      <h4>Skills to Master at Every Stage</h4>
-      <ol>
-        <li><strong>Data Cleaning:</strong> Garbage in = garbage out.</li>
-        <li><strong>Critical Thinking:</strong> Ask "So what?" after every analysis.</li>
-        <li><strong>Communication:</strong> Simplify complex findings for non-technical audiences.</li>
-        <li><strong>Ethics:</strong> Never manipulate data to fit a narrative.</li>
-      </ol>
-      
-      <h4>Final Thoughts</h4>
-      <p>Data analysis is a marathon, not a sprint. My journey from Excel hacks to machine learning took patience, countless Google searches, and a willingness to fail. Start small, stay curious, and remember: Every dataset has a story—your job is to find it.</p>
-      
-      <!-- Related Posts Section -->
-      <div class="related-posts">
-        <h4>Related Posts</h4>
-        <ul>
-          <li><a href="#blog2" class="read-more" data-target="blog2">Embracing the Power of Data Visualization</a></li>
-          <li><a href="#blog3" class="read-more" data-target="blog3">Tips and Tricks for Aspiring Data Analysts</a></li>
-        </ul>
-      </div>
-      
-      <a class="back-to-home" href="#home">← Return to Home</a>
-    </article>
-
-    <!-- Blog Post 2 -->
-    <article class="post" id="blog2">
-      <h2>Blog #2: Embracing the Power of Data Visualization</h2>
-      <time datetime="2025-02-20">February 20, 2025</time>
-      <p class="minutes-read">6 min read</p>
-      <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=800&q=80" alt="Data visualization" loading="lazy" />
-      <h3>Introduction: The Day a Line Chart Saved My Career</h3>
-      <p>Picture this: It’s 3 AM. You’re staring at a massive, tangled spreadsheet —a labyrinth of more than 100,000 rows of customer data. 
-        Your boss needs a “quick summary” by sunrise. It is a chaotic puzzle that, at first glance, means nothing. Yet, you know that deep inside those rows and columns, there is a powerful story waiting to be uncovered. Panic sets in.</p>
-     <p>Then, you remember: Numbers don’t convince people. Stories do.</p>
-      <p>You swap the spreadsheet for a simple line chart showing a 40% spike in weekend sales over the last few months. Suddenly, your CEO gets it. The next day, your team shifts marketing budgets to Saturdays, and revenue jumps.</p>
-      <p>That’s the power of data storytelling. Let’s talk about how to turn your data from “meh” to “holy cow, I need this.”</p>
-    
-      <h3>Why Your Data Needs a Story (Not Just a Spreadsheet)</h3>
-      <p>Data is the world’s most valuable currency, but raw numbers are like unmined gold—useless until polished. Here’s why storytelling wins:</p>
-      <ul>
-        <li><strong>Our brains are wired for stories:</strong> You’ll forget 90% of this blog tomorrow, but you’ll remember the 3 AM anecdote above.</li>
-        <li><strong>Clarity beats complexity:</strong> A startup I worked with once drowned in SaaS metrics. We replaced their 20-column Excel sheet with a single bar chart highlighting churn rates. Suddenly, they knew exactly where to focus.</li>
-        <li><strong>Stories drive action:</strong> No one ever cried, “Let’s pivot!” over a pivot table.</li>
-      </ul>
-    
-      <p>Sometimes back, I analyzed the datasets for a retail company That struggled with declining foot traffic. After analyzing customer visit patterns, a simple heatmap revealed that their stores were busiest on Friday evenings but had low staffing. Adjusting staffing hours led to a 25% improvement in customer service ratings and a noticeable revenue bump.</p>
-     <p><strong>Your takeaway:</strong> If your data doesn’t have a hero, a villain (e.g., declining sales), and a plot twist (e.g., “Tuesdays are the new Fridays”), you’re doing it wrong.</p>
-    
-    
-    <h3>Discovering the Power of Visual Storytelling</h3>
-    <p>A picture is worth a thousand numbers. Beginning your data visualization journey of transforming raw data into visuals that communicate insights at a glance starts with setting a clear goal: to create a visual narrative that captures attention and drives action.</p>
-  
-    <p>One day a healthcare provider wanted to reduce patient no-show rates. A simple stacked bar chart showed that 70% of no-shows were scheduled on Mondays. The solution? Appointment reminders sent on Sunday evenings. No-shows dropped by 35%.</p>
-    
-    <h3>Chart Chooser: Your Data’s Cast of Characters</h3>
-    <p>Every story needs the right characters. Here’s your lineup:</p>
-    <ul>
-      <li><strong>The Bar Chart:</strong> Your reliable best friend. Perfect for showdowns (“East vs. West sales”). It is a visual that is used to compare performance across different channels or across regions.</li>
-      <li><strong>The Line Graph:</strong> The time traveler. Shows trends (“Why our Q4 crashed”). It always illustrates trends over time when analyzing time series data.</li>
-      <li><strong>The Scatter Plot:</strong> The detective. Exposes hidden relationships (“Turns out, rain boosts umbrella sales”). It is used to reveal hidden correlations between ad spend and conversion rates.</li>
-      <li><strong>The Heatmap:</strong> The mood ring. Reveals patterns (“8 PM is when everyone abandons their carts”). It is best for visualizing user activity on a web page.</li>
-      <li><strong>Dashboards:</strong> Combines the different visuals, such as KPIs and other generated visuals, on a single page for a 360° business view. An ideal dashboard should not be so busy with many visuals on a single page; 4 visuals are enough to drive a story.</li>
-    </ul>
-    <p>To demonstrate this a SaaS company noticed customers leaving the company after the third month. A line graph revealed a common drop-off point—right when the free trial ended. Offering a discount extension at that moment increased retention by 40%.</p>
-    <p><strong>The villain:</strong> Pie charts. Unless you’re comparing 2-3 categories, they’re the Voldemort of visuals—no one wants to talk about them.</p>
-    
-    <h3>My Secret Weapons: Tools That Don’t Make Me Want to Yell</h3>
-    <p>I’ve tried every tool. Here’s what has worked in driving business performance:</p>
-    <ul>
-      <li><strong>Tableau:</strong> For when you need to impress stakeholders. Drag-and-drop magic. It has interactive and user-friendly dashboards</li>
-      <li><strong>Power BI:</strong> Excel’s cooler sibling. Perfect for real-time dashboards. Its interactive nature with cool features makes it a user centric tool to drive compelling stories in the datasets.</li>
-      <li><strong>Python (Plotly and Seaborn):</strong> My go-to for custom visuals. Once built a live-updating weather vs. ice cream sales map that convinced a client to shift delivery routes. They always give detailed analytics insights.</li>
-      <li><strong></strong> Free and perfect for storytelling. No coding needed.</li>
-    </ul>
-    <p><strong>Pro Tip:</strong> Start with free tools like <strong>Google Data Studio.</strong> No coding needed—just storytelling. These tools became my brush and palette, helping me craft visuals that not only looked appealing but also told the story hidden within the numbers.</p>
-    
-    <h3>Design Hacks Even Your Grandma Would Understand</h3>
-    <p>Great visuals are like IKEA instructions: simple, intuitive, and hard to mess up.</p>
-    <ul>
-      <li><strong>Kill the clutter: </strong> If it doesn’t answer “So what?”, delete it.</li>
-      <li><strong>Color like a pro:</strong> Use red for “bad” (churn), green for “good” (growth). Avoid rainbow vomit. But always remember to stick with the organization’s branding colors.</li>
-      <li><strong>Label everything:</strong> Assume your audience has never seen a chart before. This will make sure that the visuals stick in their minds and their hearts as well.</li>
-    </ul>
-    <p><strong>My disaster story:</strong> I once used a 3D pie chart in a board meeting. The project manager still roasts me at parties.</p>
-
-    <h3>Case Study: How a Dying Cafe Came Back to Life (With One Dashboard)</h3>
-    <h4>The problem:</h4>
-    <p>A local cafe was bleeding cash. Their “dashboard” was a sticky note: “Sales down. Help.”</p>
-    <h4>What I did:</h4>
-    <ol>
-      <li><strong>Cleaned the data:</strong> Tracked hourly sales, weather, and foot traffic.</li>
-      <li><strong>Built a simple dashboard:</strong>
-        <ul>
-          <li><strong>Line chart:</strong> Sales by hour (spoiler: 3 PM was dead).</li>
-          <li><strong>Heatmap:</strong> Busiest days (Sundays were empty).</li>
-        </ul>
-      </li>
-      <li><strong>The fix:</strong> Launched “3 PM Happy Hour” and Sunday live music.</li>
-    </ol>
-    <p><strong>Result:</strong> 60% revenue bump in 8 weeks.</p>
-    
-    
-    <h3>Why Static Charts Are So 2003 (And How to Go Interactive)</h3>
-    <p>Imagine reading a choose-your-own-adventure book vs. a dictionary. That’s interactive vs. static visuals.</p>
-    <ul>
-      <li><strong>Filters:</strong> Let users drill down (“Show me Q2 in the Midwest”).</li>
-      <li><strong>Tooltips:</strong> Hover to see why a spike happened.</li>
-      <li><strong>Tableau Dashboards:</strong> Click to explore.</li>
-    </ul>
-    <h4>Example:</h4>
-    <p>While reviewing the dataset for the nonprofit organization whose target was to increase donations, an interactive dashboard revealed that retirees donated most at 10 AM. Sending targeted email campaigns at that time doubled contributions.</p>
-    
-
-    <h3> Your Turn: How to Stop Reading and Start Doing</h3>
-    <p>This experience taught me several invaluable lessons:</p>
-    <ul>
-      <li><strong>Simplicity is key:</strong> Overloading a visual with too much information can obscure the main message.</li>
-      <li><strong>Context matters:</strong> Clear labels, legends, and interactivity help audiences understand the story behind the data.</li>
-      <li><strong>The right tools make a difference:</strong> Leveraging advanced tools can transform raw data into insights that drive action.</li>
-    </ul>
-    <h4>Your Action Plan:</h4>
-    <ul>
-      <li><strong>Start Small:</strong> Build a sales dashboard in Excel.</li>
-      <li><strong>Experiment:</strong> Try a Python tutorial with Plotly.</li>
-      <li><strong>Explore more:</strong> Create an interactive visual on Power BI.</li>
-      <li><strong>Share:</strong> Post your project on LinkedIn or GitHub.</li>
-    </ul>
-    <h4>Final Thought:</h4>
-    <p>Data storytelling isn’t about fancy tools—it’s about giving your numbers a heartbeat. Data is your story. Tell it well.</p>
-    <p>Remember, every dataset has a story. Your job is to find it.</p>
-    </article>
-     <!-- Related Posts Section -->
-     <div class="related-posts">
-      <h4>Related Posts</h4>
-      <ul>
-        <li><a href="#blog4" class="read-more" data-target="blog4">Reflections on the Future of Data Science</a></li>
-        <li><a href="#blog3" class="read-more" data-target="blog3">Tips and Tricks for Aspiring Data Analysts</a></li>
-      </ul>
-    </div>
-    
-    <a class="back-to-home" href="#home">← Return to Home</a>
-  </article>
-
-    <!-- Blog Post 3 -->
-    
-    <article class="post" id="blog3">
-      <h2>Blog #3: Tips and Tricks for Aspiring Data Analysts</h2>
-      <time datetime="2025-01-15">January 15, 2025</time>
-      <p class="minutes-read">7 min read</p>
-      <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&w=800&q=80" alt="Data analysis tips" loading="lazy" />
-      <p>For those embarking on the exciting journey of data analysis, I have a few expert tips...</p>
-      <ul>
-        <li><strong>Stay Curious:</strong> Every dataset has a story...</li>
-        <li><strong>Master the Basics:</strong> A strong foundation in statistics and programming...</li>
-        <li><strong>Experiment and Practice:</strong> Engage with real-world datasets...</li>
-        <li><strong>Embrace Continuous Learning:</strong> The field of data science evolves rapidly...</li>
-        <li><strong>Network with Peers:</strong> Join data communities, attend meetups...</li>
-        <li>Note: This is an overview of the Blog, complete blog comming soon....</li>
-      </ul>
-      <p>Every seasoned data analyst started as a beginner. Remember that every mistake is a learning opportunity...</p>
-      <a class="back-to-home" href="#home">← Return to Home</a>
-    </article>
-
-    <!-- Blog Post 4 -->
-    <article class="post" id="blog4">
-      <h2>Blog #4: Reflections on the Future of Data Science</h2>
-      <time datetime="2024-12-01">December 1, 2024</time>
-      <p class="minutes-read">5 min read</p>
-      <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80" alt="Future of data science" loading="lazy" />
-      <p>Looking toward the future, data science is poised to become even more integral to business, technology, and society...</p>
-      <p>Emerging technologies like artificial intelligence, machine learning, and automation are reshaping the landscape...</p>
-      <p>However, with great power comes great responsibility. As data scientists and analysts, we must advocate for ethical data practices...</p>
-      <p>My vision for the future is one where data is not only a tool for insight but also a catalyst for positive change...</p>
-      <li>Note: This is an overview of the Blog, complete blog comming soon....</li>
-      <a class="back-to-home" href="#home">← Return to Home</a>
-      
-    </article>
-
-    <!-- Blog Post 5 -->
-    <article class="blog-post" id="blog5">
-      <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80" alt="Data cleaning workspace" class="post-image" loading="lazy" />
-      <div class="post-content">
-        <div class="post-meta">
-          <time datetime="2025-03-20">March 20, 2025</time>
-          <p class="minutes-read">4 min read</p>
-        </div>
-        <h2>Blog #5: The Art of Data Cleaning</h2>
-        <p>Data cleaning is one of the most crucial—and often overlooked—aspects of data analysis...</p>
-        <p>Throughout my career, I’ve encountered datasets riddled with duplicate entries and inconsistent formats...</p>
-        <p>In this post, I share some of my best practices for data cleaning, including leveraging Python’s Pandas library...</p>
-        <li>Note: This is an overview of the Blog, complete blog comming soon....</li>
-      </div>
-      <a class="back-to-home" href="#home">← Return to Home</a>
-    </article>
-
-    <!-- Blog Post 6 -->
-    <article class="blog-post" id="blog6">
-      <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80" alt="Advanced SQL Techniques" class="post-image" loading="lazy" />
-      <div class="post-content">
-        <div class="post-meta">
-          <time datetime="2025-03-15">March 15, 2025</time>
-          <p class="minutes-read">8 min read</p>
-        </div>
-        <h2>Blog #6: Advanced SQL Techniques</h2>
-        <p>SQL remains one of the most powerful tools in a data analyst’s arsenal. Beyond simple querying, advanced SQL techniques...</p>
-        <p>In this post, I delve into topics such as window functions, common table expressions (CTEs), and query optimization strategies...</p>
-        <p>Mastering these techniques not only improves query performance but also empowers you to extract deeper insights...</p>
-        <li>Note: This is an overview of the Blog, complete blog comming soon....</li>
-      </div>
-      <a class="back-to-home" href="#home">← Return to Home</a>
-    </article>
-  </div>
-
-  <!-- Footer with Separator and Useful Links (Contact removed from footer) -->
-  <footer role="contentinfo">
-    <p>&copy; 2025 Data Insights Blog. All rights reserved.</p>
-    <nav>
-      <a href="#" class="footer-link" data-modal="modal-privacy">Privacy Policy</a>
-      <a href="#" class="footer-link" data-modal="modal-terms">Terms of Service</a>
-    </nav>
-  </footer>
-
-  <!-- Modal for About -->
-  <div id="modal-about" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-about-title">
-    <div class="modal-content">
-      <span class="modal-close" aria-label="Close">&times;</span>
-      <h2 id="modal-about-title">About Pharaoh Chirchir</h2>
+   <!-- About Modal (Dynamic Floating Window) -->
+   <div class="modal-overlay" id="aboutModalOverlay">
+    <div class="modal about-modal">
+      <button class="close-btn" id="closeAboutModal">Close</button>
+      <h2>Pharaoh in Nutshell.</h2>
+        I am a dedicated data analyst, passionate about analyzing complex data and storytelling. I believe that words and data are the two most powerful tools to change the world when given the right intent and audience. In my entire career, I have blended my expertise to help organizations interpret data to drive meaningful decisions.
       <p>
-        I am a dedicated data analyst and educator who transforms complex data into actionable insights.
-        Through my educational blogs, I share practical tips, interactive exercises, and resources designed to empower professionals and students alike.
-        I am also actively involved in knowledge management to ensure that valuable insights are captured and shared.
+        </p>
+        <strong>Delivering results.</strong> By the end of the day, I work on simplifying complex tasks through programming, analyzing large datasets, and uncovering valuable insights. My expertise spans around data analysis, visualization, machine learning, and problem solving. I specialize in end-to-end data analytics projects—from collecting data from third-party sources to delivering actionable insights, bridging the gap between raw data and decision-making.
+      <p>
+        <strong>Beyond work.</strong> After work, I dedicate my time to personal projects, continuous learning, and competitive programming. I challenge myself on platforms like HackerRank and explore new skills to stay ahead in the evolving data landscape. Most of my learning has come from online platforms—e-books, video tutorials, and self-paced courses. I deeply appreciate the democratization of education that has made these resources widely accessible.
+      <p>
+        <strong>Projects completed.</strong> Explore some of my data analytics projects on the projects section. I have linked my original work to their GitHub repositories, so feel free to download, explore, and experiment with my code.
+      <p>
+        <strong>Giving back to the community.</strong> I believe in sharing knowledge and supporting the data community. I write blogs on data analytics trends, mentor junior analysts on turning complex data into actionable insights, and help teams build dashboards, spot trends, and find data-driven answers. I make data work for people—whether it's through insightful reports, user-friendly dashboards, or answering tough business questions.
       </p>
     </div>
   </div>
 
-  <!-- Modal for Portfolio -->
-  <div id="modal-portfolio" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-portfolio-title">
-    <div class="modal-content">
-      <span class="modal-close" aria-label="Close">&times;</span>
-      <h2 id="modal-portfolio-title">Portfolio</h2>
-      <p>Explore my professional portfolio showcasing my projects, designs, and achievements. Discover creative solutions and innovative work.</p>
-      <p><a href="https://chirchirp.github.io/my-portfolio/#home" target="_blank">Visit Portfolio</a></p>
-    </div>
-  </div>
 
-  <!-- Modal for Contact with Form -->
-  <div id="modal-contact" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-contact-title">
-    <div class="modal-content">
-      <span class="modal-close" aria-label="Close">&times;</span>
-      <h2 id="modal-contact-title">Contact</h2>
-      <form id="contact-form">
-        <label for="contact-name">Name:</label>
-        <input type="text" id="contact-name" name="contact-name" required>
-        
-        <label for="contact-email">Email:</label>
-        <input type="email" id="contact-email" name="contact-email" required>
-        
-        <label for="contact-message">Message:</label>
-        <textarea id="contact-message" name="contact-message" rows="4" required></textarea>
-        
-        <button type="submit">Send Message</button>
+  <!-- Contact Modal with Form -->
+  <div class="modal-overlay" id="contactModalOverlay" style="display:none;">
+    <div class="modal">
+      <button class="close-btn" id="closeContactModal">Close</button>
+      <h2>Contact Me</h2>
+      <form id="contactForm">
+        <label for="yourName">Your Name:</label>
+        <input type="text" id="yourName" name="yourName" required />
+        <label for="yourEmail">Email Address:</label>
+        <input type="email" id="yourEmail" name="yourEmail" required />
+        <label for="yourMessage">Message:</label>
+        <textarea id="yourMessage" name="yourMessage" rows="4" required></textarea>
+        <button type="submit" class="cta-btn">Send Message</button>
       </form>
     </div>
   </div>
 
-  <!-- Modal for Privacy Policy -->
-  <div id="modal-privacy" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-privacy-title">
-    <div class="modal-content">
-      <span class="modal-close" aria-label="Close">&times;</span>
-      <h2 id="modal-privacy-title">Privacy Policy</h2>
-      <p>This Privacy Policy explains how we collect, use, and protect your personal information. We value your privacy and are committed to safeguarding your data.</p>
+
+  <!-- Terms and Conditions Modal -->
+  <div class="modal-overlay" id="termsModalOverlay">
+    <div class="modal terms-modal">
+      <button class="close-btn" id="closeTermsModal">Close</button>
+      <h2>Terms and Conditions</h2>
+      <p>
+        Welcome to our website. By accessing and using this website, you agree to be bound by these Terms and Conditions and all applicable laws. If you do not agree with these terms, please do not use this website.
+      </p>
+      <h3>Intellectual Property</h3>
+      <p>
+        All content on this website, including text, graphics, logos, images, and data, is the property of Pharaoh Chirchir and is protected by international copyright laws.
+      </p>
+      <h3>Use of Website</h3>
+      <p>
+        This website is for personal and non-commercial use only. Unauthorized use or distribution of any material on this website is strictly prohibited.
+      </p>
+      <h3>Disclaimer and Limitation of Liability</h3>
+      <p>
+        The information provided on this website is for informational purposes only and does not constitute professional advice. Pharaoh Chirchir makes no warranties regarding the accuracy or completeness of the content and shall not be liable for any damages arising from its use.
+      </p>
+      <h3>Indemnification</h3>
+      <p>
+        You agree to indemnify and hold harmless Pharaoh Chirchir and its affiliates from any claims arising out of your use of this website.
+      </p>
+      <h3>Governing Law</h3>
+      <p>
+        These Terms shall be governed by the laws of your jurisdiction without regard to its conflict of law provisions.
+      </p>
     </div>
   </div>
 
-  <!-- Modal for Terms of Service -->
-  <div id="modal-terms" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-terms-title">
-    <div class="modal-content">
-      <span class="modal-close" aria-label="Close">&times;</span>
-      <h2 id="modal-terms-title">Terms of Service</h2>
-      <p>These Terms of Service govern your use of our website and services. By accessing our site, you agree to these terms. Please read them carefully.</p>
+  <!-- Privacy Policy Modal -->
+  <div class="modal-overlay" id="privacyModalOverlay">
+    <div class="modal privacy-modal">
+      <button class="close-btn" id="closePrivacyModal">Close</button>
+      <h2>Privacy Policy</h2>
+      <p>
+        Your privacy is critically important to us. This Privacy Policy explains how we collect, use, and protect your personal information when you visit our website.
+      </p>
+      <h3>Information Collection</h3>
+      <p>
+        We collect personal information that you voluntarily provide, such as your name and email address when you fill out our contact form.
+      </p>
+      <h3>Use of Information</h3>
+      <p>
+        We use the information to respond to your inquiries, improve our website, and provide you with relevant updates.
+      </p>
+      <h3>Data Security</h3>
+      <p>
+        We implement a variety of security measures to ensure the safety of your personal information.
+      </p>
+      <h3>Cookies</h3>
+      <p>
+        Our website uses cookies to enhance your experience. You can control cookies through your browser settings.
+      </p>
+      <h3>Third-Party Disclosure</h3>
+      <p>
+        We do not sell, trade, or otherwise transfer your personal information to outside parties without your consent, except as required by law.
+      </p>
+      <h3>Changes to Privacy Policy</h3>
+      <p>
+        We reserve the right to update this Privacy Policy at any time. Your continued use of the website signifies your acceptance of any changes.
+      </p>
+      <h3>Contact</h3>
+      <p>
+        If you have any questions regarding this Privacy Policy, please contact us using the information provided in the Contact modal.
+      </p>
     </div>
   </div>
+
+  <!-- Footer Section -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-left">
+        <p>&copy; 2025 Pharaoh Chirchir. All rights reserved.</p>
+        <nav class="footer-nav">
+          <a id="termsNav" href="#">Terms and Conditions</a>
+          <a id="privacyNav" href="#">Privacy</a>
+        </nav>
+      </div>
+      <div class="footer-right">
+        <a href="https://github.com/Chirchirp" target="_blank" aria-label="GitHub">
+          <svg viewBox="0 0 16 16" version="1.1" width="24" height="24" aria-hidden="true">
+            <path fill-rule="evenodd" fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 
+            2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 
+            0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 
+            1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 
+            0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 
+            1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 
+            2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 
+            2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 
+            0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 
+            8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path>
+          </svg>
+        </a>
+        <a href="mailto:chirkiruiphero@gmail.com" target="_blank" aria-label="Gmail">
+          <svg viewBox="0 0 512 512" width="24" height="24">
+            <path fill="currentColor" d="M502.3 190.8L327.4 338.3c-15.1 13.3-37.5 
+            13.3-52.6 0L9.7 190.8C3.9 186.1 0 178.6 0 170.4V80c0-26.5 
+            21.5-48 48-48h416c26.5 0 48 21.5 48 
+            48v90.4c0 8.2-3.9 15.7-9.7 20.4zM480 
+            128L256 288 32 128v242c0 26.5 21.5 48 48 
+            48h352c26.5 0 48-21.5 48-48V128z"></path>
+          </svg>
+        </a>
+        <a href="https://linkedin.com/in/pharaoh-chirchir-m-sc-0b600b138/" target="_blank" aria-label="LinkedIn">
+          <svg viewBox="0 0 448 512" width="24" height="24">
+            <path fill="currentColor" d="M100.28 448H7.4V148.9h92.88zm-46.44-341a53.75 
+            53.75 0 1 1 53.75-53.75 53.75 53.75 0 0 1-53.75 53.75zM447.9 
+            448h-92.68V302.4c0-34.7-12.45-58.4-43.54-58.4-23.72 
+            0-37.86 16-44.06 31.5-2.28 5.5-2.85 13.2-2.85 
+            20.9V448h-92.68s1.23-261.9 0-288.1h92.68v40.8c12.3-19 
+            34.3-46.2 83.38-46.2 60.88 0 106.6 39.8 106.6 125.4V448z"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </footer>
 
   <script>
-    // Toggle Dark Mode
-    document.getElementById('toggle-theme').addEventListener('click', function() {
-      document.body.classList.toggle('dark');
+     // Mobile Menu Functionality
+     const mobileHamburger = document.getElementById('mobileHamburger');
+    const mobileNav = document.getElementById('mobileNav');
+    mobileHamburger.addEventListener('click', () => {
+      mobileNav.style.display = mobileNav.style.display === 'flex' ? 'none' : 'flex';
+    });
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileNav.style.display = 'none';
+      });
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-      const postsContainer = document.querySelector('.posts-container');
-      const blogGrid = document.querySelector('.blog-grid');
-      
-      // "Read More" click: show detailed post
-      document.querySelectorAll('.read-more').forEach(function(link) {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const targetId = this.getAttribute('data-target');
-          blogGrid.style.display = 'none';
-          postsContainer.style.display = 'block';
-          postsContainer.querySelectorAll('article').forEach(function(post) {
-            post.style.display = 'none';
-          });
-          document.getElementById(targetId).style.display = 'block';
-          window.scrollTo({ top: postsContainer.offsetTop - 20, behavior: 'smooth' });
-        });
-      });
-      
-      // "Return to Home" click: hide post and show grid
-      document.querySelectorAll('.back-to-home').forEach(function(link) {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          postsContainer.style.display = 'none';
-          blogGrid.style.display = 'grid';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-      });
+    // About Modal Functionality
+    const aboutModalOverlay = document.getElementById('aboutModalOverlay');
+    const openAboutBtn = document.getElementById('openAbout');
+    const aboutNav = document.getElementById('aboutNav');
+    const mobileAboutNav = document.getElementById('mobileAboutNav');
+    const closeAboutModal = document.getElementById('closeAboutModal');
+    function openAboutModal() {
+      aboutModalOverlay.style.display = 'flex';
+    }
+    function closeAbout() {
+      aboutModalOverlay.style.display = 'none';
+    }
+    openAboutBtn.addEventListener('click', openAboutModal);
+    aboutNav.addEventListener('click', openAboutModal);
+    mobileAboutNav && mobileAboutNav.addEventListener('click', openAboutModal);
+    closeAboutModal.addEventListener('click', closeAbout);
+    aboutModalOverlay.addEventListener('click', function(e) {
+      if (e.target === aboutModalOverlay) closeAbout();
+    });
 
-      // Home link in header – dynamic scroll and closing open posts
-      document.querySelectorAll('header .nav-ribbon a[href="#home"]').forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          postsContainer.style.display = 'none';
-          blogGrid.style.display = 'grid';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-      });
+    // Contact Modal Functionality
+    const contactModalOverlay = document.getElementById('contactModalOverlay');
+    const contactNav = document.getElementById('contactNav');
+    const mobileContactNav = document.getElementById('mobileContactNav');
+    const closeContactModal = document.getElementById('closeContactModal');
 
-      // Modal functionality for About, Portfolio, and Footer Links
-      const modalLinks = document.querySelectorAll('.footer-link, .portfolio-link, .about-link');
-      modalLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-          e.preventDefault();
-          const modalId = this.getAttribute('data-modal');
-          document.getElementById(modalId).style.display = 'block';
-        });
-      });
-      
-      // Close modals on clicking close or outside content
-      const modals = document.querySelectorAll('.modal');
-      modals.forEach(modal => {
-        modal.addEventListener('click', function(e) {
-          if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close')) {
-            modal.style.display = 'none';
-          }
-        });
-      });
+    function openContactModal() {
+      contactModalOverlay.style.display = 'flex';
+    }
 
-      // Handle Contact Form Submission
-      document.getElementById('contact-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        alert('Thank you, your message has been sent!');
-        this.reset();
-        document.getElementById('modal-contact').style.display = 'none';
+    function closeContact() {
+      contactModalOverlay.style.display = 'none';
+    }
+
+    contactNav.addEventListener('click', openContactModal);
+    mobileContactNav && mobileContactNav.addEventListener('click', openContactModal);
+    closeContactModal.addEventListener('click', closeContact);
+    contactModalOverlay.addEventListener('click', function(e) {
+      if (e.target === contactModalOverlay) closeContact();
+    });
+
+    // EmailJS Form Submission Handling
+    const contactForm = document.getElementById('contactForm');
+    contactForm.addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    emailjs.sendForm('service_h3eoa9g', 'template_9varj9u', this)
+      .then(function() {
+        alert("Thanks for your message. You will receive a response within 24 hours.");
+        closeContact(); // Hide the modal after successful submission
+        contactForm.reset(); // Reset the form fields
+      }, function(error) {
+        alert("Failed to send message, please try again later.");
       });
-      
-      // Handle Feedback Form Submission (if exists)
-      const feedbackForm = document.getElementById('feedback-form');
-      if (feedbackForm) {
-        feedbackForm.addEventListener('submit', function(e) {
-          e.preventDefault();
-          alert('Thank you for your feedback!');
-          this.reset();
-        });
-      }
+    });
+
+    // Skills Modal Functionality
+    const skillsModalOverlay = document.getElementById('skillsModalOverlay');
+    const openSkillsBtn = document.getElementById('openSkills');
+    const closeSkillsModal = document.getElementById('closeSkillsModal');
+    function openSkillsModal() {
+      skillsModalOverlay.style.display = 'flex';
+    }
+    function closeSkills() {
+      skillsModalOverlay.style.display = 'none';
+    }
+    openSkillsBtn.addEventListener('click', openSkillsModal);
+    closeSkillsModal.addEventListener('click', closeSkills);
+    skillsModalOverlay.addEventListener('click', function(e) {
+      if (e.target === skillsModalOverlay) closeSkills();
+    });
+
+    // Terms and Conditions Modal Functionality
+    const termsModalOverlay = document.getElementById('termsModalOverlay');
+    const termsNav = document.getElementById('termsNav');
+    const closeTermsModal = document.getElementById('closeTermsModal');
+    function openTermsModal() {
+      termsModalOverlay.style.display = 'flex';
+    }
+    function closeTerms() {
+      termsModalOverlay.style.display = 'none';
+    }
+    termsNav.addEventListener('click', openTermsModal);
+    closeTermsModal.addEventListener('click', closeTerms);
+    termsModalOverlay.addEventListener('click', function(e) {
+      if (e.target === termsModalOverlay) closeTerms();
+    });
+
+    // Privacy Policy Modal Functionality
+    const privacyModalOverlay = document.getElementById('privacyModalOverlay');
+    const privacyNav = document.getElementById('privacyNav');
+    const closePrivacyModal = document.getElementById('closePrivacyModal');
+    function openPrivacyModal() {
+      privacyModalOverlay.style.display = 'flex';
+    }
+    function closePrivacy() {
+      privacyModalOverlay.style.display = 'none';
+    }
+    privacyNav.addEventListener('click', openPrivacyModal);
+    closePrivacyModal.addEventListener('click', closePrivacy);
+    privacyModalOverlay.addEventListener('click', function(e) {
+      if (e.target === privacyModalOverlay) closePrivacy();
     });
   </script>
 </body>
 </html>
+ 
