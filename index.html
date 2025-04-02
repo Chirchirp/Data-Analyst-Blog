@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!DOCTYPE html>
-<html lang="en">
-<head>
   <!-- Google Fonts & Font Awesome -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   
@@ -15,541 +10,332 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="description" content="Data Insights Blog - Expert analysis and narratives in data science. Explore topics from Excel to machine learning and more.">
+  <meta name="keywords" content="data analysis, analytics, data insights, machine learning, SQL, Excel, Tableau, Power BI, Poppins, Font Awesome, knowledge management">
   <meta name="author" content="Pharaoh Chirchir">
   <meta name="robots" content="index, follow">
-  <meta property="og:title" content="Data Insights Blog | Pharaoh Chirchir">
-  <meta property="og:description" content="Expert analysis and narratives in data science. Explore topics from Excel to machine learning and more.">
-  <meta property="og:image" content="path/to/your-image.jpg">
-  <meta name="theme-color" content="#00f7ff">
-  <link rel="canonical" href="https://yourwebsite.com/data-insights-blog">
-  
   <title>Data Insights Blog | Pharaoh Chirchir</title>
   
-  <!-- Google Analytics -->
+  <!-- Google Analytics (Sample GA4 Integration - replace with your tracking ID) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX'); // Replace with your actual tracking ID
+    gtag('config', 'G-XXXXXXXXXX');
   </script>
   
   <style>
-    /* ============================= */
-    /*   Next-Generation Custom Properties  */
-    /* ============================= */
+    /* Use Poppins for all text */
+    body, h1, h2, h3, h4, h5, h6, p, a { font-family: 'Poppins', sans-serif; }
+    
+    /* Default Light Mode Variables – Blue Palette */
     :root {
-      /* Modern Color System */
-      --primary: #00f7ff;
-      --secondary: #4dd5ff;
-      --bg-gradient: linear-gradient(45deg, #dadaec, #a8a8b3);
-      --glass-bg: rgb(246, 240, 240);
-      --accent: #fbfbfb;
-      --text-base: #f0f0f0;
-      --heading-gradient: linear-gradient(45deg, var(--primary), var(--secondary));
-      
-      /* Typography */
-      --font-base: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
-      --font-heading: 'Lora', Georgia, serif;
-      --font-scale-h1: clamp(1.8rem, 4vw, 2.5rem);
-      --font-scale-h2: clamp(1.5rem, 3.5vw, 2.2rem);
-      --font-scale-h3: clamp(1.0rem, 2.5vw, 1.2rem);
-      --line-height-base: 1.6;
-      --spacing-unit: 1rem;
-      
-      /* Transitions & Animations */
-      --transition-fast: 0.2s ease;
-      --transition-normal: 0.3s ease;
-      --transition-slow: 0.5s ease;
-      
-      /* Effects */
-      --glass-blur: blur(8px);
-      --hover-scale: 1.03;
-      --focus-outline: 2px solid var(--primary);
+      --background: #fafafa;
+      --primary: #ffffff;
+      --secondary: #f9f9f9;
+      --tile-bg: #ffffff;
+      --tile-text: #333333;
+      --accent: #3498db;
+      --nav-text-color: #222222;
+      --hover-bg: #f5f5f5;
+      --border-color: #e0e0e0;
+      --heading-color: #2c3e50;
+      --transition: all 0.3s ease;
     }
-
-    /* Automatic dark mode */
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --text-base: #ffffff;
-        --accent: #10b5ba;
-        --glass-bg: rgba(38, 45, 51, 0.6);
-      }
+    /* Dark Mode Variables */
+    body.dark {
+      --background: #222222;
+      --primary: #222222;
+      --secondary: #333333;
+      --tile-bg: #333333;
+      --tile-text: #f1f1f1;
+      --accent: #2980b9;
+      --nav-text-color: #f1f1f1;
+      --hover-bg: #444444;
+      --border-color: #444444;
+      --heading-color: #bdc3c7;
     }
-
-    /* ============================= */
-    /*          Global Reset         */
-    /* ============================= */
-    *,
-    *::before,
-    *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html {
-      scroll-behavior: smooth;
-    }
+    
+    /* Global Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
-      font-family: var(--font-base);
-      background: var(--bg-gradient);
-      color: var(--text-base);
-      line-height: var(--line-height-base);
+      background: var(--background);
+      color: var(--tile-text);
+      line-height: 1.6;
       padding-top: 70px;
-      font-size: 16px;
-      transition: background var(--transition-normal), color var(--transition-normal);
+      transition: var(--transition);
     }
-
-    /* Reduced Motion Option */
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        transition: none !important;
-        animation-duration: 0.01ms !important;
-      }
+    
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 { color: var(--heading-color); }
+    
+    /* Skip Navigation Link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 0;
+      background: var(--accent);
+      color: #ffffff;
+      padding: 8px;
+      z-index: 1001;
+      transition: var(--transition);
     }
-
-    /* ============================= */
-    /*         Typography            */
-    /* ============================= */
-    h1 {
-      font-family: var(--font-heading);
-      font-size: var(--font-scale-h1);
-      margin-bottom: calc(var(--spacing-unit) * 1.5);
-      background: var(--heading-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    h2 {
-      font-family: var(--font-heading);
-      font-size: var(--font-scale-h2);
-      margin-bottom: var(--spacing-unit);
-      background: var(--heading-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.2rem;
-    }
-    h3 {
-      font-family: var(--font-heading);
-      font-size: var(--font-scale-h3);
-      margin-top: calc(var(--spacing-unit) * 1.5);
-      background: var(--heading-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    p {
-      margin: calc(var(--spacing-unit) * 0.75) 0;
-      text-align: justify;
-    }
-
-    /* Gradient Text for Branding */
-    .site-title a {
-      background: var(--heading-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-size: 2rem;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    /* ============================= */
-    /*      Header & Navigation      */
-    /* ============================= */
+    .skip-link:focus { top: 0; }
+    
+    /* Header */
     header {
-      position: sticky;
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      background: var(--glass-bg);
-      box-shadow: 0 2px 8px rgba(165, 164, 164, 0.9);
-      border-bottom: 2px solid var(--accent);
-      backdrop-filter: var(--glass-blur);
+      background: var(--primary);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
       z-index: 1000;
-      transition: box-shadow var(--transition-normal);
-    }
-    header:hover {
-      box-shadow: 0 5px 20px rgb(155, 141, 141);
+      border-bottom: 2px solid var(--accent);
     }
     .header-ribbon {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 1rem 1rem;
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
+    }
+    .site-title a {
+      text-decoration: none;
+      color: var(--nav-text-color);
+      font-size: 1.9rem;
+      font-weight: 600;
     }
     .nav-ribbon {
       display: flex;
-      gap: 1.25rem;
+      gap: 20px;
       flex-wrap: wrap;
     }
     .nav-ribbon a {
-      color: var(--text-base);
+      color: var(--nav-text-color);
       text-decoration: none;
       font-size: 1rem;
       font-weight: 500;
       text-transform: uppercase;
-      transition: color var(--transition-fast);
+      transition: var(--transition);
     }
-    .nav-ribbon a:hover,
-    .nav-ribbon a:focus {
-      color: var(--accent);
-      outline: var(--focus-outline);
+    .nav-ribbon a:hover { color: var(--accent); }
+    /* Adding icons to navigation links */
+    .nav-ribbon a i { margin-right: 6px; }
+    /* Portfolio & About links trigger modals */
+    .nav-ribbon a.portfolio-link,
+    .nav-ribbon a.about-link { cursor: pointer; }
+    .theme-toggle {
+      padding: 5px 12px;
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
     }
-    .nav-ribbon a i {
-      margin-right: 0.5rem;
+    .theme-toggle:hover { opacity: 0.9; }
+
+    /* Intro Section */
+    .intro {
+      background: var(--secondary);
+      color: #050934;
+      padding: 15px 20px;
+      margin: 20px auto 5px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1rem;
+      max-width: 1000px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
-    /* ============================= */
-    /*        Main Container         */
-    /* ============================= */
+    /* Main Container */
     .container {
       width: 90%;
       max-width: 1200px;
-      margin: 2rem auto;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: calc(var(--spacing-unit) * 1.5);
+      margin: 5px auto;
+      padding: 20px;
     }
-
-    /* CSS Grid Layout for Blog Grid */
     .blog-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
     }
 
-    /* ============================= */
-    /*         Blog Tiles            */
-    /* ============================= */
+    /* Blog Tiles */
     .blog-tile {
-      background: var(--glass-bg);
-      color: var(--text-base);
-      padding: 1.5rem;
-      border: 1px solid var(--accent);
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+      background: var(--tile-bg);
+      color: var(--tile-text);
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      transition: var(--transition);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      animation: fadeIn 0.8s ease-out forwards;
     }
-    .blog-tile:hover,
-    .blog-tile:focus-within {
-      transform: translateY(-4px) scale(var(--hover-scale));
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      outline: none;
+    .blog-tile:hover {
+      transform: translateY(-3px);
+      background: var(--hover-bg);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
     }
-    .blog-tile h2 {
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-    }
-    .blog-tile p {
-      flex-grow: 1;
-      margin-bottom: 1rem;
-    }
-    .tags {
-      margin-bottom: 0.625rem;
-    }
+    .blog-tile h2 { font-size: 1.4rem; margin-bottom: 10px; }
+    .blog-tile p { flex-grow: 1; margin-bottom: 15px; }
+    .tags { margin-bottom: 8px; }
     .tag {
       display: inline-block;
-      background: rgba(255, 255, 255, 0.9);
+      background: #c8dbe9e4;
       color: #0a0a0a;
-      padding: 0.15rem 0.425rem;
-      border-radius: 2px;
+      padding: 3px 8px;
+      border-radius: 4px;
       font-size: 0.8rem;
-      margin-right: 0.3125rem;
+      margin-right: 4px;
     }
     .blog-tile a {
       text-decoration: none;
       font-weight: 600;
       background: var(--accent);
-      color: #fff;
-      padding: 0.625rem 0.875rem;
+      color: #ffffff;
+      padding: 8px 12px;
       border-radius: 4px;
-      transition: opacity var(--transition-fast);
+      transition: var(--transition);
       align-self: flex-start;
     }
-    .blog-tile a:hover,
-    .blog-tile a:focus {
-      opacity: 0.9;
-      outline: var(--focus-outline);
-    }
+    .blog-tile a:hover { opacity: 0.9; }
 
-    /* ============================= */
-    /*       Blog Posts Detailed     */
-    /* ============================= */
+    /* Blog Posts (Detailed) */
     .posts-container {
       width: 90%;
       max-width: 800px;
-      margin: 2.5rem auto;
-      padding: 1.5rem;
+      margin: 40px auto;
+      padding: 20px;
+      display: none;
     }
-    .post,
-    .blog-post {
-      background: var(--glass-bg);
-      color: var(--text-base);
-      margin-bottom: 2.5rem;
-      padding: 1.875rem 2.5rem;
-      border-radius: 10px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-      transition: transform var(--transition-normal);
-      animation: fadeIn 0.8s ease-out forwards;
+    .post, .blog-post {
+      background: var(--tile-bg);
+      color: var(--tile-text);
+      margin-bottom: 40px;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+      display: none;
     }
-    .post:hover,
-    .blog-post:hover,
-    .post:focus-within,
-    .blog-post:focus-within {
-      transform: translateY(-3px);
-      outline: var(--focus-outline);
-    }
-    .post img,
-    .blog-post img {
+    .post img, .blog-post img {
       width: 100%;
       border-radius: 8px;
-      margin: 1.25rem 0;
-      transition: transform var(--transition-normal);
+      margin-bottom: 20px;
+      loading: lazy;
     }
-    .post img:hover,
-    .blog-post img:hover {
-      transform: scale(1.02);
-    }
-    .post h2,
-    .blog-post h2 {
-      font-size: var(--font-scale-h2);
-      margin-bottom: 0.75rem;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.5rem;
-    }
-    .post time,
-    .blog-post time {
-      font-size: 0.9rem;
-      margin-bottom: 0.75rem;
-      display: block;
-    }
-    .post p,
-    .blog-post p {
-      margin-bottom: 1rem;
-      line-height: 1.8;
-    }
-    pre {
-      background: #f5f5f5;
-      padding: 1.625rem;
-      overflow-x: auto;
-      border-radius: 4px;
-      font-family: monospace;
-    }
-    code {
-      font-family: monospace;
-    }
-    .post ul,
-    .blog-post ul,
-    .post ol,
-    .blog-post ol {
-      margin-left: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .post li,
-    .blog-post li {
-      margin-bottom: 0.5rem;
-      line-height: 1.6;
-    }
+    .post h2, .blog-post h2 { font-size: 1.9rem; margin-bottom: 10px; }
+    .post time, .blog-post time { font-size: 0.9rem; margin-bottom: 10px; display: block; }
+    .post p, .blog-post p { margin-bottom: 15px; line-height: 1.8; max-width: 750px; }
+    pre { background: #f5f5f5; padding: 10px; overflow-x: auto; border-radius: 4px; font-family: monospace; }
+    code { font-family: monospace; }
+    .post ul, .blog-post ul,
+    .post ol, .blog-post ol { margin-left: 20px; margin-bottom: 15px; }
+    .post li, .blog-post li { margin-bottom: 8px; line-height: 1.6; }
     .back-to-home {
       display: inline-block;
-      margin-top: 1.5rem;
+      margin-top: 15px;
       text-decoration: none;
       color: var(--accent);
-      font-size: 1rem;
       font-weight: 600;
-      transition: opacity var(--transition-fast);
+      transition: var(--transition);
     }
-    .back-to-home:hover,
-    .back-to-home:focus {
-      opacity: 0.9;
-      outline: var(--focus-outline);
-    }
+    .back-to-home:hover { opacity: 0.9; }
+    
 
-    /* ============================= */
-    /*           Footer              */
-    /* ============================= */
+    
+    /* Footer with Separator and Useful Links */
     footer {
       text-align: center;
-      padding: 1.25rem 0;
-      background: var(--glass-bg);
-      color: var(--text-base);
-      margin-top: 2.5rem;
+      padding: 20px 0;
+      background: var(--primary);
+      color: var(--nav-text-color);
+      margin-top: 40px;
       border-top: 2px solid var(--accent);
     }
-    footer nav {
-      margin: 0.625rem 0;
-    }
+    footer nav { margin: 10px 0; }
     footer nav a {
-      margin: 0 0.625rem;
+      margin: 0 10px;
       text-decoration: none;
-      color: var(--text-base);
+      color: var(--nav-text-color);
       font-size: 0.9rem;
     }
-    footer nav a:hover,
-    footer nav a:focus {
-      color: var(--accent);
-      outline: var(--focus-outline);
-    }
-
-    /* ============================= */
-    /*         Modal Styles          */
-    /* ============================= */
+    footer nav a:hover { color: var(--accent); }
+    
+    /* Modal Styles */
     .modal {
       display: none;
       position: fixed;
       z-index: 2000;
       left: 0;
       top: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
-      align-items: center;
-      justify-content: center;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
     }
     .modal-content {
-      background: var(--glass-bg);
+      background-color: var(--tile-bg);
+      margin: 10% auto;
       padding: 20px;
-      width: 90%;
+      border-radius: 8px;
       max-width: 600px;
-      max-height: 90%;
-      border-radius: 10px;
-      overflow-y: auto;
       position: relative;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
     }
-    .modal-content h2 {
-      margin-bottom: 0.938rem;
-    }
+    .modal-content h2 { margin-bottom: 15px; }
     .modal-close {
       position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 24px;
+      top: 10px;
+      right: 15px;
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: bold;
       cursor: pointer;
-      color: var(--accent);
-      transition: color var(--transition-fast);
     }
-    .modal-close:hover,
-    .modal-close:focus {
-      color: var(--accent);
-      outline: var(--focus-outline);
-    }
+    .modal-close:hover { color: var(--accent); }
+    /* Modal Form Styles for Contact */
     .modal-content form {
       display: flex;
       flex-direction: column;
     }
-    .modal-content form label {
-      margin-top: 0.625rem;
-      font-weight: bold;
-    }
+    .modal-content form label { margin-top: 10px; font-weight: bold; }
     .modal-content form input,
     .modal-content form textarea {
-      margin-top: 0.3125rem;
-      padding: 0.5rem;
+      margin-top: 5px;
+      padding: 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
     .modal-content form button {
-      margin-top: 0.938rem;
-      padding: 0.625rem;
+      margin-top: 15px;
+      padding: 10px;
       background: var(--accent);
       border: none;
       border-radius: 4px;
-      color: #fff;
+      color: #ffffff;
       cursor: pointer;
-      transition: opacity var(--transition-fast);
+      transition: var(--transition);
     }
-    .modal-content form button:hover,
-    .modal-content form button:focus {
-      opacity: 0.9;
-      outline: var(--focus-outline);
+    .modal-content form button:hover { opacity: 0.9; }
+    
+    /* Responsive Design */
+    @media (max-width:768px) {
+      .header-ribbon { flex-direction: column; align-items: flex-start; }
+      .nav-ribbon { margin-top: 10px; gap: 15px; }
+      .site-title a { font-size: 1.6rem; }
+      body { padding-top: 110px; }
     }
-
-    /* ============================= */
-    /*  Next-Generation Animations   */
-    /* ============================= */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ============================= */
-    /*       Back-to-Top Button      */
-    /* ============================= */
-    .back-to-top {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--accent);
-      color: #fff;
-      padding: 0.75rem;
-      border-radius: 50%;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      text-decoration: none;
-      font-size: 1.2rem;
-      transition: transform var(--transition-fast), opacity var(--transition-fast);
-      z-index: 1500;
-    }
-    .back-to-top:hover,
-    .back-to-top:focus {
-      transform: scale(1.1);
-      opacity: 0.9;
-      outline: var(--focus-outline);
-    }
-
-    /* ============================= */
-    /*       Responsive Design       */
-    /* ============================= */
-    @media (max-width: 768px) {
-      .header-ribbon {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .nav-ribbon {
-        margin-top: 0.625rem;
-        gap: 0.938rem;
-      }
-      .site-title a {
-        font-size: 1.6rem;
-      }
-      body {
-        padding-top: 110px;
-        font-size: 14px;
-      }
-      .container {
-        padding: 10px;
-        display: grid;
-        grid-template-columns: 1fr;
-      }
-      /* Reduce heading sizes for better mobile balance */
-      h1 { font-size: clamp(1.8rem, 5vw, 2.2rem); }
-      h2 { font-size: clamp(1.4rem, 4vw, 2rem); }
-      h3 { font-size: clamp(1.2rem, 3.5vw, 1.8rem); }
-    }
-    @media (max-width: 480px) {
-      body {
-        font-size: 13px;
-      }
-      h1 { font-size: clamp(1.6rem, 6vw, 2rem); }
-      h2 { font-size: clamp(1.3rem, 5vw, 1.8rem); }
-      .header-ribbon, .container {
-        padding: 0.75rem;
-      }
-    }
-
-
-
-</style>
+  </style>
 </head>
 <body>
- 
+  <!-- Skip Navigation Link -->
+  <a class="skip-link" href="#blogs">Skip to content</a>
 
   <!-- Header Ribbon with Navigation & Dark Mode Toggle Button -->
   <header id="home" role="banner">
@@ -563,20 +349,16 @@
         <a href="#" class="portfolio-link footer-link" data-modal="modal-portfolio"><i class="fas fa-briefcase"></i> Portfolio</a>
         <a href="#" class="footer-link" data-modal="modal-contact"><i class="fas fa-envelope"></i> Contact</a>
       </nav>
+      <button class="theme-toggle" id="toggle-theme" aria-label="Toggle dark mode">Toggle Dark Mode</button>
     </div>
   </header>
 
-
-
-  
-
-  <div id="readMoreModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Title</h2>
-        <p>Expanded content goes here...</p>
-    </div>
-</div>
+  <!-- Introduction Section -->
+  <div class="intro">
+    <p>
+      Welcome to Data Insights Blog – your resource for expert insights and actionable tips in data analysis. Empowering analysts to transform raw data into decisions.
+    </p>
+  </div>
 
   <!-- Blog Grid Container -->
   <div class="container" id="blogs">
@@ -756,7 +538,7 @@
       
       <a class="back-to-home" href="#home">← Return to Home</a>
     </article>
-    
+
     <!-- Blog Post 2 -->
     <article class="post" id="blog2">
       <h2>Blog #2: Embracing the Power of Data Visualization</h2>
@@ -1090,8 +872,8 @@
 
   <!-- Footer with Separator and Useful Links (Contact removed from footer) -->
   <footer role="contentinfo">
+    <p>&copy; 2025 Data Insights Blog. All rights reserved.</p>
     <nav>
-      <a>&copy; 2025 Data Insights Blog. All rights reserved.</a>
       <a href="#" class="footer-link" data-modal="modal-privacy">Privacy Policy</a>
       <a href="#" class="footer-link" data-modal="modal-terms">Terms of Service</a>
     </nav>
@@ -1116,7 +898,7 @@
       <span class="modal-close" aria-label="Close">&times;</span>
       <h2 id="modal-portfolio-title">Portfolio</h2>
       <p>Explore my professional portfolio showcasing my projects, designs, and achievements. Discover creative solutions and innovative work.</p>
-      <p><a href="https://chirchirp.github.io/my-portfolio/#home" target="_blank">Visit Portfolio</a></p>
+      <p><a href="https://chirchirp.github.io/Pharaoh_portfolio/" target="_blank">Visit Portfolio</a></p>
     </div>
   </div>
 
@@ -1159,135 +941,88 @@
   </div>
 
   <script>
-    'use strict';
-  
-    document.addEventListener('DOMContentLoaded', () => {
-      // Toggle Dark Mode with existence check
-      const toggleThemeButton = document.getElementById('toggle-theme');
-      if (toggleThemeButton) {
-        toggleThemeButton.addEventListener('click', () => {
-          document.body.classList.toggle('dark');
-          // Optionally update ARIA attribute for accessibility
-          toggleThemeButton.setAttribute('aria-pressed', document.body.classList.contains('dark'));
-        });
-      }
-  
+    // Toggle Dark Mode
+    document.getElementById('toggle-theme').addEventListener('click', function() {
+      document.body.classList.toggle('dark');
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
       const postsContainer = document.querySelector('.posts-container');
       const blogGrid = document.querySelector('.blog-grid');
-  
-      // "Read More" click: show detailed post (using CSS classes for visibility if possible)
-      document.querySelectorAll('.read-more').forEach(link => {
-        link.addEventListener('click', e => {
+      
+      // "Read More" click: show detailed post
+      document.querySelectorAll('.read-more').forEach(function(link) {
+        link.addEventListener('click', function(e) {
           e.preventDefault();
-          const targetId = link.getAttribute('data-target');
-          if (blogGrid && postsContainer) {
-            blogGrid.style.display = 'none';
-            postsContainer.style.display = 'block';
-            postsContainer.querySelectorAll('article').forEach(post => {
-              post.style.display = 'none';
-            });
-            const targetPost = document.getElementById(targetId);
-            if (targetPost) {
-              targetPost.style.display = 'block';
-              window.scrollTo({ top: postsContainer.offsetTop - 20, behavior: 'smooth' });
-            }
-          }
+          const targetId = this.getAttribute('data-target');
+          blogGrid.style.display = 'none';
+          postsContainer.style.display = 'block';
+          postsContainer.querySelectorAll('article').forEach(function(post) {
+            post.style.display = 'none';
+          });
+          document.getElementById(targetId).style.display = 'block';
+          window.scrollTo({ top: postsContainer.offsetTop - 20, behavior: 'smooth' });
         });
       });
-  
+      
       // "Return to Home" click: hide post and show grid
-      document.querySelectorAll('.back-to-home').forEach(link => {
-        link.addEventListener('click', e => {
+      document.querySelectorAll('.back-to-home').forEach(function(link) {
+        link.addEventListener('click', function(e) {
           e.preventDefault();
-          if (postsContainer && blogGrid) {
-            postsContainer.style.display = 'none';
-            blogGrid.style.display = 'grid';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
+          postsContainer.style.display = 'none';
+          blogGrid.style.display = 'grid';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
-  
+
       // Home link in header – dynamic scroll and closing open posts
       document.querySelectorAll('header .nav-ribbon a[href="#home"]').forEach(link => {
-        link.addEventListener('click', e => {
+        link.addEventListener('click', function(e) {
           e.preventDefault();
-          if (postsContainer && blogGrid) {
-            postsContainer.style.display = 'none';
-            blogGrid.style.display = 'grid';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
+          postsContainer.style.display = 'none';
+          blogGrid.style.display = 'grid';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
       });
-  
+
       // Modal functionality for About, Portfolio, and Footer Links
       const modalLinks = document.querySelectorAll('.footer-link, .portfolio-link, .about-link');
       modalLinks.forEach(link => {
-        link.addEventListener('click', e => {
+        link.addEventListener('click', function(e) {
           e.preventDefault();
-          const modalId = link.getAttribute('data-modal');
-          const modal = document.getElementById(modalId);
-          if (modal) {
-            modal.style.display = 'block';
-          }
+          const modalId = this.getAttribute('data-modal');
+          document.getElementById(modalId).style.display = 'block';
         });
       });
-  
+      
       // Close modals on clicking close or outside content
       const modals = document.querySelectorAll('.modal');
       modals.forEach(modal => {
-        modal.addEventListener('click', e => {
+        modal.addEventListener('click', function(e) {
           if (e.target.classList.contains('modal') || e.target.classList.contains('modal-close')) {
             modal.style.display = 'none';
           }
         });
       });
-  
+
       // Handle Contact Form Submission
-      const contactForm = document.getElementById('contact-form');
-      if (contactForm) {
-        contactForm.addEventListener('submit', e => {
-          e.preventDefault();
-          alert('Thank you, your message has been sent!');
-          contactForm.reset();
-          const modalContact = document.getElementById('modal-contact');
-          if (modalContact) {
-            modalContact.style.display = 'none';
-          }
-        });
-      }
-  
+      document.getElementById('contact-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Thank you, your message has been sent!');
+        this.reset();
+        document.getElementById('modal-contact').style.display = 'none';
+      });
+      
       // Handle Feedback Form Submission (if exists)
       const feedbackForm = document.getElementById('feedback-form');
       if (feedbackForm) {
-        feedbackForm.addEventListener('submit', e => {
+        feedbackForm.addEventListener('submit', function(e) {
           e.preventDefault();
           alert('Thank you for your feedback!');
-          feedbackForm.reset();
+          this.reset();
         });
       }
     });
-    const menuToggle = document.querySelector('.menu-toggle');
-    const menu = document.querySelector('.nav-menu');
-
-    menuToggle.addEventListener('click', () => {
-        menu.classList.toggle('active');
-    });
-    document.querySelectorAll('.read-more-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        document.getElementById('readMoreModal').style.display = 'flex';
-    });
-    });
-
-    document.querySelector('.close').addEventListener('click', function() {
-        document.getElementById('readMoreModal').style.display = 'none';
-    });
-
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            document.getElementById('readMoreModal').style.display = 'none';
-        }
-    });
   </script>
-  
 </body>
 </html>
