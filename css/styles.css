@@ -160,26 +160,8 @@
     #home-view, .post-detail {
       animation: view-enter var(--page-in) var(--ease-out) both;
     }
-    #slot-posts {
-      position: relative;
-    }
-    .post-detail {
-      display: none;
-      visibility: hidden;
-      overflow: hidden;
-      height: 0;
-      position: absolute;
-      left: -9999px;
-      width: 100%;
-    }
-    .post-detail.active {
-      display: block;
-      visibility: visible;
-      overflow: visible;
-      height: auto;
-      position: static;
-      left: auto;
-    }
+    .post-detail { display:none; }
+    .post-detail.active { display:block; }
 
     @keyframes view-enter {
       from { opacity:0; transform:translateY(18px); }
@@ -200,8 +182,11 @@
       content:'';
       position:absolute; top:0; right:0;
       width:45%; height:100%;
-      background-image: repeating-linear-gradient()
-  
+      background-image: repeating-linear-gradient(
+        0deg, transparent, transparent 28px, var(--g200) 28px, var(--g200) 29px
+      );
+      opacity:.45;
+      pointer-events:none;
     }
     .hero-inner { max-width:880px; margin:0 auto; position:relative; }
 
@@ -443,12 +428,9 @@
        ARTICLE HEADER
     ================================================ */
     .article-header {
-      padding: calc(var(--header-h) + 3.5rem) 2rem 2.5rem;
-      border-bottom: 1px solid var(--g200);
-    }
-    .article-header-inner {
-      max-width: 1200px;
-      margin: 0 auto;
+      padding:calc(var(--header-h) + 3.5rem) 2rem 2.5rem;
+      border-bottom:1px solid var(--g200);
+      max-width:1200px; margin:0 auto;
     }
 
     .back-btn {
@@ -493,27 +475,13 @@
        ARTICLE BODY
     ================================================ */
     .article-body {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 3.5rem 2rem 5rem;
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) 260px !important;
-      grid-template-rows: auto;
-      gap: 4rem;
-      align-items: start;
+      max-width:1200px; margin:0 auto;
+      padding:3.5rem 2rem 5rem;
+      display:grid;
+      grid-template-columns:1fr 260px;
+      gap:5.5rem; align-items:start;
     }
-    /* Force article-content to grid column 1 and article-toc to column 2 */
-    .article-content {
-      grid-column: 1;
-      grid-row: 1;
-      max-width: var(--measure);
-      min-width: 0;
-      overflow-wrap: break-word;
-    }
-    .article-toc {
-      grid-column: 2 !important;
-      grid-row: 1 !important;
-    }
+    .article-content { max-width:var(--measure); }
 
     /* Block-body paragraph format */
     .article-content p {
@@ -718,44 +686,22 @@
     /* ================================================
        ARTICLE SIDEBAR — TOC
     ================================================ */
-    .article-toc {
-      position: sticky;
-      top: calc(var(--header-h) + 2rem);
-      min-width: 0;
-      contain: layout style;
-      background: var(--g100);
-      border: 1px solid var(--g200);
-      border-radius: 4px;
-      padding: 1.5rem;
-      overflow: visible;
-    }
+    .article-toc { position:sticky; top:calc(var(--header-h) + 2rem); }
     .toc-label {
-      font-size: .68rem;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--g400);
-      font-family: var(--ff-body);
-      font-weight: 600;
-      margin-bottom: .75rem;
-      display: block;
+      font-size:.67rem; letter-spacing:.2em; text-transform:uppercase;
+      color:var(--g400); margin-bottom:1rem;
+      padding-bottom:.75rem; border-bottom:1px solid var(--g200);
+      font-family:var(--ff-mono);
     }
     .toc-list { list-style:none; display:flex; flex-direction:column; }
     .toc-list a {
-      font-size: .78rem;
-      color: var(--g500);
-      display: block;
-      padding: .38rem 0 .38rem .85rem;
-      border-left: 2px solid var(--g200);
-      transition: color var(--t-fast), border-color var(--t-fast), padding-left var(--t-fast);
-      cursor: pointer;
-      text-decoration: none;
-      line-height: 1.4;
+      font-size:.78rem; color:var(--g500); display:block;
+      padding:.38rem 0 .38rem .85rem;
+      border-left:2px solid var(--g200);
+      transition: color var(--t-fast), border-color var(--t-fast);
+      cursor:default;
     }
-    .toc-list a:hover {
-      color: var(--black);
-      border-left-color: var(--g600);
-      padding-left: 1.1rem;
-    }
+    .toc-list a:hover { color:var(--black); border-left-color:var(--g400); }
 
     .next-post-box {
       margin-top:2.5rem; border:1px solid var(--g200); padding:1.35rem;
@@ -935,151 +881,3 @@
         animation-duration:.01ms !important;
         transition-duration:.01ms !important;
       }
-
-    /* ================================================
-       REACTION BUTTONS
-    ================================================ */
-    .reactions-section {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 1px solid var(--g200);
-    }
-    .reactions-label {
-      font-size: .74rem;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--g400);
-      margin-bottom: 1rem;
-      display: block;
-    }
-    .reactions-row {
-      display: flex;
-      gap: .75rem;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .reaction-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .45rem;
-      padding: .5rem .9rem;
-      border: 1.5px solid var(--g200);
-      background: var(--white);
-      border-radius: 100px;
-      font-family: var(--ff-body);
-      font-size: .85rem;
-      color: var(--g600);
-      cursor: pointer;
-      transition: all var(--t-fast) var(--ease-out);
-      user-select: none;
-      position: relative;
-      overflow: hidden;
-    }
-    .reaction-btn:hover {
-      border-color: var(--g400);
-      color: var(--g800);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    }
-    .reaction-btn.reacted {
-      background: var(--black);
-      border-color: var(--black);
-      color: var(--white);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px rgba(0,0,0,0.18);
-    }
-    .reaction-btn.reacted:hover {
-      background: var(--g700);
-      border-color: var(--g700);
-    }
-    .reaction-emoji {
-      font-size: 1rem;
-      line-height: 1;
-      transition: transform var(--t-fast) var(--ease-out);
-    }
-    .reaction-btn:hover .reaction-emoji {
-      transform: scale(1.25) rotate(-5deg);
-    }
-    .reaction-btn.reacted .reaction-emoji {
-      animation: reaction-pop .35s var(--ease-out) both;
-    }
-    @keyframes reaction-pop {
-      0%   { transform: scale(1); }
-      40%  { transform: scale(1.5) rotate(8deg); }
-      70%  { transform: scale(.9) rotate(-3deg); }
-      100% { transform: scale(1.15) rotate(0deg); }
-    }
-    .reaction-count {
-      font-weight: 600;
-      min-width: 1ch;
-      text-align: center;
-    }
-    .reactions-thanks {
-      margin-top: .85rem;
-      font-size: .82rem;
-      color: var(--g400);
-      font-style: italic;
-      min-height: 1.2em;
-      transition: opacity var(--t-med);
-    }
-    .reactions-share {
-      margin-top: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      flex-wrap: wrap;
-    }
-    .share-label {
-      font-size: .74rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--g400);
-    }
-    .share-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      padding: .35rem .75rem;
-      background: none;
-      border: 1.5px solid var(--g200);
-      border-radius: 3px;
-      font-family: var(--ff-body);
-      font-size: .78rem;
-      color: var(--g500);
-      cursor: pointer;
-      transition: all var(--t-fast);
-    }
-    .share-btn:hover {
-      border-color: var(--g500);
-      color: var(--g800);
-    }
-    .share-btn.copied {
-      border-color: #22c55e;
-      color: #16a34a;
-    }
-
-    /* ================================================
-       AUTHOR BIO (at post bottom)
-    ================================================ */
-    .author-bio-section {
-      margin-top: 3.5rem;
-      padding: 2rem;
-      background: var(--g100);
-      border-left: 3px solid var(--black);
-    }
-    .author-bio-section h4 {
-      font-family: var(--ff-display);
-      font-size: 1rem;
-      margin-bottom: .5rem;
-    }
-    .author-bio-section p {
-      font-size: .88rem;
-      color: var(--g600);
-      margin: 0;
-      line-height: 1.7;
-    }
-    .author-bio-name {
-      font-weight: 700;
-      color: var(--g800) !important;
-      font-style: italic;
-    }
