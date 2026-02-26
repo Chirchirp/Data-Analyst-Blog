@@ -31,6 +31,26 @@
       --page-out:   0.3s;
       --page-in:    0.45s;
     }
+    /* responsive site padding and safe-area support */
+    :root {
+      /* how much space to keep on each side (auto-scaling) */
+      --site-padding: clamp(0.9rem, 3.5vw, 1.6rem);
+    
+      /* make it easy to change mobile measure and header height */
+      --measure-mobile: 60ch;
+      --header-h-mobile: 56px;
+    }
+    
+    /* container helper — use for any top-level region inside the page */
+    .container {
+      max-width: 1200px;
+      margin-inline: auto;
+      padding-inline: calc(var(--site-padding) + env(safe-area-inset-left));
+      padding-inline-end: calc(var(--site-padding) + env(safe-area-inset-right));
+      /* fallback for older browsers: */
+      padding-left: var(--site-padding);
+      padding-right: var(--site-padding);
+    }
 
     /* ================================================
        RESET & BASE
@@ -881,3 +901,61 @@
         animation-duration:.01ms !important;
         transition-duration:.01ms !important;
       }
+
+    @media (max-width:640px) {
+  /* slightly smaller base font for very small devices */
+  html { font-size: 15.5px; }
+
+  /* reduce header height & keep nav clear */
+  .site-header { height: var(--header-h-mobile); }
+  :root { --measure: var(--measure-mobile); }
+
+  /* increase horizontal padding slightly so items don't reach the edge */
+  :root { --site-padding: clamp(1rem, 5vw, 1.25rem); }
+
+  /* make sure main-layout uses full width but keeps padding */
+  .main-layout {
+    grid-template-columns: 1fr;
+    padding-inline: var(--site-padding);
+    gap: 2.25rem;
+  }
+
+  /* tighten hero vertical padding to avoid huge hero on phones */
+  .hero {
+    padding-top: calc(var(--header-h-mobile) + 1.25rem);
+    padding-bottom: 1.5rem;
+  }
+
+  /* ensure hero inner content never exceeds viewport width */
+  .hero-inner { max-width: 92%; margin-inline: auto; }
+
+  /* avoid full-width decorative backgrounds from overflowing */
+  .hero::before {
+    width: clamp(120px, 40%, 300px);
+    right: 1rem;
+    opacity: .35;
+  }
+
+  /* nav: keep hamburger visible and nav drop padded */
+  .nav-links.open { padding-inline: var(--site-padding); }
+
+  /* modal spacing so the modal box never touches the edges */
+  .modal-box {
+    padding-inline: calc(var(--site-padding) + 0.5rem);
+    padding-right: calc(var(--site-padding) + 0.5rem);
+    max-width: calc(100% - (var(--site-padding) * 2));
+  }
+
+  /* data tables & code blocks: keep interior padding but allow scroll */
+  .data-table-wrap, .code-wrap { padding-inline: 0.5rem; }
+
+  /* small screens: avoid full-bleed elements like tldr */
+  .tldr, .takeaways {
+    padding-inline: var(--site-padding);
+    margin-inline: 0;
+    border-radius: 4px;
+  }
+
+  /* reading progress bar below header on small screens */
+  #reading-progress { top: var(--header-h-mobile); }
+}
