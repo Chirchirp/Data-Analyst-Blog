@@ -1,0 +1,144 @@
+<!-- POST: blog3 — Things I Wish Someone Had Told Me Earlier -->
+<div class="post-detail" id="blog3" role="main">
+  <div class="article-header"><div class="article-header-inner">
+    <button class="back-btn back-to-home">← Back to all posts</button>
+    <p class="article-series">Career · Craft · Hard-Won Lessons</p>
+    <h1 class="article-title">Things I Wish Someone Had <em>Told Me Earlier</em></h1>
+    <p class="article-lede">Not "learn Python" advice. The actual inflection points — the moments that changed not just what I know, but how I think. Eight years of lessons distilled into the things I'd tell a younger version of myself on day one.</p>
+    <div class="article-byline">
+      <span><strong>Pharaoh Chirchir</strong></span>
+      <span>January 15, 2025</span>
+      <span>10 min read</span>
+      <div class="tags"><span class="tag">Career</span><span class="tag">Mindset</span><span class="tag">EDA</span><span class="tag">Communication</span></div>
+    </div>
+  </div></div>
+  <div class="article-body">
+    <div class="article-content">
+      <p>Resolution Insurance - my first month as a Claims Analyst: 48 hours, a nightmare Excel sheet, and a reconciliation(a term I first encountered during my initial interview for the Claims Analyst position) that still didn't add up by Thursday morning. I was about to tell my manager I needed another day when my mentor Augustine walked over, looked at the screen for about thirty seconds, and said: <em>"You're not crunching numbers. You're translating whispers into shouts."</em></p>
+
+      <p>I didn't fully understand what he meant until much later. But that reframe — away from "processing data" and toward "surfacing truth that was always there but invisible" — eventually changed everything about how I approach this work.</p>
+
+      <p>These are the lessons I wish had arrived earlier. They're not sequential — they landed over eight years in whatever order the universe decided I was ready for them.</p>
+
+      <h2 id="mindset">1. Your Mindset Is the Only Skill That Transfers Everywhere</h2>
+      <p>Tools come and go. SQL dialects change. Python libraries deprecate. Tableau versions update. The one thing that compounds regardless of which tool you're using: how you think about problems.</p>
+
+      <p>The three traits I've seen in every analyst I genuinely respect are curiosity (asking "why does this pattern exist?" before "what is the number?"), persistence (treating errors and anomalies as clues rather than obstacles), and intellectual humility (the willingness to say "I assumed X and I was wrong — let me revisit the question"). These don't deprecate. They transfer to every tool, domain, and dataset you'll ever touch.</p>
+
+      <div class="callout">
+        <span class="callout-label">Uncomfortable truth</span>
+        <p>The analysts who plateau are usually not the ones who failed to learn the right tool. They're the ones who stopped being genuinely curious about the data in front of them.</p>
+      </div>
+
+      <h2 id="fundamentals">2. Learn the Fundamentals Before the Tools</h2>
+      <p>I spent six months learning Tableau before I truly understood probability distributions. When I finally sat down with a statistics textbook — working through distributions, hypothesis testing, and the central limit theorem — every tool I'd already learned suddenly made more sense. Because I finally understood what the tool was doing <em>with</em> the data, not just how to operate it.</p>
+
+      <p>The hierarchy that I wish someone had given me explicitly: statistics → data structures → SQL → Python → BI tools → ML. Each layer depends on the ones below it. Skipping layers doesn't make you faster. It makes you someone who can run analyses without knowing whether they're valid.</p>
+
+      <h2 id="data-cleaning">3. Clean Data Is Not Someone Else's Job</h2>
+      <p>This one cost me real credibility early in my career. On a project I'd been rushing, I cleaned a dataset in under an hour — fast by the deadline — missed a category mislabelling, and produced a churn analysis that pointed the team at the wrong customer segment for two months. By the time anyone caught it, a campaign had already been built and partially deployed.</p>
+
+      <p>The cleaning step is not a handoff. It's not a "data engineering problem." If you are the analyst on the project and the data goes into your model or your dashboard, its cleanliness is your responsibility — regardless of where it came from or who prepared it upstream. Full stop.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — Minimum cleaning checks before any analysis</span><span class="code-lang">Python</span></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.read_csv(<span class="st">'dataset.csv'</span>)
+
+<span class="comm"># Check 1: Null rates — anything &gt;5% needs a decision</span>
+null_pct = df.isnull().mean().sort_values(ascending=<span class="kw">False</span>)
+<span class="fn">print</span>(null_pct[null_pct > 0])
+
+<span class="comm"># Check 2: Duplicates — never assume upstream handled this</span>
+<span class="fn">print</span>(<span class="st">f"Duplicate rows: {df.duplicated().sum()}"</span>)
+
+<span class="comm"># Check 3: Cardinality of categoricals — catch mislabellings</span>
+<span class="kw">for</span> col <span class="kw">in</span> df.select_dtypes(<span class="st">'object'</span>).columns:
+    <span class="fn">print</span>(<span class="st">f"{col}: {df[col].nunique()} unique values"</span>)
+    <span class="fn">print</span>(df[col].value_counts().head(10))
+    <span class="fn">print</span>()</code></pre>
+      </div>
+
+      <h2 id="eda">4. EDA Is Non-Negotiable — Every Single Time</h2>
+      <p>Every serious project starts with exploratory data analysis before I touch a model or build a dashboard. Not because it's a best practice I've read about — because every time I've skipped it under deadline pressure, I've paid for it downstream.</p>
+
+      <p>Summary statistics reveal distribution issues that invalidate your model assumptions. Scatter plots expose correlations you didn't know to look for. Two lines of Seaborn's <code>pairplot</code> have saved me from building on false assumptions more times than I can count. EDA is not the step before the real work. It <em>is</em> the real work.</p>
+
+      <div class="pull-quote">
+        <p>"I've never done an exploratory analysis and found nothing interesting. The data always has a story. EDA is just how you learn to listen."</p>
+      </div>
+
+      <h2 id="stakeholders">5. Stakeholders Want Clarity, Not Analysis</h2>
+      <p>This was the single biggest career shift for me, and it came not from a book or a course but from watching a presentation bomb in a room of executives who clearly had the context to understand it.</p>
+
+      <p>The analyst presenting had done excellent work. The model was solid. The findings were real. But every slide said "here are the findings" when it needed to say "this is what you should do." The executives sat there for 45 minutes and left with no clearer idea of what to do next than when they'd walked in. The presentation was not a success.</p>
+
+      <p>Learning to say "the data shows X, which means you should consider Y by Friday" instead of "here are the findings" is the single biggest career accelerator available to a junior or mid-level analyst. The first gives someone something to act on. The second gives them homework.</p>
+
+      <h2 id="portfolio">6. Build Your Portfolio Like a Professional, Not a Student</h2>
+      <p>I wish someone had told me to document my work publicly from year one — not because I was looking for a job (I wasn't), but because the discipline of writing clearly about your analytical decisions makes you a better analyst. When you can't explain why you chose a specific model over another one, or why you handled missing data a particular way, it exposes gaps in your reasoning that the analysis itself doesn't surface.</p>
+
+      <p>GitHub and LinkedIn aren't just for job hunting. They're where you build a record of how you think. An analyst who can show five real projects with documented decisions, results, and honest post-mortems is significantly more credible than one with identical technical skills and no external evidence of their work.</p>
+
+      <h2 id="so-what">7. Ask "So What?" After Every Single Slide</h2>
+      <p>If you can't answer "so what?" immediately after presenting any finding, the slide shouldn't be in the deck. This question — simple, brutal, and entirely necessary — is the best quality filter for analytical work I've ever found.</p>
+
+      <p>It works at the slide level, the project level, and the career level. So what does this trend mean for the business? So what should we do differently? So what does this change about our previous assumptions? When you can't answer it fluently, you haven't finished the analysis. You've just finished the data processing.</p>
+
+      <div class="takeaways">
+        <h4>Key takeaways</h4>
+        <ul>
+          <li>Mindset — curiosity, persistence, humility — compounds across every tool and domain you'll work in.</li>
+          <li>Learn statistics before tools. Understanding what the tool is doing is worth more than knowing how to operate it.</li>
+          <li>Data quality is your responsibility. Own the cleaning step even when the data came from upstream.</li>
+          <li>EDA is not a preamble. It is the work. Never skip it.</li>
+          <li>Analysts who accelerate fastest learn to connect findings to decisions, not just present findings.</li>
+          <li>Document your work publicly. The discipline of writing clearly makes you a better analyst.</li>
+          <li>"So what?" is the most powerful quality filter in analytical work. Apply it relentlessly.</li>
+        </ul>
+      </div>
+
+      <div class="tldr">
+        <span class="tldr-label">TL;DR</span>
+        <p>The best analysts aren't distinguished by tool fluency — they're distinguished by how clearly they think, how carefully they handle data quality, and how consistently they connect findings to decisions. Build those habits early and the tools will take care of themselves.</p>
+      </div>
+
+      <div class="author-bio-section">
+        <h4>About the author</h4>
+        <p><span class="author-bio-name">Pharaoh Chirchir</span> is a Senior Data Analyst with 8+ years of experience. He started as a Claims Analyst convinced that good analysis spoke for itself — and spent several years learning, sometimes painfully, that it doesn't. These days he writes about the craft, the failures, and the lessons that actually compound.</p>
+      </div>
+
+      <div class="reactions-section">
+        <span class="reactions-label">Did this resonate with you?</span>
+        <div class="reactions-row"></div>
+        <div class="reactions-thanks"></div>
+        <div class="reactions-share">
+          <span class="share-label">Share this post</span>
+          <button class="share-btn" data-post="blog3">🔗 Copy link</button>
+        </div>
+      </div>
+
+      <p style="font-size:.83rem; color:var(--g400); margin-top:2.5rem; border-top:1px solid var(--g200); padding-top:1.5rem;">
+        <strong>What's next:</strong> <button class="read-link post-link" data-post="blog4" style="font-size:.83rem;">Future of Data Science <span class="arrow">→</span></button>
+      </p>
+    </div>
+
+    <aside class="article-toc">
+      <p class="toc-label">In this post</p>
+      <ul class="toc-list">
+        <li><a href="#mindset">Mindset as foundation</a></li>
+        <li><a href="#fundamentals">Fundamentals over tools</a></li>
+        <li><a href="#data-cleaning">Data cleaning discipline</a></li>
+        <li><a href="#eda">EDA as practice</a></li>
+        <li><a href="#stakeholders">Stakeholder communication</a></li>
+        <li><a href="#portfolio">Portfolio building</a></li>
+        <li><a href="#so-what">The "So What?" filter</a></li>
+      </ul>
+      <div class="next-post-box">
+        <span class="np-label">Read next</span>
+        <button class="read-link post-link" data-post="blog4">Future of Data Science <span class="arrow">→</span></button>
+      </div>
+    </aside>
+  </div>
+</div>

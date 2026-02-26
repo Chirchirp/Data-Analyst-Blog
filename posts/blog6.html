@@ -1,0 +1,815 @@
+<!-- ═══════════════════════════════════════════
+     POST: blog6 — Advanced SQL Techniques
+     ENHANCED VERSION — Drop-in replacement
+     for the blog6 section in index.html
+════════════════════════════════════════════ -->
+<div class="post-detail" id="blog6" role="main">
+  <div class="article-header"><div class="article-header-inner">
+    <button class="back-btn back-to-home">Back to all posts</button>
+    <p class="article-series">SQL · Query Design · Performance · Analytics Engineering</p>
+    <h1 class="article-title">Advanced SQL Techniques for <em>Real-World Analysis</em></h1>
+    <p class="article-lede">Window functions, CTEs, query optimisation, and the analytical patterns that separate analysts who query data from analysts who think in data. This is the SQL I actually use — and why each technique earns its place.</p>
+    <div class="article-byline">
+      <span><strong>Pharaoh Chirchir</strong></span>
+      <span>March 15, 2025</span>
+      <span>18 min read</span>
+      <div class="tags"><span class="tag">SQL</span><span class="tag">PostgreSQL</span><span class="tag">Window Functions</span><span class="tag">CTEs</span><span class="tag">Performance</span><span class="tag">Analytics</span></div>
+    </div>
+  </div></div>
+  <div class="article-body">
+    <div class="article-content">
+
+      <!-- INTRO -->
+      <p>I've been writing SQL professionally for seven years, and I still encounter analysts who are one or two techniques away from a completely different level of work. Not because they don't know SQL — they know it well. But there's a category of SQL knowledge that doesn't make it into tutorials: the patterns that only reveal themselves when you've been on the wrong end of a query that ran for 45 minutes, a cohort analysis that was off by 15% due to a subtle JOIN error, or a reporting pipeline that was right three months ago and wrong today.</p>
+
+      <p>This post is about that category. Not "how does GROUP BY work" — but the techniques that let you build analytical queries that are fast, readable, maintainable, and actually correct in ways that survive contact with real, messy production data.</p>
+
+      <div class="pull-quote">
+        <p>"The difference between a good SQL analyst and a great one isn't the ability to write complex queries. It's the ability to know which simple construct solves the problem, and why the complex one would silently give you the wrong answer."</p>
+      </div>
+
+      <!-- SECTION 1: WINDOW FUNCTIONS -->
+      <h2>Window Functions: The Most Powerful Tool You're Underusing</h2>
+
+      <p>Window functions are the single biggest capability gap I see in otherwise experienced analysts. They're not difficult once you understand the mental model — but that model is genuinely different from standard aggregate thinking, and until it clicks, the syntax feels arbitrary.</p>
+
+      <p>The key insight is this: a window function performs a calculation <em>across a set of rows related to the current row</em>, without collapsing those rows into one. The GROUP BY collapses. The window function doesn't. Both operate over a defined set of rows — but with opposite effects on the output.</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Function</th><th>What it does</th><th>Business use case</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>ROW_NUMBER()</code></td><td>Unique sequential integer per partition</td><td>Deduplication — keep latest record per customer</td></tr>
+            <tr><td><code>RANK()</code></td><td>Rank with gaps for ties</td><td>Sales leaderboards — tied performers get same rank</td></tr>
+            <tr><td><code>DENSE_RANK()</code></td><td>Rank without gaps for ties</td><td>Quartile/tier assignment where no "skipped" position is acceptable</td></tr>
+            <tr><td><code>LAG() / LEAD()</code></td><td>Access prior/next row value</td><td>Period-over-period change without a self-join</td></tr>
+            <tr><td><code>SUM() OVER</code></td><td>Running total or partitioned sum</td><td>Cumulative revenue; percentage of group total</td></tr>
+            <tr><td><code>AVG() OVER</code></td><td>Moving average</td><td>7-day rolling average for smoothing volatile metrics</td></tr>
+            <tr><td><code>NTILE(n)</code></td><td>Divide rows into n equal buckets</td><td>Customer segmentation into quartiles/deciles</td></tr>
+            <tr><td><code>FIRST_VALUE() / LAST_VALUE()</code></td><td>First or last value within the window</td><td>Cohort analysis — attribute current behaviour to acquisition channel</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>The anatomy of a window specification</h3>
+      <p>The <code>OVER</code> clause has three components — all optional, but each changes the behaviour fundamentally:</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Window function anatomy and frame clauses</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- General structure:</span>
+<span class="fn">FUNCTION</span>() <span class="kw">OVER</span> (
+    <span class="kw">PARTITION BY</span> col1, col2    <span class="cm">-- Reset the window for each group</span>
+    <span class="kw">ORDER BY</span>    col3            <span class="cm">-- Define ordering within the window</span>
+    <span class="cm">-- Frame clause: which rows relative to current row are included</span>
+    <span class="kw">ROWS BETWEEN</span> start <span class="kw">AND</span> end  <span class="cm">-- Physical rows</span>
+    <span class="cm">-- or</span>
+    <span class="kw">RANGE BETWEEN</span> start <span class="kw">AND</span> end <span class="cm">-- Logical values (peer-aware)</span>
+)
+
+<span class="cm">-- Frame boundary options:
+--   UNBOUNDED PRECEDING  → from the first row of the partition
+--   N PRECEDING          → N rows before current
+--   CURRENT ROW          → current row only
+--   N FOLLOWING          → N rows after current
+--   UNBOUNDED FOLLOWING  → to the last row of the partition</span>
+
+<span class="cm">-- Example: 7-day moving average of daily revenue</span>
+<span class="kw">SELECT</span>
+    sale_date,
+    daily_revenue,
+    <span class="fn">AVG</span>(daily_revenue) <span class="kw">OVER</span> (
+        <span class="kw">ORDER BY</span> sale_date
+        <span class="kw">ROWS BETWEEN</span> <span class="nu">6</span> <span class="kw">PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> revenue_7day_avg
+<span class="kw">FROM</span> daily_sales;</code></pre>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">ROWS vs RANGE — a critical distinction</span>
+        <p><code>ROWS BETWEEN</code> counts physical rows. <code>RANGE BETWEEN</code> includes all rows with the same ORDER BY value as peers. If you're computing running totals on a date column where multiple rows share the same date, <code>RANGE</code> will include all same-date rows in the frame; <code>ROWS</code> will include only the physical preceding rows. For date-based running totals, you almost always want <code>ROWS</code>.</p>
+      </div>
+
+      <h3>Real-world pattern: Period-over-period comparison without a self-join</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — MoM revenue change using LAG() — no self-join needed</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="kw">WITH</span> monthly_revenue <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        region,
+        <span class="fn">DATE_TRUNC</span>(<span class="st">'month'</span>, sale_date)            <span class="kw">AS</span> month,
+        <span class="fn">SUM</span>(amount)                                  <span class="kw">AS</span> revenue
+    <span class="kw">FROM</span> sales
+    <span class="kw">GROUP BY</span> <span class="nu">1</span>, <span class="nu">2</span>
+)
+<span class="kw">SELECT</span>
+    region,
+    month,
+    revenue,
+    <span class="fn">LAG</span>(revenue, <span class="nu">1</span>) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> region
+        <span class="kw">ORDER BY</span> month
+    )                                                <span class="kw">AS</span> prev_month_revenue,
+
+    <span class="cm">-- MoM change — NULLIF prevents division-by-zero</span>
+    <span class="fn">ROUND</span>(
+        (revenue - <span class="fn">LAG</span>(revenue, <span class="nu">1</span>) <span class="kw">OVER</span> (
+                        <span class="kw">PARTITION BY</span> region <span class="kw">ORDER BY</span> month))
+        / <span class="fn">NULLIF</span>(<span class="fn">LAG</span>(revenue, <span class="nu">1</span>) <span class="kw">OVER</span> (
+                        <span class="kw">PARTITION BY</span> region <span class="kw">ORDER BY</span> month), <span class="nu">0</span>)
+        * <span class="nu">100</span>, <span class="nu">2</span>
+    )                                                <span class="kw">AS</span> mom_change_pct,
+
+    <span class="cm">-- Revenue as % of region's running total for the year</span>
+    <span class="fn">ROUND</span>(revenue /
+        <span class="fn">SUM</span>(revenue) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> region,
+                         <span class="fn">DATE_TRUNC</span>(<span class="st">'year'</span>, month)
+        ) * <span class="nu">100</span>, <span class="nu">2</span>
+    )                                                <span class="kw">AS</span> pct_of_annual_total
+<span class="kw">FROM</span> monthly_revenue
+<span class="kw">ORDER BY</span> region, month;</code></pre>
+      </div>
+
+      <h3>Real-world pattern: Deduplication with ROW_NUMBER()</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Keep latest record per customer using ROW_NUMBER</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Pattern: keep the most recent record per customer_id
+-- Common in CRM extracts where full history is dumped each time</span>
+<span class="kw">WITH</span> ranked <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        *,
+        <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> customer_id
+            <span class="kw">ORDER BY</span> updated_at <span class="kw">DESC</span>
+        ) <span class="kw">AS</span> rn
+    <span class="kw">FROM</span> customers
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> ranked <span class="kw">WHERE</span> rn = <span class="nu">1</span>;
+
+<span class="cm">-- Why NOT use DISTINCT or MAX() subquery?
+-- DISTINCT won't resolve key conflicts where non-key columns differ.
+-- MAX() subquery requires a correlated subquery per column. With 20+ columns,
+-- this becomes both verbose and slow. ROW_NUMBER() + filter is clean and fast.</span></code></pre>
+      </div>
+
+      <!-- SECTION 2: CTEs -->
+      <h2>CTEs: Writing SQL That Humans Can Maintain</h2>
+
+      <p>Common Table Expressions (CTEs) are the most important readability tool in SQL — and they're systematically underused, usually because analysts learned SQL before CTEs were widespread and never updated their style.</p>
+
+      <p>The argument for CTEs over subqueries isn't about performance (CTEs are often inlined by the optimizer, so they rarely differ in speed). It's about <em>cognitive load</em>. A nested subquery forces you to read inside-out. A sequence of named CTEs reads top-to-bottom like a narrative. When you return to that query six months later, the CTE version tells you what it's doing. The subquery version makes you reconstruct the logic.</p>
+
+      <h3>The CTE design principles I follow</h3>
+
+      <div class="num-callout">
+        <div class="num">01</div>
+        <div class="num-callout-body">
+          <h4>One transformation per CTE</h4>
+          <p>Each CTE should do one thing: filter, aggregate, join, or enrich — not all four simultaneously. If your CTE has more than ~20 lines, it's doing too much. Split it.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">02</div>
+        <div class="num-callout-body">
+          <h4>Name CTEs by what they contain, not what they do</h4>
+          <p><code>active_customers</code> is a good CTE name. <code>filter_customers</code> is a bad one — it tells you the operation, not the result. The result is what the next CTE (or final SELECT) needs to reason about.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">03</div>
+        <div class="num-callout-body">
+          <h4>Use a final <code>-- RESULT</code> comment on the last CTE</h4>
+          <p>When a query has 6+ CTEs, it's easy to lose track of which one produces the final output. A comment on the last CTE makes the query scannable in 5 seconds.</p>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Multi-CTE query: customer LTV segmentation</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Real-world example: segment customers by LTV quartile
+-- and calculate average order cadence per segment</span>
+
+<span class="kw">WITH</span>
+
+<span class="cm">-- 1. Base: one row per customer with key purchase metrics</span>
+customer_orders <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        <span class="fn">COUNT</span>(*)                              <span class="kw">AS</span> order_count,
+        <span class="fn">SUM</span>(order_value)                       <span class="kw">AS</span> total_ltv,
+        <span class="fn">MIN</span>(order_date)                        <span class="kw">AS</span> first_order,
+        <span class="fn">MAX</span>(order_date)                        <span class="kw">AS</span> last_order,
+        <span class="fn">AVG</span>(order_value)                       <span class="kw">AS</span> avg_order_value
+    <span class="kw">FROM</span> orders
+    <span class="kw">WHERE</span> order_status = <span class="st">'completed'</span>
+    <span class="kw">GROUP BY</span> customer_id
+),
+
+<span class="cm">-- 2. Enrich: calculate days between orders (order cadence)</span>
+customer_cadence <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        order_count,
+        total_ltv,
+        avg_order_value,
+        <span class="cm">-- Average days between repeat orders; NULL for single-order customers</span>
+        <span class="fn">CASE</span>
+            <span class="kw">WHEN</span> order_count > <span class="nu">1</span>
+            <span class="kw">THEN</span> <span class="fn">EXTRACT</span>(<span class="kw">EPOCH FROM</span> (last_order - first_order))
+                 / (<span class="nu">86400.0</span> * (order_count - <span class="nu">1</span>))
+        <span class="kw">END</span>                                    <span class="kw">AS</span> avg_days_between_orders
+    <span class="kw">FROM</span> customer_orders
+),
+
+<span class="cm">-- 3. Segment: assign LTV quartile using NTILE</span>
+customer_segments <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        order_count,
+        total_ltv,
+        avg_order_value,
+        avg_days_between_orders,
+        <span class="fn">NTILE</span>(<span class="nu">4</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> total_ltv <span class="kw">DESC</span>) <span class="kw">AS</span> ltv_quartile
+    <span class="kw">FROM</span> customer_cadence
+),
+
+<span class="cm">-- 4. Label: convert quartile numbers to readable segment names</span>
+labelled_segments <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        *,
+        <span class="fn">CASE</span> ltv_quartile
+            <span class="kw">WHEN</span> <span class="nu">1</span> <span class="kw">THEN</span> <span class="st">'Champions'</span>
+            <span class="kw">WHEN</span> <span class="nu">2</span> <span class="kw">THEN</span> <span class="st">'Loyal'</span>
+            <span class="kw">WHEN</span> <span class="nu">3</span> <span class="kw">THEN</span> <span class="st">'Developing'</span>
+            <span class="kw">WHEN</span> <span class="nu">4</span> <span class="kw">THEN</span> <span class="st">'At Risk'</span>
+        <span class="kw">END</span>                                    <span class="kw">AS</span> segment_name
+    <span class="kw">FROM</span> customer_segments
+)
+
+<span class="cm">-- RESULT: aggregate segment-level summary for reporting</span>
+<span class="kw">SELECT</span>
+    segment_name,
+    ltv_quartile,
+    <span class="fn">COUNT</span>(*)                                   <span class="kw">AS</span> customer_count,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(total_ltv), <span class="nu">2</span>)                  <span class="kw">AS</span> avg_ltv,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(avg_order_value), <span class="nu">2</span>)            <span class="kw">AS</span> avg_order_value,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(order_count), <span class="nu">1</span>)               <span class="kw">AS</span> avg_orders,
+    <span class="fn">ROUND</span>(<span class="fn">AVG</span>(avg_days_between_orders), <span class="nu">0</span>)   <span class="kw">AS</span> avg_cadence_days
+<span class="kw">FROM</span> labelled_segments
+<span class="kw">GROUP BY</span> <span class="nu">1</span>, <span class="nu">2</span>
+<span class="kw">ORDER BY</span> <span class="nu">2</span>;</code></pre>
+      </div>
+
+      <h3>Recursive CTEs: when your data has hierarchy</h3>
+
+      <p>Recursive CTEs are the correct tool for hierarchical data — org charts, product categories, territory rollups, account hierarchies — and almost nothing else. They're worth knowing specifically because the alternatives (multiple self-joins, application-side recursion, storing flattened paths) are all significantly worse.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Recursive CTE: organisation hierarchy flattening</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- employees table: id, name, manager_id (NULL = CEO)
+-- Goal: for each employee, find their full reporting path and depth</span>
+
+<span class="kw">WITH RECURSIVE</span> org_hierarchy <span class="kw">AS</span> (
+
+    <span class="cm">-- Anchor member: start from the top (no manager)</span>
+    <span class="kw">SELECT</span>
+        id,
+        name,
+        manager_id,
+        name::text                <span class="kw">AS</span> reporting_path,
+        <span class="nu">0</span>                         <span class="kw">AS</span> depth
+    <span class="kw">FROM</span> employees
+    <span class="kw">WHERE</span> manager_id <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cm">-- Recursive member: join each employee to their manager</span>
+    <span class="kw">SELECT</span>
+        e.id,
+        e.name,
+        e.manager_id,
+        (h.reporting_path || <span class="st">' → '</span> || e.name)::text,
+        h.depth + <span class="nu">1</span>
+    <span class="kw">FROM</span> employees e
+    <span class="kw">INNER JOIN</span> org_hierarchy h <span class="kw">ON</span> e.manager_id = h.id
+)
+<span class="kw">SELECT</span>
+    id,
+    name,
+    depth,
+    reporting_path
+<span class="kw">FROM</span> org_hierarchy
+<span class="kw">ORDER BY</span> reporting_path;
+
+<span class="cm">-- Important: always add a depth limit (WHERE depth <= 10)
+-- in production to guard against circular references in dirty data</span></code></pre>
+      </div>
+
+      <!-- SECTION 3: COHORT ANALYSIS -->
+      <h2>Cohort Retention Analysis: The Most Business-Critical Pattern in Analytics SQL</h2>
+
+      <p>Cohort retention analysis is the query I've written more than any other in production analytics work. It answers the most important question any consumer business can ask: of the customers who first bought in month X, how many came back in months X+1, X+2, X+N? The shape of that answer — whether retention is high and flat, or drops steeply after month one — determines product strategy, marketing budget allocation, and whether the business is actually building something people want to keep using.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Full cohort retention matrix, production-grade</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="kw">WITH</span>
+
+<span class="cm">-- Identify each customer's acquisition cohort (month of first order)</span>
+acquisition_cohorts <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        <span class="fn">DATE_TRUNC</span>(<span class="st">'month'</span>, <span class="fn">MIN</span>(order_date)) <span class="kw">AS</span> cohort_month
+    <span class="kw">FROM</span> orders
+    <span class="kw">WHERE</span> order_status = <span class="st">'completed'</span>
+    <span class="kw">GROUP BY</span> customer_id
+),
+
+<span class="cm">-- For each order, calculate how many months after cohort acquisition it occurred</span>
+order_periods <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        o.customer_id,
+        ac.cohort_month,
+        <span class="fn">DATE_TRUNC</span>(<span class="st">'month'</span>, o.order_date) <span class="kw">AS</span> order_month,
+        <span class="cm">-- Month number: 0 = acquisition month, 1 = first month after, etc.</span>
+        (
+            <span class="fn">EXTRACT</span>(<span class="kw">YEAR FROM</span> <span class="fn">AGE</span>(
+                <span class="fn">DATE_TRUNC</span>(<span class="st">'month'</span>, o.order_date),
+                ac.cohort_month
+            )) * <span class="nu">12</span>
+            + <span class="fn">EXTRACT</span>(<span class="kw">MONTH FROM</span> <span class="fn">AGE</span>(
+                <span class="fn">DATE_TRUNC</span>(<span class="st">'month'</span>, o.order_date),
+                ac.cohort_month
+            ))
+        )::int                              <span class="kw">AS</span> period_number
+    <span class="kw">FROM</span> orders o
+    <span class="kw">INNER JOIN</span> acquisition_cohorts ac <span class="kw">USING</span> (customer_id)
+    <span class="kw">WHERE</span> o.order_status = <span class="st">'completed'</span>
+),
+
+<span class="cm">-- Count cohort size (period 0 = acquisition)</span>
+cohort_sizes <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        cohort_month,
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> customer_id) <span class="kw">AS</span> cohort_size
+    <span class="kw">FROM</span> order_periods
+    <span class="kw">WHERE</span> period_number = <span class="nu">0</span>
+    <span class="kw">GROUP BY</span> cohort_month
+),
+
+<span class="cm">-- Count retained customers per cohort per period</span>
+retention_counts <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        cohort_month,
+        period_number,
+        <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> customer_id) <span class="kw">AS</span> retained_customers
+    <span class="kw">FROM</span> order_periods
+    <span class="kw">GROUP BY</span> <span class="nu">1</span>, <span class="nu">2</span>
+)
+
+<span class="cm">-- RESULT: retention matrix with % rates</span>
+<span class="kw">SELECT</span>
+    rc.cohort_month,
+    cs.cohort_size,
+    rc.period_number,
+    rc.retained_customers,
+    <span class="fn">ROUND</span>(
+        rc.retained_customers::numeric / cs.cohort_size * <span class="nu">100</span>, <span class="nu">1</span>
+    )                           <span class="kw">AS</span> retention_rate_pct
+<span class="kw">FROM</span> retention_counts rc
+<span class="kw">INNER JOIN</span> cohort_sizes cs <span class="kw">USING</span> (cohort_month)
+<span class="kw">WHERE</span> rc.period_number <span class="kw">BETWEEN</span> <span class="nu">0</span> <span class="kw">AND</span> <span class="nu">11</span>    <span class="cm">-- First 12 months</span>
+<span class="kw">ORDER BY</span> rc.cohort_month, rc.period_number;</code></pre>
+      </div>
+
+      <div class="tip-box">
+        <span class="tip-label">Interpreting retention output in Power BI or Tableau</span>
+        <p>Pivot this result on <code>period_number</code> (0–11 as columns) with <code>cohort_month</code> as rows and <code>retention_rate_pct</code> as values. Use conditional formatting on the cell values — high green fading to red. The shape you're looking for: a diagonal band of high retention in recent cohorts is a positive signal; a step-change in retention rate often corresponds to a product change or marketing campaign.</p>
+      </div>
+
+      <!-- SECTION 4: ADVANCED JOINS -->
+      <h2>Advanced JOIN Patterns: Beyond INNER and LEFT</h2>
+
+      <p>Every analyst knows INNER, LEFT, and sometimes RIGHT JOIN. But there are join patterns that appear regularly in real analytical work and are rarely covered in SQL fundamentals. Knowing them saves hours of workaround code.</p>
+
+      <h3>The ANTI-JOIN: finding what's missing</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Anti-join pattern: customers who never returned</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Which customers placed exactly one order and never returned?
+-- Anti-join is more readable and often faster than NOT IN with subquery</span>
+
+<span class="cm">-- Method 1: LEFT JOIN + IS NULL (classic anti-join)</span>
+<span class="kw">SELECT</span> c.customer_id, c.email, c.acquisition_date
+<span class="kw">FROM</span> customers c
+<span class="kw">LEFT JOIN</span> (
+    <span class="kw">SELECT DISTINCT</span> customer_id
+    <span class="kw">FROM</span> orders
+    <span class="kw">WHERE</span> order_date > (
+        <span class="kw">SELECT MIN</span>(order_date) <span class="kw">FROM</span> orders o2
+        <span class="kw">WHERE</span> o2.customer_id = orders.customer_id
+    )
+) repeat_purchasers <span class="kw">USING</span> (customer_id)
+<span class="kw">WHERE</span> repeat_purchasers.customer_id <span class="kw">IS NULL</span>;
+
+<span class="cm">-- Method 2: NOT EXISTS (preferred — avoids NULL edge cases with NOT IN)</span>
+<span class="kw">SELECT</span> c.customer_id, c.email, c.acquisition_date
+<span class="kw">FROM</span> customers c
+<span class="kw">WHERE NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="nu">1</span>
+    <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id = c.customer_id
+      <span class="kw">AND</span> o.order_number > <span class="nu">1</span>   <span class="cm">-- any order beyond the first</span>
+);
+
+<span class="cm">-- Why NOT use NOT IN?
+-- NOT IN returns no rows if the subquery contains any NULLs.
+-- This is a silent bug that appears in real data whenever customer_id
+-- has null values in the orders table. NOT EXISTS handles NULLs correctly.</span></code></pre>
+      </div>
+
+      <h3>The LATERAL JOIN: row-by-row correlated queries</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — LATERAL JOIN: last N orders per customer without window functions</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- For each customer, retrieve their 3 most recent orders
+-- LATERAL allows the inner query to reference the outer query's current row</span>
+<span class="kw">SELECT</span>
+    c.customer_id,
+    c.email,
+    recent.order_date,
+    recent.order_value,
+    recent.product_category
+<span class="kw">FROM</span> customers c
+<span class="kw">LEFT JOIN LATERAL</span> (
+    <span class="kw">SELECT</span> order_date, order_value, product_category
+    <span class="kw">FROM</span> orders o
+    <span class="kw">WHERE</span> o.customer_id = c.customer_id     <span class="cm">-- references outer row</span>
+      <span class="kw">AND</span> o.order_status = <span class="st">'completed'</span>
+    <span class="kw">ORDER BY</span> order_date <span class="kw">DESC</span>
+    <span class="kw">LIMIT</span> <span class="nu">3</span>
+) recent <span class="kw">ON TRUE</span>
+<span class="kw">ORDER BY</span> c.customer_id, recent.order_date <span class="kw">DESC</span>;</code></pre>
+      </div>
+
+      <!-- SECTION 5: QUERY PERFORMANCE -->
+      <h2>Query Performance: Making Slow Queries Fast</h2>
+
+      <p>The query that runs in 8 seconds in development and 4 minutes in production is one of the most common pain points in analytical SQL work. The causes are almost always identifiable — once you know where to look.</p>
+
+      <h3>Step 1: Read EXPLAIN ANALYZE before changing anything</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Reading EXPLAIN ANALYZE output</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Always use ANALYZE (executes the query) + BUFFERS (shows cache hits/misses)</span>
+<span class="kw">EXPLAIN</span> (ANALYZE, BUFFERS, FORMAT TEXT)
+<span class="kw">SELECT</span>
+    customer_id,
+    <span class="fn">SUM</span>(order_value)
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> order_date >= <span class="st">'2024-01-01'</span>
+<span class="kw">GROUP BY</span> customer_id;
+
+<span class="cm">/*
+What to look for in the output:
+
+Node types and their cost signals:
+  Seq Scan      → reading the entire table — needs an index
+  Index Scan    → using an index efficiently
+  Hash Join     → building hash table from smaller relation (good)
+  Nested Loop   → looping — acceptable for small outer sets, slow for large
+  Sort          → check if an index can eliminate this
+
+Key metrics per node:
+  actual time=X..Y    → X = first row cost, Y = all rows cost
+  rows=N              → actual rows produced (compare with estimated)
+  Buffers hit=N       → pages read from cache (good)
+  Buffers read=N      → pages read from disk (slow — needs caching or index)
+
+Red flags:
+  • Estimated rows >> Actual rows → stale table statistics (run ANALYZE)
+  • Seq Scan on a large table that's being filtered → missing index
+  • Sort node on a large dataset → consider index on ORDER BY column
+  • Hash Batches > 1 → hash table spilled to disk (increase work_mem)
+*/</span></code></pre>
+      </div>
+
+      <h3>The most common performance fixes</h3>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>EXPLAIN symptom</th><th>Root cause</th><th>Fix</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Seq Scan on filtered large table</td>
+              <td>No index on WHERE column</td>
+              <td><code>CREATE INDEX ON table(column);</code></td>
+            </tr>
+            <tr>
+              <td>Seq Scan despite existing index</td>
+              <td>Low selectivity — filter returns >10% of rows</td>
+              <td>Partial index, or reconsider query structure</td>
+            </tr>
+            <tr>
+              <td>Estimated rows far from actual</td>
+              <td>Stale statistics</td>
+              <td><code>ANALYZE table;</code> or <code>VACUUM ANALYZE;</code></td>
+            </tr>
+            <tr>
+              <td>Nested Loop on large outer set</td>
+              <td>Optimizer chose wrong join strategy</td>
+              <td>Index on join column; or <code>SET enable_nestloop = off</code> to test</td>
+            </tr>
+            <tr>
+              <td>Sort on large result</td>
+              <td>No index on ORDER BY column</td>
+              <td>Index on ORDER BY + WHERE columns (composite)</td>
+            </tr>
+            <tr>
+              <td>Hash Batches &gt; 1</td>
+              <td>Hash table spilled to disk</td>
+              <td><code>SET work_mem = '256MB';</code> for session</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Practical performance patterns for analytical queries</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- 1. Composite index for common analytical query pattern
+-- (filter on date range, aggregate by category)</span>
+<span class="kw">CREATE INDEX</span> idx_orders_date_category
+    <span class="kw">ON</span> orders (order_date, product_category)
+    <span class="kw">INCLUDE</span> (order_value, customer_id);
+<span class="cm">-- INCLUDE adds columns to the index leaf without making them sort keys.
+-- Allows index-only scans for queries that touch these columns.</span>
+
+<span class="cm">-- 2. Partial index — only index the rows you actually query</span>
+<span class="kw">CREATE INDEX</span> idx_orders_completed_2024
+    <span class="kw">ON</span> orders (order_date, customer_id)
+    <span class="kw">WHERE</span> order_status = <span class="st">'completed'</span>
+      <span class="kw">AND</span> order_date >= <span class="st">'2024-01-01'</span>;
+<span class="cm">-- Dramatically smaller index. Only useful if your WHERE clause
+-- always includes status = 'completed' and a 2024+ date filter.</span>
+
+<span class="cm">-- 3. Pre-aggregation for heavy dashboards
+-- If a query is run 100× per day on 50M rows, materialise the heavy part</span>
+<span class="kw">CREATE MATERIALIZED VIEW</span> mv_daily_revenue <span class="kw">AS</span>
+<span class="kw">SELECT</span>
+    <span class="fn">DATE_TRUNC</span>(<span class="st">'day'</span>, order_date) <span class="kw">AS</span> day,
+    product_category,
+    region,
+    <span class="fn">SUM</span>(order_value)              <span class="kw">AS</span> revenue,
+    <span class="fn">COUNT</span>(*)                       <span class="kw">AS</span> order_count
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> order_status = <span class="st">'completed'</span>
+<span class="kw">GROUP BY</span> <span class="nu">1</span>, <span class="nu">2</span>, <span class="nu">3</span>;
+
+<span class="cm">-- Refresh on schedule (e.g. nightly via Airflow or pg_cron)</span>
+<span class="kw">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> mv_daily_revenue;
+<span class="cm">-- CONCURRENTLY: no table lock during refresh (requires unique index on view)</span>
+<span class="kw">CREATE UNIQUE INDEX</span> ON mv_daily_revenue (day, product_category, region);</code></pre>
+      </div>
+
+      <!-- SECTION 6: SLOWLY CHANGING DIMENSIONS -->
+      <h2>Slowly Changing Dimensions: The Pattern That Breaks Most Analytical Models</h2>
+
+      <p>Slowly Changing Dimensions (SCDs) are the source of more analytical errors than any other concept in data warehousing. The question is simple: when a customer changes their region from "Nairobi" to "Mombasa" in March, what do you do with all their January and February orders? Were those Nairobi orders or Mombasa orders?</p>
+
+      <p>There's no universally correct answer — it depends on the business question. But there is a correct way to store the data so that <em>either</em> answer is possible.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — SCD Type 2: querying point-in-time customer attributes</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- SCD Type 2 customer_dim schema:
+-- customer_id, region, segment, valid_from, valid_to (NULL = current record)
+-- Each attribute change creates a new row with a new valid_from date</span>
+
+<span class="cm">-- Q: What was each customer's region at the time of their order?
+-- (not their current region — their region when the order happened)</span>
+<span class="kw">SELECT</span>
+    o.order_id,
+    o.customer_id,
+    o.order_date,
+    o.order_value,
+    cd.region      <span class="kw">AS</span> region_at_time_of_order,
+    cd.segment     <span class="kw">AS</span> segment_at_time_of_order
+<span class="kw">FROM</span> orders o
+<span class="kw">INNER JOIN</span> customer_dim cd
+    <span class="kw">ON</span>  o.customer_id = cd.customer_id
+    <span class="kw">AND</span> o.order_date >= cd.valid_from
+    <span class="kw">AND</span> o.order_date <  <span class="fn">COALESCE</span>(cd.valid_to, <span class="st">'9999-12-31'</span>)
+<span class="kw">ORDER BY</span> o.order_date;
+
+<span class="cm">-- Q: What is each customer's current region?
+-- (standard query — only the active record)</span>
+<span class="kw">SELECT</span> customer_id, region, segment
+<span class="kw">FROM</span> customer_dim
+<span class="kw">WHERE</span> valid_to <span class="kw">IS NULL</span>;     <span class="cm">-- or: WHERE valid_to > CURRENT_DATE</span>
+
+<span class="cm">-- Q: How many customers changed region in 2024?
+-- (historical comparison — requires SCD Type 2)</span>
+<span class="kw">SELECT</span>
+    customer_id,
+    region_before,
+    region_after,
+    change_date
+<span class="kw">FROM</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        region <span class="kw">AS</span> region_after,
+        valid_from <span class="kw">AS</span> change_date,
+        <span class="fn">LAG</span>(region) <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> customer_id
+            <span class="kw">ORDER BY</span> valid_from
+        ) <span class="kw">AS</span> region_before
+    <span class="kw">FROM</span> customer_dim
+) region_changes
+<span class="kw">WHERE</span> region_before <span class="kw">IS NOT NULL</span>
+  <span class="kw">AND</span> region_before <> region_after
+  <span class="kw">AND</span> change_date <span class="kw">BETWEEN</span> <span class="st">'2024-01-01'</span> <span class="kw">AND</span> <span class="st">'2024-12-31'</span>;</code></pre>
+      </div>
+
+      <!-- SECTION 7: PRACTICAL PATTERNS -->
+      <h2>Five SQL Patterns Every Analyst Should Have Ready</h2>
+
+      <div class="section-marker"><span>Copy-paste-ready analytical patterns</span></div>
+
+      <h3>1. Running total with year-to-date reset</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — YTD running total that resets each year</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="kw">SELECT</span>
+    sale_date,
+    daily_revenue,
+    <span class="fn">SUM</span>(daily_revenue) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> <span class="fn">DATE_TRUNC</span>(<span class="st">'year'</span>, sale_date)  <span class="cm">-- reset per year</span>
+        <span class="kw">ORDER BY</span> sale_date
+        <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> ytd_revenue
+<span class="kw">FROM</span> daily_sales
+<span class="kw">ORDER BY</span> sale_date;</code></pre>
+      </div>
+
+      <h3>2. Percentile calculations without application code</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Percentile distribution for order values</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="kw">SELECT</span>
+    product_category,
+    <span class="fn">PERCENTILE_CONT</span>(<span class="nu">0.25</span>) <span class="kw">WITHIN GROUP</span> (<span class="kw">ORDER BY</span> order_value) <span class="kw">AS</span> p25,
+    <span class="fn">PERCENTILE_CONT</span>(<span class="nu">0.50</span>) <span class="kw">WITHIN GROUP</span> (<span class="kw">ORDER BY</span> order_value) <span class="kw">AS</span> median,
+    <span class="fn">PERCENTILE_CONT</span>(<span class="nu">0.75</span>) <span class="kw">WITHIN GROUP</span> (<span class="kw">ORDER BY</span> order_value) <span class="kw">AS</span> p75,
+    <span class="fn">PERCENTILE_CONT</span>(<span class="nu">0.90</span>) <span class="kw">WITHIN GROUP</span> (<span class="kw">ORDER BY</span> order_value) <span class="kw">AS</span> p90,
+    <span class="fn">AVG</span>(order_value)                                             <span class="kw">AS</span> mean
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> order_status = <span class="st">'completed'</span>
+<span class="kw">GROUP BY</span> product_category
+<span class="kw">ORDER BY</span> median <span class="kw">DESC</span>;</code></pre>
+      </div>
+
+      <h3>3. Gap detection in time-series data</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Find missing days in a daily event stream</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Detect gaps in daily data — critical for monitoring pipeline health</span>
+<span class="kw">WITH</span> date_series <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> <span class="fn">GENERATE_SERIES</span>(
+        (<span class="kw">SELECT MIN</span>(event_date) <span class="kw">FROM</span> daily_events),
+        (<span class="kw">SELECT MAX</span>(event_date) <span class="kw">FROM</span> daily_events),
+        <span class="st">'1 day'</span>::interval
+    )::date <span class="kw">AS</span> expected_date
+)
+<span class="kw">SELECT</span> ds.expected_date <span class="kw">AS</span> missing_date
+<span class="kw">FROM</span> date_series ds
+<span class="kw">LEFT JOIN</span> daily_events de <span class="kw">ON</span> de.event_date = ds.expected_date
+<span class="kw">WHERE</span> de.event_date <span class="kw">IS NULL</span>
+<span class="kw">ORDER BY</span> missing_date;</code></pre>
+      </div>
+
+      <h3>4. Pivoting rows to columns with FILTER</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Dynamic pivot using FILTER (cleaner than CASE WHEN)</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Revenue by quarter in a single row per region</span>
+<span class="kw">SELECT</span>
+    region,
+    <span class="fn">SUM</span>(order_value) <span class="kw">FILTER</span> (
+        <span class="kw">WHERE EXTRACT</span>(QUARTER <span class="kw">FROM</span> order_date) = <span class="nu">1</span>
+    ) <span class="kw">AS</span> q1_revenue,
+    <span class="fn">SUM</span>(order_value) <span class="kw">FILTER</span> (
+        <span class="kw">WHERE EXTRACT</span>(QUARTER <span class="kw">FROM</span> order_date) = <span class="nu">2</span>
+    ) <span class="kw">AS</span> q2_revenue,
+    <span class="fn">SUM</span>(order_value) <span class="kw">FILTER</span> (
+        <span class="kw">WHERE EXTRACT</span>(QUARTER <span class="kw">FROM</span> order_date) = <span class="nu">3</span>
+    ) <span class="kw">AS</span> q3_revenue,
+    <span class="fn">SUM</span>(order_value) <span class="kw">FILTER</span> (
+        <span class="kw">WHERE EXTRACT</span>(QUARTER <span class="kw">FROM</span> order_date) = <span class="nu">4</span>
+    ) <span class="kw">AS</span> q4_revenue
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE EXTRACT</span>(YEAR <span class="kw">FROM</span> order_date) = <span class="nu">2024</span>
+<span class="kw">GROUP BY</span> region;</code></pre>
+      </div>
+
+      <h3>5. Finding consecutive streaks</h3>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Identify consecutive active months per customer (streak analysis)</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="cm">-- Find each customer's longest consecutive active streak (monthly purchases)</span>
+<span class="kw">WITH</span>
+
+active_months <span class="kw">AS</span> (
+    <span class="kw">SELECT DISTINCT</span>
+        customer_id,
+        <span class="fn">DATE_TRUNC</span>(<span class="st">'month'</span>, order_date)::date <span class="kw">AS</span> active_month
+    <span class="kw">FROM</span> orders
+    <span class="kw">WHERE</span> order_status = <span class="st">'completed'</span>
+),
+
+<span class="cm">-- Classic streak trick: row_number creates a group identifier
+-- when subtracted from the ordered month number</span>
+streak_groups <span class="kw">AS</span> (
+    <span class="kw">SELECT</span>
+        customer_id,
+        active_month,
+        active_month - (<span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (
+            <span class="kw">PARTITION BY</span> customer_id
+            <span class="kw">ORDER BY</span> active_month
+        ) * <span class="kw">INTERVAL</span> <span class="st">'1 month'</span>)::date <span class="kw">AS</span> streak_id
+    <span class="kw">FROM</span> active_months
+)
+
+<span class="kw">SELECT</span>
+    customer_id,
+    <span class="fn">MIN</span>(active_month) <span class="kw">AS</span> streak_start,
+    <span class="fn">MAX</span>(active_month) <span class="kw">AS</span> streak_end,
+    <span class="fn">COUNT</span>(*)          <span class="kw">AS</span> streak_length_months
+<span class="kw">FROM</span> streak_groups
+<span class="kw">GROUP BY</span> customer_id, streak_id
+<span class="kw">ORDER BY</span> streak_length_months <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="nu">20</span>;</code></pre>
+      </div>
+
+      <!-- TAKEAWAYS -->
+      <div class="takeaways">
+        <h4>Key takeaways</h4>
+        <ul>
+          <li>Window functions don't collapse rows — that's the mental model shift. Use <code>ROW_NUMBER()</code> for deduplication, <code>LAG()</code>/<code>LEAD()</code> for period-over-period change, and <code>SUM() OVER</code> for running totals without GROUP BY.</li>
+          <li>CTEs are a readability tool, not a performance tool. One transformation per CTE. Name them by what they contain, not what they do. The query should read like a story.</li>
+          <li>Cohort retention is the most business-critical analytical query pattern. Build it once correctly, templatise it, and adapt it across products and metrics.</li>
+          <li>Use <code>NOT EXISTS</code> instead of <code>NOT IN</code> whenever the subquery could contain NULLs — which in production data it almost always can.</li>
+          <li>Read <code>EXPLAIN (ANALYZE, BUFFERS)</code> before optimising. Seq Scans on large filtered tables need indexes. Stale statistics need <code>ANALYZE</code>. Hash spill to disk needs <code>work_mem</code>.</li>
+          <li>Slowly Changing Dimensions require a Type 2 design (valid_from / valid_to) if you ever need to know what attribute a customer had <em>at the time</em> of an event — not just what they have now.</li>
+          <li>The <code>FILTER</code> clause is cleaner than <code>CASE WHEN</code> inside aggregates. Use it for pivot-style queries.</li>
+          <li>Streak detection, gap detection, and percentile calculation are patterns worth having templated — they come up repeatedly and are easy to get wrong under time pressure.</li>
+        </ul>
+      </div>
+
+      <div class="tldr">
+        <span class="tldr-label">TL;DR</span>
+        <p>Advanced SQL mastery is knowing which construct solves which problem — and why the naive approach silently gives you the wrong answer. Window functions for ordered calculations without aggregation. CTEs for readable multi-step logic. Cohort analysis with month-offset arithmetic. NOT EXISTS over NOT IN for null safety. EXPLAIN ANALYZE before you optimise. SCD Type 2 for point-in-time accuracy. And a library of patterns — percentiles, gap detection, streak analysis, dynamic pivots — you reach for without thinking, because you've written them enough times to have built intuition about how they behave on real data.</p>
+      </div>
+
+      <p style="font-size:.83rem; color:var(--g400); margin-top:2.5rem; border-top:1px solid var(--g200); padding-top:1.5rem;">
+        <strong>What's next:</strong> <button class="read-link post-link" data-post="blog3" style="font-size:.83rem;">7 Career Tips <span class="arrow">→</span></button>
+      </p>
+      <div class="author-bio-section">
+        <h4>About the author</h4>
+        <p><span class="author-bio-name">Pharaoh Chirchir</span> is a Senior Data Analyst with 8+ years of experience building production-grade analytical pipelines. He writes about the craft of data work — the techniques, the failures, and the mindset shifts that actually matter on the job.</p>
+      </div>
+
+      <div class="reactions-section">
+        <span class="reactions-label">Did this resonate with you?</span>
+        <div class="reactions-row"></div>
+        <div class="reactions-thanks"></div>
+        <div class="reactions-share">
+          <span class="share-label">Share this post</span>
+          <button class="share-btn" data-post="blog6">🔗 Copy link</button>
+        </div>
+      </div>
+    </div><!-- /article-content -->
+
+    <aside class="article-toc" aria-label="Table of contents">
+      <p class="toc-label">In this post</p>
+      <ul class="toc-list">
+        <li><a>Window functions deep dive</a></li>
+        <li><a>Frame clauses (ROWS vs RANGE)</a></li>
+        <li><a>CTEs: design principles</a></li>
+        <li><a>Recursive CTEs</a></li>
+        <li><a>Cohort retention matrix</a></li>
+        <li><a>Advanced JOIN patterns</a></li>
+        <li><a>Query performance (EXPLAIN)</a></li>
+        <li><a>Slowly Changing Dimensions</a></li>
+        <li><a>5 ready-to-use patterns</a></li>
+      </ul>
+      <div class="next-post-box">
+        <span class="np-label">Read next</span>
+        <button class="read-link post-link" data-post="blog3">7 Career Tips <span class="arrow">→</span></button>
+      </div>
+    </aside>
+  </div>
+</div><!-- /blog6 -->

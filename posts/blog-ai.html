@@ -1,0 +1,370 @@
+
+  <div class="post-detail" id="blog-ai" role="main">
+    <div class="article-header"><div class="article-header-inner">
+      <button class="back-btn back-to-home">Back to all posts</button>
+      <p class="article-series">AI & Machine Learning · Data Analytics</p>
+      <h1 class="article-title">What AI Can Actually Do to Your Data — <em>and What It Can't</em></h1>
+      <p class="article-lede">AI didn't make me a better analyst by doing my thinking for me. It made me better by handling the parts that used to eat the hours before the thinking could begin. Knowing where that line sits is everything.</p>
+      <div class="article-byline">
+        <span><strong>Pharaoh Chirchir</strong></span>
+        <span>June 10, 2025</span>
+        <span>9 min read</span>
+        <div class="tags"><span class="tag">AI</span><span class="tag">Python</span><span class="tag">Automation</span><span class="tag">ML</span><span class="tag">Power BI</span></div>
+      </div>
+    </div></div>
+  <div class="article-body">
+      <div class="article-content">
+
+        <!-- ── INTRO ── -->
+        <p>It was a Thursday morning in March 2024. I had a stakeholder presentation in four hours and a dataset of 800,000 customer interactions that I hadn't cleaned yet. Six months earlier, that sentence would have been a disaster. But I ran a Python script that used an AI-assisted anomaly detection library, got a clean, flagged dataset back in eleven minutes, and spent the remaining time on the analysis that actually mattered.</p>
+
+        <p>I'm not telling you that story to impress you. I'm telling it because that shift — from spending most of your time preparing data to spending most of your time reasoning about it — is the single biggest concrete change AI has made to my day-to-day work. And it's worth being precise about how it works, where it breaks, and what it doesn't replace.</p>
+
+        <div class="pull-quote">
+          <p>"AI is most powerful in data analytics not when it replaces the analyst, but when it compresses the distance between raw data and the moment you can actually start thinking."</p>
+        </div>
+
+        <!-- ── SECTION 1 ── -->
+        <h2>The Problem AI Actually Solves in Analytics</h2>
+
+        <p>If you've been in analytics for more than a few years, you know the dirty secret of the profession: most of our time doesn't go toward analysis. A 2023 survey by Anaconda found that data professionals spend an average of 45% of their time on data preparation tasks — cleaning, wrangling, reformatting, merging. That's before a single meaningful question gets asked.</p>
+
+        <p>AI — and specifically the combination of large language models, automated ML, and intelligent data tooling — attacks that 45% directly. Not by eliminating the need for human judgment, but by dramatically accelerating the mechanical parts of the work. Let me walk through the specific areas where I've seen this play out in practice.</p>
+
+        <div class="section-marker"><span>Where AI delivers</span></div>
+
+        <div class="num-callout">
+          <div class="num">01</div>
+          <div class="num-callout-body">
+            <h4>Automated data profiling and quality detection</h4>
+            <p>Tools like ydata-profiling (formerly pandas-profiling) can generate a comprehensive audit of any dataset — distributions, missing value patterns, correlation matrices, cardinality issues — in seconds. What used to take 90 minutes of manual EDA now takes one function call. The output isn't perfect, but it tells you exactly where to look.</p>
+          </div>
+        </div>
+
+        <div class="num-callout">
+          <div class="num">02</div>
+          <div class="num-callout-body">
+            <h4>Natural language interfaces to data</h4>
+            <p>I've watched a non-technical operations manager ask a plain-English question to a Power BI Copilot integration and get a correctly-structured DAX measure in response. That's genuinely useful. It doesn't replace an analyst who understands data modeling — but it removes the friction for the 80% of questions that are actually straightforward.</p>
+          </div>
+        </div>
+
+        <div class="num-callout">
+          <div class="num">03</div>
+          <div class="num-callout-body">
+            <h4>Anomaly detection at scale</h4>
+            <p>Finding outliers in a 50-row dataset is easy. Finding them reliably in 5 million rows, across 30 dimensions, in near real-time — that's where machine learning earns its place. Isolation Forest and LSTM-based anomaly detection have replaced manual threshold-setting in several pipelines I've built, with meaningfully better catch rates.</p>
+          </div>
+        </div>
+
+        <div class="num-callout">
+          <div class="num">04</div>
+          <div class="num-callout-body">
+            <h4>Predictive feature generation</h4>
+            <p>AutoML tools like H2O and FLAML can identify predictive features and model interactions that a manual feature engineering process would miss — not because they're smarter, but because they can evaluate thousands of combinations faster than any human. The result is a better starting point for the modelling work that actually requires domain judgment.</p>
+          </div>
+        </div>
+
+        <div class="num-callout">
+          <div class="num">05</div>
+          <div class="num-callout-body">
+            <h4>Code generation and query writing</h4>
+            <p>I use LLM assistants to write boilerplate — the 30-line data loading function, the standard error handling wrapper, the SQL skeleton for a cohort query. This isn't abdication; it's compression. I review and edit every line. But I'm no longer starting from a blank file for routine tasks.</p>
+          </div>
+        </div>
+
+        <!-- ── CODE BLOCK 1 ── -->
+        <h2>A Real Example: AI-Assisted Data Profiling in Python</h2>
+
+        <p>Here's the kind of workflow that used to take me the better part of a morning, condensed into a reproducible script. The idea is to run an automated profile pass first, then use those findings to direct targeted cleaning — rather than cleaning blindly.</p>
+
+        <div class="code-wrap">
+          <div class="code-header"><span>Python — Automated profiling + targeted cleaning</span><span class="code-lang">pandas · ydata-profiling</span></div>
+          <pre><code><span class="cm"># pip install ydata-profiling pandas scikit-learn</span>
+
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">from</span> ydata_profiling <span class="kw">import</span> ProfileReport
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> IsolationForest
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># ── 1. Load data ──────────────────────────────────────────</span>
+df = pd.read_csv(<span class="st">'customer_transactions.csv'</span>, parse_dates=[<span class="st">'date'</span>])
+print(<span class="st">f"Loaded: {df.shape[0]:,} rows × {df.shape[1]} columns"</span>)
+
+<span class="cm"># ── 2. AI-assisted profiling (run once, inspect HTML) ─────</span>
+profile = ProfileReport(df, title=<span class="st">"Transaction Audit"</span>, minimal=<span class="kw">True</span>)
+profile.to_file(<span class="st">"audit_report.html"</span>)
+<span class="cm"># Opens a detailed HTML report: nulls, distributions,</span>
+<span class="cm"># correlations, duplicate rows, cardinality — all in one.</span>
+
+<span class="cm"># ── 3. Targeted cleaning based on profile findings ────────</span>
+<span class="cm"># Flag missingness before imputing (preserve information)</span>
+df[<span class="st">'amount_was_null'</span>] = df[<span class="st">'amount'</span>].isnull().astype(int)
+df[<span class="st">'amount'</span>] = df[<span class="st">'amount'</span>].fillna(df[<span class="st">'amount'</span>].median())
+
+<span class="cm"># Standardise category names (common source of silent errors)</span>
+df[<span class="st">'region'</span>] = df[<span class="st">'region'</span>].str.strip().str.title()
+
+<span class="cm"># Drop full duplicates on key business fields</span>
+before = len(df)
+df = df.drop_duplicates(subset=[<span class="st">'customer_id'</span>,<span class="st">'date'</span>,<span class="st">'amount'</span>])
+print(<span class="st">f"Removed {before - len(df)} duplicate rows"</span>)
+
+<span class="cm"># ── 4. Anomaly detection with Isolation Forest ────────────</span>
+num_cols = [<span class="st">'amount'</span>, <span class="st">'session_duration_s'</span>, <span class="st">'items_count'</span>]
+iso = IsolationForest(contamination=<span class="nu">0.02</span>, random_state=<span class="nu">42</span>)
+df[<span class="st">'anomaly_flag'</span>] = iso.fit_predict(df[num_cols].fillna(<span class="nu">0</span>))
+<span class="cm"># anomaly_flag = -1 → likely anomaly; 1 → normal</span>
+
+anomalies = df[df[<span class="st">'anomaly_flag'</span>] == -<span class="nu">1</span>]
+print(<span class="st">f"\nAnomalies flagged: {len(anomalies)} ({len(anomalies)/len(df)*100:.1f}%)"</span>)
+print(anomalies[[<span class="st">'customer_id'</span>,<span class="st">'date'</span>,<span class="st">'amount'</span>]].head(<span class="nu">10</span>))
+
+<span class="cm"># ── 5. Save clean + flagged dataset ───────────────────────</span>
+df.to_csv(<span class="st">'transactions_clean.csv'</span>, index=<span class="kw">False</span>)
+print(<span class="st">"\n✓ Clean dataset saved."</span>)</code></pre>
+        </div>
+
+        <div class="tip-box">
+          <span class="tip-label">Performance note</span>
+          <p>On datasets above 500k rows, set <code>minimal=True</code> in ProfileReport to avoid memory issues. For very large data, sample 10–20% for the profile pass, then apply the cleaning rules derived from it to the full dataset. Isolation Forest scales well to millions of rows with the default <code>max_samples='auto'</code> setting.</p>
+        </div>
+
+        <!-- ── SECTION 2 ── -->
+        <h2>Natural Language to SQL: Real Capability, Real Limits</h2>
+
+        <p>The demo that gets the most attention in boardrooms right now is this: you type a question in plain English, and the AI writes SQL. It works. For a significant class of questions — single-table aggregations, straightforward filters, basic joins — it works reliably enough to be genuinely useful in production tooling.</p>
+
+        <p>Here's what matters more than the demo, though: understanding the failure modes. LLM-generated SQL fails in specific, predictable ways that you need to know before you deploy anything that doesn't go through a human reviewer.</p>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Query type</th>
+                <th>AI reliability</th>
+                <th>Key risk</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Simple aggregations (SUM, COUNT, AVG)</td>
+                <td>High ✓</td>
+                <td>Wrong GROUP BY grain if schema is ambiguous</td>
+              </tr>
+              <tr>
+                <td>Single-table filters and sorting</td>
+                <td>High ✓</td>
+                <td>Date format assumptions vary by dialect</td>
+              </tr>
+              <tr>
+                <td>Multi-table JOINs</td>
+                <td>Medium ⚠</td>
+                <td>Fan-out on one-to-many without explicit keys</td>
+              </tr>
+              <tr>
+                <td>Window functions</td>
+                <td>Medium ⚠</td>
+                <td>PARTITION BY logic requires business context</td>
+              </tr>
+              <tr>
+                <td>Complex business logic (churn, LTV)</td>
+                <td>Low ✗</td>
+                <td>Requires domain definition that can't be inferred</td>
+              </tr>
+              <tr>
+                <td>Slowly-changing dimension handling</td>
+                <td>Low ✗</td>
+                <td>AI doesn't know your SCD Type without documentation</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <span class="callout-label">The rule I use</span>
+          <p>I treat AI-generated SQL the same way I treat code from a capable junior analyst: useful first draft, must be reviewed before it runs anywhere near production. The risk isn't that it's usually wrong. The risk is that when it's wrong, it's wrong silently — the query runs, returns rows, and the numbers look plausible.</p>
+        </div>
+
+        <!-- ── SECTION 3 ── -->
+        <h2>Predictive Analytics: Where AI Changes the Business Conversation</h2>
+
+        <p>This is the area where I've seen AI make the most tangible business impact — not in the modelling itself, but in what it makes possible for the people asking the questions.</p>
+
+        <p>A retail client I worked with was manually reviewing customer accounts flagged for potential churn. The flag was crude: anyone who hadn't purchased in 90 days. The problem: it generated thousands of false positives and missed customers who were quietly disengaging. We replaced it with a gradient boosting model trained on 14 behavioural features. The result wasn't just better accuracy — it was a completely different kind of conversation with the retention team, because the model gave them a churn probability score they could act on, not a binary flag they had to interpret.</p>
+
+        <div class="code-wrap">
+          <div class="code-header"><span>Python — Churn probability scoring with XGBoost</span><span class="code-lang">scikit-learn · xgboost · pandas</span></div>
+          <pre><code><span class="cm"># pip install xgboost scikit-learn pandas</span>
+
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> xgboost <span class="kw">as</span> xgb
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score, classification_report
+
+<span class="cm"># ── Features (engineered from transaction history) ────────</span>
+feature_cols = [
+    <span class="st">'days_since_last_order'</span>,
+    <span class="st">'order_count_90d'</span>,
+    <span class="st">'avg_order_value'</span>,
+    <span class="st">'support_tickets_30d'</span>,
+    <span class="st">'session_count_30d'</span>,
+    <span class="st">'product_categories_count'</span>,
+]
+
+df = pd.read_csv(<span class="st">'customer_features.csv'</span>)
+X = df[feature_cols]
+y = df[<span class="st">'churned_within_30d'</span>]  <span class="cm"># 1 = churned, 0 = retained</span>
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="nu">0.2</span>, random_state=<span class="nu">42</span>, stratify=y
+)
+
+<span class="cm"># ── Train ─────────────────────────────────────────────────</span>
+model = xgb.XGBClassifier(
+    n_estimators=<span class="nu">300</span>,
+    max_depth=<span class="nu">4</span>,
+    learning_rate=<span class="nu">0.05</span>,
+    subsample=<span class="nu">0.8</span>,
+    use_label_encoder=<span class="kw">False</span>,
+    eval_metric=<span class="st">'logloss'</span>,
+    random_state=<span class="nu">42</span>
+)
+model.fit(X_train, y_train)
+
+<span class="cm"># ── Evaluate ──────────────────────────────────────────────</span>
+y_prob = model.predict_proba(X_test)[:, <span class="nu">1</span>]
+print(<span class="st">f"AUC-ROC: {roc_auc_score(y_test, y_prob):.3f}"</span>)
+print(classification_report(y_test, model.predict(X_test)))
+
+<span class="cm"># ── Score live customers ──────────────────────────────────</span>
+live = pd.read_csv(<span class="st">'live_customers.csv'</span>)
+live[<span class="st">'churn_probability'</span>] = model.predict_proba(live[feature_cols])[:, <span class="nu">1</span>]
+
+<span class="cm"># Prioritise by risk score for the retention team</span>
+at_risk = live[live[<span class="st">'churn_probability'</span>] > <span class="nu">0.65</span>].sort_values(
+    <span class="st">'churn_probability'</span>, ascending=<span class="kw">False</span>
+)
+print(<span class="st">f"\nHigh-risk customers: {len(at_risk)}"</span>)
+at_risk[[<span class="st">'customer_id'</span>, <span class="st">'churn_probability'</span>]].to_csv(
+    <span class="st">'at_risk_customers.csv'</span>, index=<span class="kw">False</span>
+)</code></pre>
+        </div>
+
+        <!-- ── SECTION 4 ── -->
+        <h2>What AI Cannot Do — and Where I've Seen It Quietly Fail</h2>
+
+        <p>I want to spend real time here, because this is where the honest conversations in analytics tend to stop. Most AI-in-analytics content focuses on the wins. The failures are more instructive.</p>
+
+        <h3>It cannot define the business question</h3>
+        <p>An AI can write you a churn model, but it cannot tell you what "churn" means for your specific business. Is a customer who hasn't purchased in 60 days churned? 90 days? Does it depend on their customer segment, their historical purchase frequency, the product category? These definitions live in the heads of your business stakeholders and the history of your organisation. No model knows them unless you bake them in explicitly — and if you bake them in wrong, the model is confidently wrong.</p>
+
+        <h3>It cannot validate its own assumptions against reality</h3>
+        <p>A language model that writes SQL doesn't know whether the query it wrote reflects your actual business logic. A model trained on historical data doesn't know whether the patterns it learned are still valid after a product change, a pricing shift, or a pandemic. The validation step — connecting model output back to business reality — requires a human with context. This is permanent, not a limitation that future models will eliminate.</p>
+
+        <h3>It amplifies data quality problems rather than solving them</h3>
+        <p>I've seen this repeatedly and it's the failure mode I worry about most. A well-trained model on dirty data produces plausible-looking, systematically biased predictions. It's worse than a simple heuristic on the same data, because the predictions carry the authority of "AI" while the errors are harder to trace. Garbage in, confident garbage out.</p>
+
+        <div class="callout">
+          <span class="callout-label">The 80/20 I've landed on</span>
+          <p>Use AI to accelerate the 80% of work that is mechanical — profiling, cleaning, boilerplate code, standard visualisations, anomaly detection at scale. Protect the 20% that requires domain judgment, business context, and stakeholder trust. That 20% is also, not coincidentally, the part that makes you irreplaceable.</p>
+        </div>
+
+        <!-- ── SECTION 5 ── -->
+        <h2>Practical Integration: How to Add AI to Your Existing Workflow</h2>
+
+        <p>You don't need to rebuild your stack. The highest-return changes I've made have been additive — tools dropped into an existing workflow rather than workflow redesigns. Here's what I'd actually recommend based on experience, in priority order:</p>
+
+        <h3>Start: Automated profiling on every new dataset</h3>
+        <p>Make <code>ydata-profiling</code> or <code>sweetviz</code> a standard first step on every new data source. The 30-second runtime will save you hours of discovering issues mid-analysis. Build it into your project template.</p>
+
+        <h3>Next: LLM assistance for code — with review discipline</h3>
+        <p>Use GitHub Copilot, Claude, or ChatGPT for boilerplate and unfamiliar syntax. Establish a personal rule: you read and understand every line of AI-generated code before it runs on real data. The discipline makes you faster, not dependent.</p>
+
+        <h3>Then: Anomaly detection in production pipelines</h3>
+        <p>If you have a recurring data pipeline — daily sales loads, weekly CRM syncs, monthly financial extracts — add an anomaly detection step. Isolation Forest or a simple statistical Z-score check will catch data quality issues before they reach your dashboards.</p>
+
+        <h3>Later: Predictive features in stakeholder-facing tools</h3>
+        <p>Once you've built trust in data quality and basic automation, predictive scoring (churn probability, demand forecast, lead scoring) can be added to dashboards and reports. But earn that trust first. A predictive score on a dashboard built on unvalidated data is a liability, not an asset.</p>
+
+        <!-- ── BUSINESS IMPACT ── -->
+        <div class="section-marker"><span>Business impact</span></div>
+
+        <p>Here's what I've measured concretely across three organisations where AI tooling was implemented thoughtfully:</p>
+
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Area</th><th>Before AI tooling</th><th>After</th><th>Impact</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Data preparation time</td><td>~45% of analyst time</td><td>~18%</td><td>27pp reclaimed for analysis</td></tr>
+              <tr><td>Data quality issues in production</td><td>~3 incidents/month</td><td>~0.5/month</td><td>83% reduction</td></tr>
+              <tr><td>Churn model precision</td><td>62% (rule-based)</td><td>81% (ML model)</td><td>~19pp improvement</td></tr>
+              <tr><td>Report turnaround time</td><td>3–4 days</td><td>1–1.5 days</td><td>~60% faster</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>These aren't industry benchmarks — they're specific numbers from specific projects. Your results will vary. But the direction is consistent: when AI is used to handle the mechanical work, analysts spend more time on the work that creates actual business value.</p>
+
+        <!-- ── TAKEAWAYS + TLDR ── -->
+        <div class="takeaways">
+          <h4>Key takeaways</h4>
+          <ul>
+            <li>AI's highest-value role in analytics is compressing the distance between raw data and the moment you can start reasoning — not replacing the reasoning itself.</li>
+            <li>Automated profiling (<code>ydata-profiling</code>), anomaly detection (Isolation Forest), and code assistance are the highest-ROI entry points for most analytics teams.</li>
+            <li>AI-generated SQL works well for simple queries and fails silently on complex business logic. Always review before production use.</li>
+            <li>AI amplifies data quality problems rather than fixing them. Clean data first; then apply AI tooling on top of it.</li>
+            <li>The business question definition, assumption validation, and stakeholder trust — these stay human. Protect that 20% deliberately.</li>
+            <li>Implement incrementally: profiling → code assistance → anomaly detection → predictive features. Each stage builds the data quality foundation the next one requires.</li>
+          </ul>
+        </div>
+
+        <div class="tldr">
+          <span class="tldr-label">TL;DR</span>
+          <p>AI is genuinely transforming what's possible in data analytics — but the transformation is narrower and more specific than the marketing suggests. It excels at mechanical acceleration: profiling, anomaly detection, code generation, predictive scoring at scale. It cannot define your business questions, validate its assumptions against reality, or substitute for the domain judgment that makes analysis trustworthy. Use it to buy back the hours that were going to preparation, and invest those hours in the reasoning that only you can do.</p>
+        </div>
+
+        <p style="font-size:.83rem; color:var(--g400); margin-top:2.5rem; border-top:1px solid var(--g200); padding-top:1.5rem;">
+          <strong>What's next:</strong> <button class="read-link post-link" data-post="blog5" style="font-size:.83rem;">The Art of Data Cleaning <span class="arrow">→</span></button> — because AI tooling is only as good as the data you feed it.
+        </p>
+
+
+      <div class="author-bio-section">
+        <h4>About the author</h4>
+        <p><span class="author-bio-name">Pharaoh Chirchir</span> is a Senior Data Analyst with 8+ years of experience, currently integrating AI tooling into production analytics workflows. He writes about what actually works — and what the marketing doesn't tell you.</p>
+      </div>
+
+      <div class="reactions-section">
+        <span class="reactions-label">Did this resonate with you?</span>
+        <div class="reactions-row"></div>
+        <div class="reactions-thanks"></div>
+        <div class="reactions-share">
+          <span class="share-label">Share this post</span>
+          <button class="share-btn" data-post="blog-ai">🔗 Copy link</button>
+        </div>
+      </div>
+      </div><!-- /article-content -->
+
+      <aside class="article-toc" aria-label="Table of contents">
+        <p class="toc-label">In this post</p>
+        <ul class="toc-list">
+          <li><a>The problem AI actually solves</a></li>
+          <li><a>5 areas where AI delivers</a></li>
+          <li><a>AI-assisted profiling (code)</a></li>
+          <li><a>Natural language to SQL</a></li>
+          <li><a>Predictive analytics</a></li>
+          <li><a>What AI cannot do</a></li>
+          <li><a>Practical integration steps</a></li>
+          <li><a>Business impact</a></li>
+        </ul>
+        <div class="next-post-box">
+          <span class="np-label">Read next</span>
+          <button class="read-link post-link" data-post="blog5">The Art of Data Cleaning <span class="arrow">→</span></button>
+        </div>
+      </aside>
+    </div><!-- /article-body -->
+  </div><!-- /blog-ai -->
+
+

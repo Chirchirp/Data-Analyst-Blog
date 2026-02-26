@@ -1,0 +1,127 @@
+<!-- POST: blog1 — Journey of a Data Analyst -->
+<div class="post-detail" id="blog1" role="main">
+  <div class="article-header"><div class="article-header-inner">
+    <button class="back-btn back-to-home">← Back to all posts</button>
+    <p class="article-series">Career · Origin Story</p>
+    <h1 class="article-title">The Journey of a Data Analyst: From Excel to <em>Machine Learning</em></h1>
+    <p class="article-lede">Eight years, six tools, one lesson that kept repeating itself. This is how the craft actually compounds — not in a straight line, but in layers you can only see in hindsight.</p>
+    <div class="article-byline">
+      <span><strong>Pharaoh Chirchir</strong></span>
+      <span>March 7, 2025</span>
+      <span>8 min read</span>
+      <div class="tags"><span class="tag">Excel</span><span class="tag">SQL</span><span class="tag">Power BI</span><span class="tag">Python</span><span class="tag">ML</span></div>
+    </div>
+  </div></div>
+  <div class="article-body">
+    <div class="article-content">
+      <p>When I started my first data role back then 2017 as a Claims Analyst, my entire analytical toolkit was Excel and a stubborn refusal to admit I didn't know what I was doing. Eight hours into reconciling a 50,000-row insurance claims sheet with mismatched date formats and merged cells, I seriously considered becoming a barista. That moment — humbling, chaotic, and oddly formative — is where this story starts.</p>
+      <p>What I didn't know then: every analyst I later admired had a version of that same story. The mess isn't a phase you survive before the real work begins. The mess <em>is</em> the real work. The question is whether you build systems for it or suffer through it each time.</p>
+
+      <h2 id="excel">Excel: Learning to Ask the Right Questions</h2>
+      <p>Excel doesn't get the credit it deserves among senior analysts. It's where I learned the most important skill in this profession: breaking a complex problem into answerable sub-questions. SUMIFS, INDEX-MATCH, and Pivot Tables weren't just functions — they were <em>forcing functions</em> that made me think structurally about data before I touched it.</p>
+      <p>The revelation came with Power Query. For two years I had run the same monthly reconciliation manually: download three exports, align date formats, handle duplicate IDs, pivot the cost centres, merge. Four hours. Every month. Power Query turned that into a one-click, three-minute refresh. I'd lost 96 hours — twelve working days — over two years. It hurt. And it made me permanently allergic to repetitive manual steps.</p>
+      <div class="callout">
+        <span class="callout-label">The Excel lesson</span>
+        <p>Before you ask "how do I do this faster?", ask "why am I doing this manually at all?" Automation begins with that question, not with learning a new tool.</p>
+      </div>
+
+      <h2 id="sql">SQL: Speaking Directly to the Data</h2>
+      <p>Moving from Excel to SQL felt like switching from a bicycle to a car — except the car also required you to completely rethink navigation. The real shift wasn't speed. It was mindset. SQL forced me to think in <em>sets</em>, not rows. That conceptual shift changed how I approached every data problem from that point forward.</p>
+      <p>A bad JOIN doesn't just slow your query — it silently multiplies rows and inflates every metric downstream. I once inflated a client's monthly revenue by 340% with a many-to-many join I hadn't caught. The number looked high but not impossible. It passed two reviews. It made it into a board presentation. I caught it at 11 PM the night before delivery. That experience permanently cured me of skipping row-count checks after JOINs.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span>SQL — Window functions for running totals</span><span class="code-lang">PostgreSQL</span></div>
+        <pre><code><span class="kw">SELECT</span>
+    customer_id,
+    order_date,
+    order_value,
+    <span class="fn">SUM</span>(order_value) <span class="kw">OVER</span> (
+        <span class="kw">PARTITION BY</span> customer_id
+        <span class="kw">ORDER BY</span> order_date
+        <span class="kw">ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW</span>
+    ) <span class="kw">AS</span> running_total
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> order_date >= <span class="st">'2024-01-01'</span>
+<span class="kw">ORDER BY</span> customer_id, order_date;</code></pre>
+      </div>
+      <p>The lightbulb moment: a monthly operations report that took 8 hours of manual effort ran in 11 minutes as a SQL query. That gap — 480 minutes vs. 11 — represents an analyst's entire day freed up for actual thinking.</p>
+
+      <h2 id="visualization">Visualization & BI: Making Numbers Speak</h2>
+      <p>Power BI introduced me to a problem I hadn't anticipated: the harder your data story is to tell, the more tempting it is to build a chart that <em>looks</em> like it's telling it. I've seen dashboards with 23 KPI tiles, 6 slicers, and a donut chart nobody could explain. The person who built it worked three weeks. Nobody used it after month one.</p>
+      <p>The dashboard that got used daily: three metrics, one line chart, one bar chart, colour-coded red/amber/green. Fit on a single screen. Readable in 15 seconds. The person who built that spent three days on it — and it ran for years.</p>
+      <div class="pull-quote">
+        <p>"The goal of a dashboard isn't to show everything you know. It's to show the one thing that determines what someone should do next."</p>
+      </div>
+
+      <h2 id="python">Python: Where Curiosity Found a New Ceiling</h2>
+      <p>I resisted Python longer than I should have. SQL felt like it could do everything. What changed my mind: a project requiring API data, a statistical model, and output feeding directly into a dashboard. SQL couldn't do all of that. Python did it in 80 lines.</p>
+      <p>The Pandas learning curve was real. The first week I spent more time fighting index resets than actually analysing. But the moment it clicked — when I started thinking in vectorised operations instead of rows — every data task looked different. Cleaner. More tractable.</p>
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — EDA starter template</span><span class="code-lang">Python</span></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+df = pd.read_csv(<span class="st">'claims_data.csv'</span>, parse_dates=[<span class="st">'claim_date'</span>])
+
+<span class="comm"># Always start here — understand what you're working with</span>
+<span class="fn">print</span>(df.info())
+<span class="fn">print</span>(df.describe())
+<span class="fn">print</span>(df.isnull().sum())
+
+<span class="comm"># Distribution check before you model anything</span>
+sns.histplot(df[<span class="st">'claim_amount'</span>], kde=<span class="kw">True</span>)</code></pre>
+      </div>
+
+      <h2 id="ml">Machine Learning: Pattern Recognition at Scale</h2>
+      <p>The most honest thing I can say about ML: it's not magic. It's statistics with better marketing and much bigger data. The analysts who get the most from it understand the business problem precisely, know what "good enough" prediction accuracy means in context, and can explain a model's output to a non-technical stakeholder without reaching for jargon.</p>
+      <p>My first ML project was a churn prediction model. The model had 87% accuracy — which sounds excellent until you realise that 85% of customers weren't churning anyway. The model was barely better than always predicting "no churn." That lesson in the difference between model accuracy and model <em>utility</em> is not in any tutorial. You learn it by building something that technically works and practically fails.</p>
+
+      <div class="takeaways">
+        <h4>Key takeaways</h4>
+        <ul>
+          <li>Excel teaches structural thinking. Don't skip it on your way to Python.</li>
+          <li>SQL forces set-based reasoning that reshapes every data problem you'll ever face.</li>
+          <li>Visualization is a communication skill. Design for the decision, not the data.</li>
+          <li>Python is the glue layer — connecting sources, models, and outputs no single tool handles alone.</li>
+          <li>ML utility ≠ ML accuracy. Always measure what decision the model improves, not just its technical performance.</li>
+        </ul>
+      </div>
+      <div class="tldr">
+        <span class="tldr-label">TL;DR</span>
+        <p>Data analysis skill compounds across layers. The bottleneck at each stage isn't the tool — it's developing the right mental model for the layer you're on. Start with fundamentals, automate the repetitive, design for decisions, and always end with the business question.</p>
+      </div>
+
+      <div class="author-bio-section">
+        <h4>About the author</h4>
+        <p><span class="author-bio-name">Pharaoh Chirchir</span> is a Senior Data Analyst with 8+ years across insurance, telecoms, retail, and financial services. He writes about the craft of analysis — the techniques, failures, and mindset shifts that actually matter.</p>
+      </div>
+
+      <div class="reactions-section">
+        <span class="reactions-label">Did this resonate with you?</span>
+        <div class="reactions-row"></div>
+        <div class="reactions-thanks"></div>
+        <div class="reactions-share">
+          <span class="share-label">Share this post</span>
+          <button class="share-btn" data-post="blog1">🔗 Copy link</button>
+        </div>
+      </div>
+
+      <p style="font-size:.83rem; color:var(--g400); margin-top:2.5rem; border-top:1px solid var(--g200); padding-top:1.5rem;">
+        <strong>What's next:</strong> <button class="read-link post-link" data-post="blog6" style="font-size:.83rem;">Advanced SQL Techniques <span class="arrow">→</span></button>
+      </p>
+    </div>
+    <aside class="article-toc">
+      <p class="toc-label">In this post</p>
+      <ul class="toc-list">
+        <li><a href="#excel">Excel: the foundation</a></li>
+        <li><a href="#sql">SQL: set-based thinking</a></li>
+        <li><a href="#visualization">Visualization & BI</a></li>
+        <li><a href="#python">Python & Pandas</a></li>
+        <li><a href="#ml">Machine learning</a></li>
+      </ul>
+      <div class="next-post-box">
+        <span class="np-label">Read next</span>
+        <button class="read-link post-link" data-post="blog6">Advanced SQL Techniques <span class="arrow">→</span></button>
+      </div>
+    </aside>
+  </div>
+</div>

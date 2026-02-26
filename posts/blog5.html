@@ -1,0 +1,746 @@
+<!-- ═══════════════════════════════════════════
+     POST: blog5 — The Art of Data Cleaning
+     ENHANCED VERSION — Drop-in replacement
+     for the blog5 section in index.html
+════════════════════════════════════════════ -->
+<div class="post-detail" id="blog5" role="main">
+  <div class="article-header"><div class="article-header-inner">
+    <button class="back-btn back-to-home">Back to all posts</button>
+    <p class="article-series">Data Engineering · Quality Assurance · Python Automation</p>
+    <h1 class="article-title">The Art of Data Cleaning: The Most Important Hour You are Probably <em>Skipping</em></h1>
+    <p class="article-lede">Beautiful dashboards built on dirty data are just confident wrong answers. Here's a systematic, automated approach to the step that actually determines whether your analysis is trustworthy — and how to stop doing it manually every time.</p>
+    <div class="article-byline">
+      <span><strong>Pharaoh Chirchir</strong></span>
+      <span>March 20, 2025</span>
+      <span>12 min read</span>
+      <div class="tags"><span class="tag">Python</span><span class="tag">Pandas</span><span class="tag">SQL</span><span class="tag">Automation</span><span class="tag">Data Quality</span></div>
+    </div>
+  </div></div>
+  <div class="article-body">
+    <div class="article-content">
+
+      <!-- INTRO -->
+      <p>I have audited dashboards that had been in production for 18 months before anyone noticed the revenue figures were 12% higher than actuals. The culprit: a JOIN that fan-out-duplicated rows in a source table — quietly and convincingly. The charts looked right. The trend direction was even correct. But the magnitude was wrong, and it had been silently misinforming budgeting decisions for a year and a half.</p>
+
+      <p>That's the insidious thing about dirty data. It does not announce itself. It doesn't throw errors. It produces results that are confident, consistent, and wrong. And if no one builds a systematic cleaning process, the odds of catching it before it causes damage are almost entirely down to luck.</p>
+
+      <div class="pull-quote">
+        <p>"Dirty data doesn't just produce wrong answers — it produces wrong answers that look exactly like right ones. That's what makes it dangerous."</p>
+      </div>
+
+      <p>This post walks through the full professional process: structured auditing, targeted cleaning, and — critically — how to automate the entire pipeline so it runs reliably every time new data arrives, not just the first time you build it.</p>
+
+      <!-- SECTION 1: THE AUDIT -->
+      <h2>Before You Clean: The Structured Audit</h2>
+
+      <p>The first step is never a fix. It is an audit. Before touching a single row, you need to understand what you're dealing with — not just what looks obviously wrong, but what the data <em>should</em> look like and where the gaps are between expectation and reality.</p>
+
+      <p>I run every new dataset through a four-question framework before I write a single transformation:</p>
+
+      <div class="num-callout">
+        <div class="num">1</div>
+        <div class="num-callout-body">
+          <h4>What does each row represent?</h4>
+          <p>The grain of the data is the most fundamental thing to establish. Is each row a transaction, a customer, a session, a daily snapshot? A misunderstood grain level leads to every downstream aggregation being wrong. Document it explicitly — in your notebook, in your pipeline README, in your data dictionary.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">2</div>
+        <div class="num-callout-body">
+          <h4>What's the expected row count and date range?</h4>
+          <p>If you're loading monthly sales data for Jan–Dec 2024, you should be able to predict approximately how many rows you expect based on business volume. If you load 80,000 rows when you expected ~120,000, that gap is information — not something to paper over.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">3</div>
+        <div class="num-callout-body">
+          <h4>Which fields are required for your specific analysis?</h4>
+          <p>Not every column matters equally. Identify which fields are non-negotiable for your use case and treat missing values in those fields as critical failures, not routine imputation targets. A null customer_id in a customer analysis isn't a data quality issue — it's a broken record that should be excluded and flagged.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">4</div>
+        <div class="num-callout-body">
+          <h4>Where did this data come from, and what could have gone wrong upstream?</h4>
+          <p>Every data source has characteristic failure modes. CRM exports often have encoding issues with special characters. API extracts frequently have timezone inconsistencies. ETL pipelines miss late-arriving records. Knowing the source tells you where to look hardest.</p>
+        </div>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — Automated structured audit report</span><span class="code-lang">pandas · tabulate</span></div>
+        <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> tabulate <span class="kw">import</span> tabulate
+<span class="kw">import</span> json
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">audit_dataframe</span>(df: pd.DataFrame, name: str = <span class="st">"dataset"</span>) -> dict:
+    <span class="st">"""
+    Runs a structured quality audit on a DataFrame.
+    Returns a dictionary of findings and prints a readable report.
+    """</span>
+    findings = {}
+    print(<span class="st">f"\n{'='*60}"</span>)
+    print(<span class="st">f"  DATA AUDIT: {name.upper()}"</span>)
+    print(<span class="st">f"  Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}"</span>)
+    print(<span class="st">f"{'='*60}\n"</span>)
+
+    <span class="cm"># 1. Basic shape</span>
+    print(<span class="st">f"Shape: {df.shape[0]:,} rows × {df.shape[1]} columns\n"</span>)
+    findings[<span class="st">'shape'</span>] = df.shape
+
+    <span class="cm"># 2. Missing value analysis — only non-zero</span>
+    missing = df.isnull().sum()
+    missing_pct = (missing / len(df) * <span class="nu">100</span>).round(<span class="nu">2</span>)
+    missing_df = pd.DataFrame({
+        <span class="st">'Missing'</span>: missing,
+        <span class="st">'Pct'</span>: missing_pct,
+        <span class="st">'Dtype'</span>: df.dtypes
+    })[missing > <span class="nu">0</span>].sort_values(<span class="st">'Missing'</span>, ascending=<span class="kw">False</span>)
+
+    <span class="kw">if</span> len(missing_df) > <span class="nu">0</span>:
+        print(<span class="st">"── Missing Values ──────────────────────────────"</span>)
+        print(tabulate(missing_df, headers=<span class="st">'keys'</span>, tablefmt=<span class="st">'simple'</span>), <span class="st">"\n"</span>)
+    <span class="kw">else</span>:
+        print(<span class="st">"✓ No missing values detected\n"</span>)
+    findings[<span class="st">'missing'</span>] = missing_df.to_dict()
+
+    <span class="cm"># 3. Duplicate detection</span>
+    full_dupes = df.duplicated().sum()
+    print(<span class="st">f"── Duplicates ──────────────────────────────────"</span>)
+    print(<span class="st">f"  Full-row duplicates : {full_dupes:,}"</span>)
+    findings[<span class="st">'full_duplicates'</span>] = int(full_dupes)
+
+    <span class="cm"># 4. Data type audit</span>
+    print(<span class="st">f"\n── Data Types ──────────────────────────────────"</span>)
+    dtype_df = df.dtypes.reset_index()
+    dtype_df.columns = [<span class="st">'Column'</span>, <span class="st">'Dtype'</span>]
+    dtype_df[<span class="st">'Inferred'</span>] = [<span class="fn">_suggest_dtype</span>(df[col]) <span class="kw">for</span> col <span class="kw">in</span> df.columns]
+    mismatch = dtype_df[dtype_df[<span class="st">'Dtype'</span>].astype(str) != dtype_df[<span class="st">'Inferred'</span>]]
+    <span class="kw">if</span> len(mismatch) > <span class="nu">0</span>:
+        print(<span class="st">"  ⚠ Potential dtype mismatches:"</span>)
+        print(tabulate(mismatch, headers=<span class="st">'keys'</span>, tablefmt=<span class="st">'simple'</span>))
+    <span class="kw">else</span>:
+        print(<span class="st">"  ✓ Data types look appropriate"</span>)
+    findings[<span class="st">'dtype_mismatches'</span>] = mismatch.to_dict()
+
+    <span class="cm"># 5. Numeric column stats — flag suspicious ranges</span>
+    numeric_cols = df.select_dtypes(include=<span class="st">'number'</span>).columns
+    <span class="kw">if</span> len(numeric_cols) > <span class="nu">0</span>:
+        print(<span class="st">f"\n── Numeric Ranges ──────────────────────────────"</span>)
+        stats = df[numeric_cols].describe().T[[<span class="st">'min'</span>, <span class="st">'max'</span>, <span class="st">'mean'</span>, <span class="st">'std'</span>]]
+        stats[<span class="st">'has_negatives'</span>] = (df[numeric_cols] < <span class="nu">0</span>).any()
+        print(tabulate(stats.round(<span class="nu">2</span>), headers=<span class="st">'keys'</span>, tablefmt=<span class="st">'simple'</span>))
+        findings[<span class="st">'numeric_stats'</span>] = stats.to_dict()
+
+    <span class="cm"># 6. Date column range detection</span>
+    date_cols = df.select_dtypes(include=[<span class="st">'datetime64'</span>]).columns
+    <span class="kw">if</span> len(date_cols) > <span class="nu">0</span>:
+        print(<span class="st">f"\n── Date Ranges ─────────────────────────────────"</span>)
+        <span class="kw">for</span> col <span class="kw">in</span> date_cols:
+            print(<span class="st">f"  {col}: {df[col].min().date()} → {df[col].max().date()} "
+                  f"({df[col].nunique():,} unique dates)"</span>)
+
+    print(<span class="st">f"\n{'='*60}\n"</span>)
+    <span class="kw">return</span> findings
+
+<span class="kw">def</span> <span class="fn">_suggest_dtype</span>(series: pd.Series) -> str:
+    <span class="st">"""Infer the most appropriate dtype for a series."""</span>
+    <span class="kw">if</span> series.dtype == <span class="st">'object'</span>:
+        <span class="kw">try</span>:
+            pd.to_numeric(series.dropna())
+            <span class="kw">return</span> <span class="st">'float64'</span>
+        <span class="kw">except</span>: <span class="kw">pass</span>
+        <span class="kw">try</span>:
+            pd.to_datetime(series.dropna(), infer_datetime_format=<span class="kw">True</span>)
+            <span class="kw">return</span> <span class="st">'datetime64'</span>
+        <span class="kw">except</span>: <span class="kw">pass</span>
+    <span class="kw">return</span> str(series.dtype)</code></pre>
+      </div>
+
+      <!-- SECTION 2: DUPLICATES -->
+      <h2>Step 1: Remove Duplicates — but Define Them First</h2>
+
+      <p>The word "duplicate" is deceptively ambiguous. I've seen analysts drop all full-row duplicates on datasets where multiple identical transactions in a single day were completely legitimate. The cleanup made the data <em>look</em> cleaner while removing valid records. The definition of a duplicate must come from business logic, not from code.</p>
+
+      <p>There are three distinct categories of duplicates you'll encounter in the wild:</p>
+
+      <ul>
+        <li><strong>Exact duplicates</strong> — every field is identical. Usually a pipeline bug (double-load, retry without dedup). Generally safe to drop after verifying.</li>
+        <li><strong>Key duplicates</strong> — the business key (e.g. customer_id + date) repeats, but other fields differ. These are often the result of data merges or slowly-changing dimension issues. You need to decide which version is authoritative — typically the most recent.</li>
+        <li><strong>Near-duplicates</strong> — records that represent the same entity but differ due to encoding, spelling, or time-zone shifts. These require fuzzy matching logic to detect.</li>
+      </ul>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — Layered deduplication with quarantine logging</span><span class="code-lang">pandas</span></div>
+        <pre><code><span class="kw">def</span> <span class="fn">deduplicate_layered</span>(
+    df: pd.DataFrame,
+    key_cols: list,
+    tiebreak_col: str = <span class="kw">None</span>,
+    quarantine_path: str = <span class="st">"quarantine_dupes.csv"</span>
+) -> pd.DataFrame:
+    <span class="st">"""
+    Performs layered deduplication:
+    1. Remove exact full-row duplicates
+    2. Resolve key duplicates by keeping the most recent record
+       (or highest value of tiebreak_col)
+    3. Write all dropped records to a quarantine file for review
+    """</span>
+    original_count = len(df)
+    quarantine = pd.DataFrame()
+
+    <span class="cm"># Layer 1: Full-row duplicates</span>
+    full_dupe_mask = df.duplicated(keep=<span class="st">'first'</span>)
+    <span class="kw">if</span> full_dupe_mask.sum() > <span class="nu">0</span>:
+        quarantine = pd.concat([quarantine, df[full_dupe_mask].assign(
+            drop_reason=<span class="st">'full_row_duplicate'</span>
+        )])
+        df = df[~full_dupe_mask].copy()
+        print(<span class="st">f"  Layer 1 — Full-row dupes removed: {full_dupe_mask.sum():,}"</span>)
+
+    <span class="cm"># Layer 2: Key duplicates — keep most recent by tiebreak_col</span>
+    key_dupe_mask = df.duplicated(subset=key_cols, keep=<span class="kw">False</span>)
+    <span class="kw">if</span> key_dupe_mask.sum() > <span class="nu">0</span> <span class="kw">and</span> tiebreak_col:
+        key_dupes = df[key_dupe_mask].copy()
+        df_clean = df[~key_dupe_mask].copy()
+
+        <span class="cm"># Keep max value of tiebreak_col (e.g. latest timestamp)</span>
+        resolved = (
+            key_dupes
+            .sort_values(tiebreak_col, ascending=<span class="kw">False</span>)
+            .drop_duplicates(subset=key_cols, keep=<span class="st">'first'</span>)
+        )
+        dropped = key_dupes[~key_dupes.index.isin(resolved.index)]
+        quarantine = pd.concat([quarantine, dropped.assign(
+            drop_reason=<span class="st">f'key_duplicate_kept_{tiebreak_col}_max'</span>
+        )])
+        df = pd.concat([df_clean, resolved]).sort_index()
+        print(<span class="st">f"  Layer 2 — Key dupes resolved: kept latest, dropped {len(dropped):,}"</span>)
+
+    <span class="cm"># Write quarantine log</span>
+    <span class="kw">if</span> len(quarantine) > <span class="nu">0</span>:
+        quarantine.to_csv(quarantine_path, index=<span class="kw">False</span>)
+        print(<span class="st">f"  Quarantine log → {quarantine_path} ({len(quarantine):,} records)"</span>)
+
+    print(<span class="st">f"  Total removed: {original_count - len(df):,} | Remaining: {len(df):,}"</span>)
+    <span class="kw">return</span> df
+
+<span class="cm"># Usage</span>
+df_clean = deduplicate_layered(
+    df,
+    key_cols=[<span class="st">'customer_id'</span>, <span class="st">'transaction_date'</span>],
+    tiebreak_col=<span class="st">'updated_at'</span>,
+    quarantine_path=<span class="st">'logs/quarantine_dupes.csv'</span>
+)</code></pre>
+      </div>
+
+      <div class="tip-box">
+        <span class="tip-label">The quarantine pattern</span>
+        <p>Never delete records silently. Every row you drop should land in a quarantine log — a CSV or database table with the dropped record plus a <code>drop_reason</code> column. This creates an audit trail you can defend, reproduce, and hand to a data engineer when the upstream bug surfaces six months later.</p>
+      </div>
+
+      <!-- SECTION 3: MISSING VALUES -->
+      <h2>Step 2: Handle Missing Values with Intent</h2>
+
+      <p>Missing values are not a problem to eliminate — they are information to understand. The question is never just "how do I fill this?" but "why is this missing, and what does that missingness mean?"</p>
+
+      <p>There are three distinct missing value patterns, each requiring a different response:</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Missing pattern</th><th>What it means</th><th>Correct response</th><th>Wrong response</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>MCAR</strong> — Missing Completely At Random</td>
+              <td>No relationship between missingness and any variable. Truly random data loss.</td>
+              <td>Safe to impute with median/mode or drop rows if count is small (&lt;5%)</td>
+              <td>Assuming all missingness is MCAR when it isn't</td>
+            </tr>
+            <tr>
+              <td><strong>MAR</strong> — Missing At Random</td>
+              <td>Missingness depends on other observed variables (e.g., age missing more for older users)</td>
+              <td>Model-based imputation (KNN, iterative imputer) using correlated columns</td>
+              <td>Simple mean/median imputation — introduces systematic bias</td>
+            </tr>
+            <tr>
+              <td><strong>MNAR</strong> — Missing Not At Random</td>
+              <td>Missingness depends on the value itself (e.g., high earners don't report income)</td>
+              <td>Treat as its own category; create a binary flag column; never impute</td>
+              <td>Any imputation — you're manufacturing data about a systematic gap</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — Intelligent missing value handler with pattern detection</span><span class="code-lang">pandas · sklearn</span></div>
+        <pre><code><span class="kw">from</span> sklearn.impute <span class="kw">import</span> KNNImputer, SimpleImputer
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder
+<span class="kw">import</span> warnings
+
+<span class="kw">def</span> <span class="fn">handle_missing</span>(
+    df: pd.DataFrame,
+    required_cols: list = <span class="kw">None</span>,
+    numeric_strategy: str = <span class="st">'knn'</span>,
+    categorical_strategy: str = <span class="st">'mode'</span>,
+    flag_threshold: float = <span class="nu">0.30</span>
+) -> pd.DataFrame:
+    <span class="st">"""
+    Handles missing values with context-aware strategies.
+
+    required_cols     : columns where nulls = record failure (rows dropped + logged)
+    numeric_strategy  : 'median', 'mean', or 'knn' (KNN imputation)
+    categorical_strategy: 'mode' or 'unknown'
+    flag_threshold    : columns above this missingness % get a binary flag column
+    """</span>
+    df = df.copy()
+    report = []
+
+    <span class="cm"># Step 1 — Drop records missing required columns</span>
+    <span class="kw">if</span> required_cols:
+        before = len(df)
+        critical_mask = df[required_cols].isnull().any(axis=<span class="nu">1</span>)
+        <span class="kw">if</span> critical_mask.sum() > <span class="nu">0</span>:
+            dropped = df[critical_mask].copy()
+            dropped[<span class="st">'drop_reason'</span>] = <span class="st">'missing_required_column'</span>
+            dropped.to_csv(<span class="st">'logs/dropped_required.csv'</span>, mode=<span class="st">'a'</span>, index=<span class="kw">False</span>)
+            df = df[~critical_mask]
+            print(<span class="st">f"  ✗ Dropped {critical_mask.sum():,} rows missing required columns"</span>)
+
+    <span class="cm"># Step 2 — Flag high-missingness columns before imputing</span>
+    missing_pct = df.isnull().mean()
+    high_missing = missing_pct[missing_pct > flag_threshold].index.tolist()
+    <span class="kw">for</span> col <span class="kw">in</span> high_missing:
+        flag_col = <span class="st">f'{col}__was_null'</span>
+        df[flag_col] = df[col].isnull().astype(int)
+        print(<span class="st">f"  ⚑ Flagged '{col}' ({missing_pct[col]:.1%} null) → '{flag_col}'"</span>)
+        report.append({<span class="st">'column'</span>: col, <span class="st">'strategy'</span>: <span class="st">'flagged'</span>, <span class="st">'pct_null'</span>: missing_pct[col]})
+
+    <span class="cm"># Step 3 — Impute numeric columns</span>
+    numeric_cols = df.select_dtypes(include=<span class="st">'number'</span>).columns.tolist()
+    numeric_nulls = [c <span class="kw">for</span> c <span class="kw">in</span> numeric_cols <span class="kw">if</span> df[c].isnull().sum() > <span class="nu">0</span>]
+
+    <span class="kw">if</span> numeric_nulls:
+        <span class="kw">if</span> numeric_strategy == <span class="st">'knn'</span>:
+            imputer = KNNImputer(n_neighbors=<span class="nu">5</span>)
+            df[numeric_nulls] = imputer.fit_transform(df[numeric_nulls])
+            print(<span class="st">f"  ✓ KNN-imputed {len(numeric_nulls)} numeric column(s)"</span>)
+        <span class="kw">else</span>:
+            fill = df[numeric_nulls].median() <span class="kw">if</span> numeric_strategy == <span class="st">'median'</span> <span class="kw">else</span> df[numeric_nulls].mean()
+            df[numeric_nulls] = df[numeric_nulls].fillna(fill)
+            print(<span class="st">f"  ✓ {numeric_strategy.title()}-imputed {len(numeric_nulls)} numeric column(s)"</span>)
+
+    <span class="cm"># Step 4 — Impute categorical columns</span>
+    cat_cols = df.select_dtypes(include=<span class="st">'object'</span>).columns.tolist()
+    cat_nulls = [c <span class="kw">for</span> c <span class="kw">in</span> cat_cols <span class="kw">if</span> df[c].isnull().sum() > <span class="nu">0</span>]
+
+    <span class="kw">for</span> col <span class="kw">in</span> cat_nulls:
+        <span class="kw">if</span> categorical_strategy == <span class="st">'mode'</span>:
+            df[col] = df[col].fillna(df[col].mode().iloc[<span class="nu">0</span>])
+        <span class="kw">else</span>:
+            df[col] = df[col].fillna(<span class="st">'Unknown'</span>)
+        print(<span class="st">f"  ✓ Filled '{col}' nulls with {categorical_strategy}"</span>)
+
+    <span class="kw">return</span> df
+
+<span class="cm"># Usage</span>
+df_clean = handle_missing(
+    df,
+    required_cols=[<span class="st">'customer_id'</span>, <span class="st">'transaction_date'</span>],
+    numeric_strategy=<span class="st">'knn'</span>,
+    categorical_strategy=<span class="st">'mode'</span>,
+    flag_threshold=<span class="nu">0.20</span>
+)</code></pre>
+      </div>
+
+      <!-- SECTION 4: STANDARDISATION -->
+      <h2>Step 3: Standardise Formats Ruthlessly</h2>
+
+      <p>Inconsistent formats are the silent assassin of aggregations and joins. "ACME Corp", "Acme corp", and " acme corp " are three different entities in SQL. A date stored as "2024-03-15" in one table and "15/03/2024" in another will never join. A phone number with and without country code will never match for deduplication.</p>
+
+      <p>The most dangerous thing about format inconsistencies is that they fail silently. Your query runs, your aggregation completes, and the result is quietly, systematically wrong.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — Automated format standardisation pipeline</span><span class="code-lang">pandas · re</span></div>
+        <pre><code><span class="kw">import</span> re
+
+<span class="kw">def</span> <span class="fn">standardise_text_columns</span>(df: pd.DataFrame, cols: list) -> pd.DataFrame:
+    <span class="st">"""Strip whitespace, normalise case, remove double spaces."""</span>
+    df = df.copy()
+    <span class="kw">for</span> col <span class="kw">in</span> cols:
+        original_unique = df[col].nunique()
+        df[col] = (
+            df[col]
+            .astype(str)
+            .str.strip()
+            .str.title()
+            .str.replace(r<span class="st">'\s+'</span>, <span class="st">' '</span>, regex=<span class="kw">True</span>)
+            .replace(<span class="st">'Nan'</span>, np.nan)
+        )
+        new_unique = df[col].nunique()
+        <span class="kw">if</span> new_unique < original_unique:
+            print(<span class="st">f"  '{col}': {original_unique} → {new_unique} unique values (collapsed {original_unique - new_unique} variants)"</span>)
+    <span class="kw">return</span> df
+
+<span class="kw">def</span> <span class="fn">standardise_dates</span>(df: pd.DataFrame, date_cols: list) -> pd.DataFrame:
+    <span class="st">"""
+    Parses date columns with mixed formats, coerces failures to NaT,
+    and creates a validation flag for unparseable values.
+    """</span>
+    df = df.copy()
+    <span class="kw">for</span> col <span class="kw">in</span> date_cols:
+        <span class="kw">if</span> df[col].dtype == <span class="st">'object'</span>:
+            parsed = pd.to_datetime(df[col], infer_datetime_format=<span class="kw">True</span>, errors=<span class="st">'coerce'</span>)
+            failures = parsed.isnull() & df[col].notnull()
+            <span class="kw">if</span> failures.sum() > <span class="nu">0</span>:
+                print(<span class="st">f"  ⚠ '{col}': {failures.sum()} unparseable values → NaT"</span>)
+                print(<span class="st">f"     Samples: {df.loc[failures, col].unique()[:5].tolist()}"</span>)
+                df[<span class="st">f'{col}__parse_error'</span>] = failures.astype(int)
+            df[col] = parsed
+        print(<span class="st">f"  ✓ '{col}' → datetime64, range: {df[col].min().date()} – {df[col].max().date()}"</span>)
+    <span class="kw">return</span> df
+
+<span class="kw">def</span> <span class="fn">standardise_phone</span>(series: pd.Series, country_code: str = <span class="st">'+254'</span>) -> pd.Series:
+    <span class="st">"""Normalises phone numbers to E.164 format: +254XXXXXXXXX"""</span>
+    <span class="kw">def</span> <span class="fn">normalise</span>(val):
+        <span class="kw">if</span> pd.isnull(val): <span class="kw">return</span> np.nan
+        digits = re.sub(r<span class="st">\D</span>, <span class="st">''</span>, str(val))
+        <span class="kw">if</span> digits.startswith(<span class="st">'0'</span>):   digits = digits[<span class="nu">1</span>:]  <span class="cm"># strip leading 0</span>
+        <span class="kw">if</span> digits.startswith(<span class="st">'254'</span>): digits = digits[<span class="nu">3</span>:]  <span class="cm"># strip country code</span>
+        <span class="kw">return</span> <span class="st">f'{country_code}{digits}'</span> <span class="kw">if</span> len(digits) == <span class="nu">9</span> <span class="kw">else</span> np.nan
+    <span class="kw">return</span> series.apply(normalise)</code></pre>
+      </div>
+
+      <!-- SECTION 5: OUTLIER DETECTION -->
+      <h2>Step 4: Detect and Decide on Outliers</h2>
+
+      <p>Outliers are the most over-corrected issue in data cleaning. The reflex to remove them is understandable but frequently wrong. A $50,000 transaction on a platform where the average is $200 might be your most important customer — or a fat-finger data entry error — or a legitimate B2B purchase in a consumer-facing dataset. The outlier itself tells you nothing. The business context tells you everything.</p>
+
+      <p>The correct workflow is: <strong>detect</strong>, then <strong>investigate</strong>, then <strong>decide</strong>. Never automate the decision step without business validation.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — Multi-method outlier detection with comparison report</span><span class="code-lang">pandas · sklearn · scipy</span></div>
+        <pre><code><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> IsolationForest
+<span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="kw">def</span> <span class="fn">detect_outliers</span>(
+    df: pd.DataFrame,
+    numeric_cols: list,
+    methods: list = [<span class="st">'iqr'</span>, <span class="st">'zscore'</span>, <span class="st">'isolation_forest'</span>],
+    contamination: float = <span class="nu">0.02</span>
+) -> pd.DataFrame:
+    <span class="st">"""
+    Runs multiple outlier detection methods and compares flags.
+    Returns df with one flag column per method + a consensus score.
+    High consensus score = more methods agree it's an outlier.
+    """</span>
+    result = df.copy()
+    flag_cols = []
+
+    <span class="kw">if</span> <span class="st">'iqr'</span> <span class="kw">in</span> methods:
+        mask = pd.Series(<span class="kw">False</span>, index=df.index)
+        <span class="kw">for</span> col <span class="kw">in</span> numeric_cols:
+            Q1, Q3 = df[col].quantile([<span class="nu">0.25</span>, <span class="nu">0.75</span>])
+            IQR = Q3 - Q1
+            mask |= (df[col] < (Q1 - <span class="nu">1.5</span>*IQR)) | (df[col] > (Q3 + <span class="nu">1.5</span>*IQR))
+        result[<span class="st">'outlier_iqr'</span>] = mask.astype(int)
+        flag_cols.append(<span class="st">'outlier_iqr'</span>)
+        print(<span class="st">f"  IQR method     : {mask.sum():,} flagged ({mask.mean():.2%})"</span>)
+
+    <span class="kw">if</span> <span class="st">'zscore'</span> <span class="kw">in</span> methods:
+        z_scores = np.abs(stats.zscore(df[numeric_cols].fillna(<span class="nu">0</span>)))
+        mask = (z_scores > <span class="nu">3</span>).any(axis=<span class="nu">1</span>)
+        result[<span class="st">'outlier_zscore'</span>] = mask.astype(int)
+        flag_cols.append(<span class="st">'outlier_zscore'</span>)
+        print(<span class="st">f"  Z-score method : {mask.sum():,} flagged ({mask.mean():.2%})"</span>)
+
+    <span class="kw">if</span> <span class="st">'isolation_forest'</span> <span class="kw">in</span> methods:
+        iso = IsolationForest(contamination=contamination, random_state=<span class="nu">42</span>)
+        preds = iso.fit_predict(df[numeric_cols].fillna(<span class="nu">0</span>))
+        mask = (preds == -<span class="nu">1</span>)
+        result[<span class="st">'outlier_isoforest'</span>] = mask.astype(int)
+        flag_cols.append(<span class="st">'outlier_isoforest'</span>)
+        print(<span class="st">f"  Isolation Forest: {mask.sum():,} flagged ({mask.mean():.2%})"</span>)
+
+    <span class="cm"># Consensus score: how many methods agree this is an outlier</span>
+    result[<span class="st">'outlier_consensus'</span>] = result[flag_cols].sum(axis=<span class="nu">1</span>)
+    high_confidence = (result[<span class="st">'outlier_consensus'</span>] == len(methods))
+    print(<span class="st">f"\n  High-confidence outliers (all methods agree): {high_confidence.sum():,}"</span>)
+    print(<span class="st">f"  → Recommend reviewing these before any action\n"</span>)
+
+    <span class="kw">return</span> result
+
+<span class="cm"># Usage — detect, then separate for business review</span>
+df_flagged = detect_outliers(
+    df_clean,
+    numeric_cols=[<span class="st">'amount'</span>, <span class="st">'session_duration_s'</span>, <span class="st">'items_count'</span>]
+)
+
+<span class="cm"># Write high-confidence outliers to review file — never auto-delete</span>
+review = df_flagged[df_flagged[<span class="st">'outlier_consensus'</span>] >= <span class="nu">2</span>]
+review.to_csv(<span class="st">'logs/outliers_for_review.csv'</span>, index=<span class="kw">False</span>)
+print(<span class="st">f"Wrote {len(review):,} records to outliers_for_review.csv"</span>)</code></pre>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">The decision framework I use</span>
+        <p>After detecting outliers: (1) Check against source system — is the value in the raw data, or was it introduced in the pipeline? (2) Ask a domain expert whether the value is plausible. (3) If removing, always replace with a flag column — never silently delete. The outlier_review.csv goes to a stakeholder, not to a delete statement.</p>
+      </div>
+
+      <!-- SECTION 6: FULL AUTOMATION PIPELINE -->
+      <h2>Step 5: Automate the Entire Pipeline</h2>
+
+      <p>Here's where professional data cleaning diverges from what most tutorials teach. Running these steps once, manually, in a notebook, is not data cleaning — it's a one-time fix that creates a false sense of security. The next data load will arrive with the same problems, and you'll repeat the work. Real data cleaning is a <em>pipeline</em>: automated, logged, versioned, and observable.</p>
+
+      <p>The architecture below wraps all previous steps into a single orchestrated class that can be called from any data ingestion workflow, triggered by a scheduler, or run as part of a CI/CD data pipeline.</p>
+
+      <div class="code-wrap">
+        <div class="code-header"><span>Python — DataCleaningPipeline: production-grade orchestration class</span><span class="code-lang">pandas · pathlib · logging</span></div>
+        <pre><code><span class="kw">import</span> logging
+<span class="kw">import</span> hashlib
+<span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field
+<span class="kw">from</span> typing <span class="kw">import</span> Optional, List
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="fn">CleaningConfig</span>:
+    <span class="st">"""Configuration object — version-controlled, not hard-coded in scripts."""</span>
+    required_cols:      List[str]   = field(default_factory=list)
+    key_cols:           List[str]   = field(default_factory=list)
+    tiebreak_col:       Optional[str] = <span class="kw">None</span>
+    text_cols:          List[str]   = field(default_factory=list)
+    date_cols:          List[str]   = field(default_factory=list)
+    numeric_cols:       List[str]   = field(default_factory=list)
+    numeric_strategy:   str         = <span class="st">'knn'</span>
+    outlier_methods:    List[str]   = field(default_factory=lambda: [<span class="st">'iqr'</span>, <span class="st">'zscore'</span>])
+    log_dir:            str         = <span class="st">'logs'</span>
+
+<span class="kw">class</span> <span class="fn">DataCleaningPipeline</span>:
+    <span class="st">"""
+    End-to-end automated data cleaning pipeline.
+    Logs every action, creates audit trails, and produces
+    a cleaning report for each run.
+    """</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, config: CleaningConfig):
+        self.config = config
+        self.log_dir = Path(config.log_dir)
+        self.log_dir.mkdir(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)
+        self.run_id = datetime.now().strftime(<span class="st">'%Y%m%d_%H%M%S'</span>)
+        self.report = {<span class="st">'run_id'</span>: self.run_id, <span class="st">'steps'</span>: []}
+        self._setup_logging()
+
+    <span class="kw">def</span> <span class="fn">_setup_logging</span>(self):
+        log_file = self.log_dir / <span class="st">f'cleaning_{self.run_id}.log'</span>
+        logging.basicConfig(
+            level=logging.INFO,
+            format=<span class="st">'%(asctime)s | %(levelname)s | %(message)s'</span>,
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler()
+            ]
+        )
+        self.logger = logging.getLogger(__name__)
+
+    <span class="kw">def</span> <span class="fn">_checkpoint</span>(self, step: str, df_before: pd.DataFrame, df_after: pd.DataFrame):
+        <span class="st">"""Record row counts and step metadata for the audit report."""</span>
+        dropped = len(df_before) - len(df_after)
+        self.report[<span class="st">'steps'</span>].append({
+            <span class="st">'step'</span>:          step,
+            <span class="st">'rows_before'</span>:   len(df_before),
+            <span class="st">'rows_after'</span>:    len(df_after),
+            <span class="st">'rows_dropped'</span>:  dropped,
+            <span class="st">'cols_before'</span>:   len(df_before.columns),
+            <span class="st">'cols_after'</span>:    len(df_after.columns),
+        })
+        self.logger.info(<span class="st">f"{step}: {len(df_before):,} → {len(df_after):,} rows ({dropped:,} dropped)"</span>)
+
+    <span class="kw">def</span> <span class="fn">run</span>(self, df: pd.DataFrame, source_name: str = <span class="st">'unknown'</span>) -> pd.DataFrame:
+        self.report[<span class="st">'source'</span>] = source_name
+        self.report[<span class="st">'input_rows'</span>] = len(df)
+        self.report[<span class="st">'input_cols'</span>] = len(df.columns)
+        self.report[<span class="st">'input_hash'</span>] = hashlib.md5(
+            pd.util.hash_pandas_object(df).values
+        ).hexdigest()
+
+        <span class="cm"># Run pipeline steps</span>
+        steps = [
+            (<span class="st">'audit'</span>,         <span class="kw">lambda</span> d: (audit_dataframe(d, source_name), d)[<span class="nu">1</span>]),
+            (<span class="st">'deduplicate'</span>,   <span class="kw">lambda</span> d: deduplicate_layered(
+                                    d, self.config.key_cols, self.config.tiebreak_col,
+                                    str(self.log_dir / <span class="st">f'quarantine_{self.run_id}.csv'</span>)
+                               )),
+            (<span class="st">'missing_values'</span>,<span class="kw">lambda</span> d: handle_missing(
+                                    d, self.config.required_cols,
+                                    self.config.numeric_strategy
+                               )),
+            (<span class="st">'standardise_text'</span>, <span class="kw">lambda</span> d: standardise_text_columns(
+                                    d, self.config.text_cols
+                               )),
+            (<span class="st">'standardise_dates'</span>,<span class="kw">lambda</span> d: standardise_dates(
+                                    d, self.config.date_cols
+                               )),
+            (<span class="st">'detect_outliers'</span>,<span class="kw">lambda</span> d: detect_outliers(
+                                    d, self.config.numeric_cols,
+                                    self.config.outlier_methods
+                               )),
+        ]
+
+        <span class="kw">for</span> step_name, step_fn <span class="kw">in</span> steps:
+            before = df.copy()
+            <span class="kw">try</span>:
+                df = step_fn(df)
+                self._checkpoint(step_name, before, df)
+            <span class="kw">except</span> Exception <span class="kw">as</span> e:
+                self.logger.error(<span class="st">f"Step '{step_name}' failed: {e}"</span>)
+                <span class="kw">raise</span>
+
+        <span class="cm"># Write cleaning report</span>
+        report_path = self.log_dir / <span class="st">f'report_{self.run_id}.json'</span>
+        <span class="kw">with</span> open(report_path, <span class="st">'w'</span>) <span class="kw">as</span> f:
+            json.dump(self.report, f, indent=<span class="nu">2</span>, default=str)
+        self.logger.info(<span class="st">f"Cleaning report written → {report_path}"</span>)
+
+        <span class="kw">return</span> df
+
+<span class="cm"># ── Usage ───────────────────────────────────────────────────────</span>
+config = CleaningConfig(
+    required_cols    = [<span class="st">'customer_id'</span>, <span class="st">'transaction_date'</span>],
+    key_cols         = [<span class="st">'customer_id'</span>, <span class="st">'transaction_date'</span>],
+    tiebreak_col     = <span class="st">'updated_at'</span>,
+    text_cols        = [<span class="st">'region'</span>, <span class="st">'category'</span>, <span class="st">'customer_name'</span>],
+    date_cols        = [<span class="st">'transaction_date'</span>, <span class="st">'updated_at'</span>],
+    numeric_cols     = [<span class="st">'amount'</span>, <span class="st">'session_duration_s'</span>],
+    numeric_strategy = <span class="st">'knn'</span>,
+    outlier_methods  = [<span class="st">'iqr'</span>, <span class="st">'zscore'</span>, <span class="st">'isolation_forest'</span>],
+    log_dir          = <span class="st">'logs/cleaning_runs'</span>
+)
+
+df_raw = pd.read_csv(<span class="st">'customer_transactions.csv'</span>, parse_dates=[<span class="st">'transaction_date'</span>])
+pipeline = DataCleaningPipeline(config)
+df_clean = pipeline.run(df_raw, source_name=<span class="st">'customer_transactions'</span>)
+df_clean.to_csv(<span class="st">'output/transactions_clean.csv'</span>, index=<span class="kw">False</span>)
+print(<span class="st">f"\n✓ Pipeline complete: {len(df_clean):,} clean rows ready for analysis."</span>)</code></pre>
+      </div>
+
+      <!-- SECTION 7: SCHEDULING -->
+      <h2>Step 6: Schedule and Monitor Your Pipeline</h2>
+
+      <p>A cleaning pipeline that runs once is a script. A cleaning pipeline that runs automatically every time new data arrives is infrastructure. The distinction matters enormously for production analytics work — and it's where most analysts stop short.</p>
+
+      <p>The two most practical options for scheduling Python cleaning pipelines in a professional environment are:</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Tool</th><th>Best for</th><th>Setup complexity</th><th>Observability</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Apache Airflow</strong></td>
+              <td>Enterprise pipelines, complex DAG dependencies</td>
+              <td>High — requires server deployment</td>
+              <td>Excellent — full UI, retry logic, alerting</td>
+            </tr>
+            <tr>
+              <td><strong>Prefect</strong></td>
+              <td>Modern data teams; cloud-native</td>
+              <td>Medium — cloud-hosted option available</td>
+              <td>Excellent — flow-level observability</td>
+            </tr>
+            <tr>
+              <td><strong>GitHub Actions</strong></td>
+              <td>Scheduled jobs on a repo-based codebase</td>
+              <td>Low — YAML config, no infrastructure</td>
+              <td>Good — logs per run, email on failure</td>
+            </tr>
+            <tr>
+              <td><strong>Cron + logging</strong></td>
+              <td>Simple recurring pipelines on a server</td>
+              <td>Very low</td>
+              <td>Basic — requires custom alerting setup</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tip-box">
+        <span class="tip-label">The one monitoring metric every cleaning pipeline needs</span>
+        <p>Track <strong>row count ratio</strong> between runs: <code>rows_clean / rows_raw</code>. If this ratio drops by more than 5% compared to the previous run, trigger an alert. A sudden increase in dropped records is almost always a signal of an upstream data problem — a schema change, a pipeline failure, or a new data source with different quality characteristics.</p>
+      </div>
+
+      <!-- SECTION 8: DOCUMENTATION -->
+      <h2>Step 7: Document Every Decision — as Code</h2>
+
+      <p>Documentation that lives outside the code rots. Within six months, the README doesn't match the pipeline, the comments describe what the code used to do, and no one knows why the outlier threshold is 3 standard deviations instead of 2.5. The solution is to make your cleaning decisions explicit in the code itself — not as comments, but as configuration objects that are version-controlled alongside the logic.</p>
+
+      <p>The <code>CleaningConfig</code> dataclass above does exactly this. Every business decision — which columns are required, what the deduplication key is, which outlier methods to use — lives in a single, readable, diff-able object. When a stakeholder asks why we're flagging customer_id nulls as critical failures, the answer is in the config, timestamped in the git log, traceable to the original requirement.</p>
+
+      <div class="callout">
+        <span class="callout-label">The audit trail that saved a project</span>
+        <p>A client's compliance team asked us, eight months after go-live, to demonstrate that no personally identifiable data had been introduced during cleaning. Because the pipeline logged every transformation with timestamps, input/output row counts, and a hash of the input data, we produced the full audit trail in under an hour. Without the logging architecture, that audit would have taken weeks — and likely would have failed.</p>
+      </div>
+
+      <!-- TAKEAWAYS -->
+      <div class="takeaways">
+        <h4>Key takeaways</h4>
+        <ul>
+          <li>Audit before you clean. Run a structured profiling report — shape, missing value patterns, data types, numeric ranges — before writing a single transformation. You're diagnosing before treating.</li>
+          <li>Define duplicates in business terms before writing code. Key duplicates and full-row duplicates require completely different resolution strategies.</li>
+          <li>Missing values are information. Understand MCAR vs MAR vs MNAR before choosing an imputation strategy. Flag high-missingness columns with binary indicator columns before imputing.</li>
+          <li>Detect outliers with multiple methods and a consensus score. Then investigate — never automate the removal decision without business validation.</li>
+          <li>Standardise formats as early in the pipeline as possible. The same entity under two different string representations silently breaks every join and aggregation downstream.</li>
+          <li>Build a pipeline, not a script. Wrap every step in an orchestrated class with run-level logging, quarantine files, and a JSON report per execution.</li>
+          <li>Every dropped row should land in a quarantine file with a documented reason. The audit trail is not optional in production analytics.</li>
+          <li>Schedule and monitor your pipeline. Track row count ratio as the primary health metric — a sudden drop signals an upstream problem before it reaches your dashboards.</li>
+        </ul>
+      </div>
+
+      <div class="tldr">
+        <span class="tldr-label">TL;DR</span>
+        <p>Professional data cleaning isn't about running a few Pandas commands on a dirty CSV. It's about building an automated, observable, auditable pipeline that catches the same problems reliably every time new data arrives — and logs every decision so you can defend your analysis six months later. Audit first. Define your terms. Flag before you drop. Automate before you ship. And always, always keep the quarantine log.</p>
+      </div>
+
+      <p style="font-size:.83rem; color:var(--g400); margin-top:2.5rem; border-top:1px solid var(--g200); padding-top:1.5rem;">
+        <strong>What's next:</strong> <button class="read-link post-link" data-post="blog2" style="font-size:.83rem;">Embracing Data Visualization <span class="arrow">→</span></button>
+      </p>
+      <div class="author-bio-section">
+        <h4>About the author</h4>
+        <p><span class="author-bio-name">Pharaoh Chirchir</span> is a Senior Data Analyst with 8+ years of experience building production-grade analytical pipelines. He writes about the craft of data work — the techniques, the failures, and the mindset shifts that actually matter on the job.</p>
+      </div>
+
+      <div class="reactions-section">
+        <span class="reactions-label">Did this resonate with you?</span>
+        <div class="reactions-row"></div>
+        <div class="reactions-thanks"></div>
+        <div class="reactions-share">
+          <span class="share-label">Share this post</span>
+          <button class="share-btn" data-post="blog5">🔗 Copy link</button>
+        </div>
+      </div>
+    </div><!-- /article-content -->
+
+    <aside class="article-toc" aria-label="Table of contents">
+      <p class="toc-label">In this post</p>
+      <ul class="toc-list">
+        <li><a>The structured audit</a></li>
+        <li><a>Layered deduplication</a></li>
+        <li><a>Missing value patterns</a></li>
+        <li><a>Format standardisation</a></li>
+        <li><a>Multi-method outlier detection</a></li>
+        <li><a>Full pipeline automation</a></li>
+        <li><a>Scheduling &amp; monitoring</a></li>
+        <li><a>Documentation as code</a></li>
+      </ul>
+      <div class="next-post-box">
+        <span class="np-label">Read next</span>
+        <button class="read-link post-link" data-post="blog2">Data Visualization <span class="arrow">→</span></button>
+      </div>
+    </aside>
+  </div>
+</div><!-- /blog5 -->
