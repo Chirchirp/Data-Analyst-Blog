@@ -1,0 +1,639 @@
+<div class="post-detail" id="blog7" role="main">
+
+<style>
+  /* ══ BLOG 7 — SCOPED STYLES ══
+     All rules scoped to #blog7 to prevent bleeding into the SPA.
+     Original design (diagrams, medallion cards, impact grid, etc.) fully preserved.
+  */
+
+  #blog7 {
+    --b7-blue-50:   #E6F1FB;
+    --b7-blue-100:  #B5D4F4;
+    --b7-blue-200:  #85B7EB;
+    --b7-blue-600:  #185FA5;
+    --b7-blue-800:  #0C447C;
+    --b7-green-50:  #EAF3DE;
+    --b7-green-100: #C0DD97;
+    --b7-green-800: #27500A;
+    --b7-coral-50:  #FAECE7;
+    --b7-coral-100: #F5C4B3;
+    --b7-coral-700: #993C1D;
+    --b7-amber-50:  #FAEEDA;
+    --b7-amber-100: #FAC775;
+    --b7-gray-50:   #F8F8F6;
+    --b7-gray-100:  #EDEDEA;
+    --b7-gray-200:  #DDDDD8;
+    --b7-text:      #1a1a18;
+    --b7-text-muted:#5a5a56;
+    --b7-border:    rgba(0,0,0,0.1);
+  }
+
+  /* Layout handled by global .article-body class — no override needed */
+
+  #blog7 .article-header { border-bottom: 0.5px solid var(--b7-border); padding-bottom: 2rem; }
+  #blog7 .article-header-inner { max-width: 1200px; margin: 0 auto; padding: 3.5rem var(--site-padding) 2rem; }
+  #blog7 .article-series { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--b7-blue-600); margin-bottom: 0.75rem; }
+  #blog7 .article-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 4.5vw, 3.1rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.025em; margin-bottom: 1rem; color: var(--b7-text); }
+  #blog7 .article-title em { font-style: italic; color: var(--b7-blue-600); }
+  #blog7 .article-lede { font-size: 1.12rem; font-style: italic; font-weight: 300; line-height: 1.85; color: var(--b7-text-muted); margin-bottom: 1.5rem; max-width: 700px; }
+  #blog7 .article-byline { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--b7-text-muted); }
+  #blog7 .article-byline strong { color: var(--b7-text); font-weight: 500; }
+  #blog7 .b7-dot { opacity: 0.35; }
+  #blog7 .b7-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  #blog7 .b7-tag { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 3px 10px; border-radius: 100px; border: 0.5px solid var(--b7-gray-200); color: var(--b7-text-muted); }
+
+  #blog7 .article-content { padding: 2.5rem 0 5rem; min-width: 0; }
+  #blog7 .article-content p { font-size: 16px; line-height: 1.85; margin-bottom: 1.3rem; color: var(--b7-text); }
+  #blog7 .article-content h2 { font-family: 'Syne', sans-serif; font-size: 1.55rem; font-weight: 700; line-height: 1.2; margin: 2.5rem 0 0.8rem; color: var(--b7-text); }
+  #blog7 .article-content h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--b7-text); }
+  #blog7 .article-content code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 13px; background: var(--b7-gray-100); color: #C04B30; padding: 2px 6px; border-radius: 4px; }
+  #blog7 hr.divider { border: none; border-top: 0.5px solid var(--b7-border); margin: 3rem 0; }
+
+  #blog7 .pull-quote { border-left: 3px solid var(--b7-blue-600); padding: 0.85rem 1.4rem; margin: 2rem 0; background: rgba(230,241,251,0.3); border-radius: 0 10px 10px 0; }
+  #blog7 .pull-quote p { font-size: 1.08rem; font-style: italic; font-weight: 300; margin: 0; line-height: 1.75; }
+
+  #blog7 .section-marker { display: flex; align-items: center; gap: 12px; margin: 2.5rem 0 1.25rem; }
+  #blog7 .section-marker span { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--b7-blue-600); background: var(--b7-blue-50); border: 0.5px solid var(--b7-blue-100); border-radius: 100px; padding: 4px 14px; white-space: nowrap; }
+  #blog7 .section-marker::after { content: ''; flex: 1; height: 0.5px; background: var(--b7-border); }
+
+  #blog7 .num-callout { display: flex; gap: 18px; align-items: flex-start; margin-bottom: 1.5rem; padding: 1.1rem 1.25rem; background: var(--b7-gray-50); border: 0.5px solid var(--b7-gray-200); border-radius: 14px; transition: border-color 0.2s, transform 0.2s; }
+  #blog7 .num-callout:hover { border-color: var(--b7-blue-100); transform: translateX(3px); }
+  #blog7 .num { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--b7-blue-100); line-height: 1; flex-shrink: 0; min-width: 36px; padding-top: 2px; }
+  #blog7 .num-callout-body h4 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--b7-text); margin-bottom: 5px; }
+  #blog7 .num-callout-body p { font-size: 14px; margin: 0; line-height: 1.7; color: var(--b7-text-muted); }
+
+  #blog7 .callout { background: var(--b7-blue-50); border: 0.5px solid var(--b7-blue-100); border-radius: 12px; padding: 1rem 1.25rem; margin: 1.5rem 0; }
+  #blog7 .callout-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--b7-blue-800); display: block; margin-bottom: 5px; }
+  #blog7 .callout p { font-size: 14px; margin: 0; color: var(--b7-blue-800); line-height: 1.7; }
+
+  #blog7 .tip-box { background: var(--b7-amber-50); border: 0.5px solid var(--b7-amber-100); border-radius: 12px; padding: 1rem 1.25rem; margin: 1.25rem 0 1.75rem; }
+  #blog7 .tip-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #7C4A00; display: block; margin-bottom: 5px; }
+  #blog7 .tip-box p { font-size: 13.5px; margin: 0; color: #5C3700; line-height: 1.65; }
+  #blog7 .tip-box code { background: rgba(0,0,0,0.07); color: #7C4A00; }
+
+  #blog7 .data-table-wrap { margin: 1.5rem 0; overflow-x: auto; border-radius: 12px; border: 0.5px solid var(--b7-gray-200); }
+  #blog7 .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  #blog7 .data-table thead { background: var(--b7-gray-50); border-bottom: 1px solid var(--b7-gray-200); }
+  #blog7 .data-table th { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--b7-text-muted); padding: 10px 14px; text-align: left; }
+  #blog7 .data-table td { padding: 10px 14px; border-bottom: 0.5px solid var(--b7-gray-100); color: var(--b7-text); vertical-align: top; line-height: 1.5; }
+  #blog7 .data-table tbody tr:last-child td { border-bottom: none; }
+  #blog7 .data-table tbody tr:hover td { background: var(--b7-gray-50); }
+  #blog7 .rel-high { color: #14532D; background: #DCFCE7; padding: 2px 8px; border-radius: 100px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  #blog7 .rel-med  { color: #7C4A00; background: #FEF3C7; padding: 2px 8px; border-radius: 100px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  #blog7 .rel-low  { color: #7F1D1D; background: #FEE2E2; padding: 2px 8px; border-radius: 100px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+
+  #blog7 .pros-cons { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 1.5rem 0; }
+  @media (max-width: 560px) { #blog7 .pros-cons { grid-template-columns: 1fr; } }
+  #blog7 .pro-box, #blog7 .con-box { border-radius: 12px; padding: 1.1rem 1.3rem; border: 0.5px solid; }
+  #blog7 .pro-box { background: rgba(234,243,222,0.5); border-color: var(--b7-green-100); }
+  #blog7 .con-box { background: rgba(250,236,231,0.5); border-color: var(--b7-coral-100); }
+  #blog7 .pro-box h4 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--b7-green-800); margin-bottom: 10px; }
+  #blog7 .con-box h4 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--b7-coral-700); margin-bottom: 10px; }
+  #blog7 .pro-box ul, #blog7 .con-box ul { padding-left: 1rem; }
+  #blog7 .pro-box li, #blog7 .con-box li { font-size: 13px; line-height: 1.65; margin-bottom: 5px; color: var(--b7-text); }
+
+  #blog7 .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 1.75rem 0; }
+  #blog7 .impact-card { background: var(--b7-gray-50); border: 0.5px solid var(--b7-gray-200); border-radius: 14px; padding: 1.1rem 1rem; text-align: center; transition: border-color 0.2s, transform 0.2s; }
+  #blog7 .impact-card:hover { border-color: var(--b7-blue-100); transform: translateY(-2px); }
+  #blog7 .impact-before { font-size: 11px; color: var(--b7-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+  #blog7 .impact-arrow  { font-size: 18px; color: var(--b7-blue-600); font-weight: 700; margin: 3px 0; }
+  #blog7 .impact-after  { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: var(--b7-green-800); line-height: 1; }
+  #blog7 .impact-label  { font-size: 12px; color: var(--b7-text-muted); margin-top: 4px; line-height: 1.4; }
+  #blog7 .impact-delta  { font-size: 11px; font-weight: 600; color: #16A34A; background: var(--b7-green-50); border: 0.5px solid var(--b7-green-100); border-radius: 100px; padding: 2px 8px; display: inline-block; margin-top: 6px; }
+
+  /* Architecture diagram */
+  #blog7 .diagram-wrap { background: #F0F4FB; border: 1px solid #D0DAF0; border-radius: 20px; padding: 2rem 1.25rem 2.5rem; margin: 1.75rem 0; }
+  #blog7 .diagram-title { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; text-align: center; color: #7A8299; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2rem; }
+  #blog7 .v-pipeline { display: flex; flex-direction: column; align-items: stretch; max-width: 680px; margin: 0 auto; }
+  #blog7 .v-stage { display: flex; align-items: stretch; gap: 14px; }
+  #blog7 .v-stage-label { width: 40px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+  #blog7 .v-stage-badge { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; border: 2.5px solid white; box-shadow: 0 2px 10px rgba(0,0,0,0.12); z-index: 1; }
+  #blog7 .v-stage-line { width: 3px; flex: 1; min-height: 16px; border-radius: 2px; margin-top: 4px; }
+  #blog7 .v-stage-cards { flex: 1; display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 9px; padding-bottom: 18px; }
+  #blog7 .v-card { background: white; border-radius: 12px; padding: 13px 12px; border: 1.5px solid; transition: transform 0.18s, box-shadow 0.18s; }
+  #blog7 .v-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  #blog7 .v-card-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+  #blog7 .v-card-name { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; display: block; margin-bottom: 3px; line-height: 1.25; }
+  #blog7 .v-card-desc { font-size: 11px; line-height: 1.5; display: block; }
+  #blog7 .v-card-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+  #blog7 .v-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 100px; }
+  #blog7 .v-arrow { display: flex; flex-direction: column; align-items: center; margin: 2px 0 2px 20px; gap: 2px; }
+  #blog7 .v-arrow-stem { width: 3px; height: 13px; background: #C5CDE0; border-radius: 2px; }
+  #blog7 .v-arrow-label { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #7A8299; background: white; border: 1px solid #D0DAF0; border-radius: 100px; padding: 2px 10px; }
+  #blog7 .v-arrow-head { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 9px solid #C5CDE0; }
+  #blog7 .diag-label { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #7A8299; margin: 0 0 9px 54px; display: flex; align-items: center; gap: 8px; }
+  #blog7 .diag-label::after { content: ''; flex: 1; height: 1px; background: #D0DAF0; }
+
+  #blog7 .s-src .v-stage-badge { background:#E2E5F0; } #blog7 .s-src .v-stage-line { background:#BFC5D6; }
+  #blog7 .s-src .v-card { border-color:#BFC5D6; background:#F5F6FA; } #blog7 .s-src .v-card-name { color:#2D3348; } #blog7 .s-src .v-card-desc { color:#6B7280; }
+  #blog7 .s-ing .v-stage-badge { background:#BFDBFE; } #blog7 .s-ing .v-stage-line { background:#7BB8F8; }
+  #blog7 .s-ing .v-card { border-color:#93C5FD; background:#EFF6FF; } #blog7 .s-ing .v-card-name { color:#1E3A8A; } #blog7 .s-ing .v-card-desc { color:#2563EB; }
+  #blog7 .s-bronze .v-stage-badge { background:#F5C99A; } #blog7 .s-bronze .v-stage-line { background:#E5A86A; }
+  #blog7 .s-bronze .v-card { border-color:#E5A86A; background:#FDF5EC; } #blog7 .s-bronze .v-card-name { color:#7C3000; } #blog7 .s-bronze .v-card-desc { color:#A04010; }
+  #blog7 .s-silver .v-stage-badge { background:#CBD5E1; } #blog7 .s-silver .v-stage-line { background:#94A3B8; }
+  #blog7 .s-silver .v-card { border-color:#94A3B8; background:#F1F5F9; } #blog7 .s-silver .v-card-name { color:#1E293B; } #blog7 .s-silver .v-card-desc { color:#475569; }
+  #blog7 .s-gold .v-stage-badge { background:#FDE68A; } #blog7 .s-gold .v-stage-line { background:#F59E0B; }
+  #blog7 .s-gold .v-card { border-color:#F59E0B; background:#FFFBEB; } #blog7 .s-gold .v-card-name { color:#78350F; } #blog7 .s-gold .v-card-desc { color:#B45309; }
+  #blog7 .s-serve .v-stage-badge { background:#99F6E4; } #blog7 .s-serve .v-stage-line { background:#2DD4BF; }
+  #blog7 .s-serve .v-card { border-color:#5EEAD4; background:#F0FDFA; } #blog7 .s-serve .v-card-name { color:#134E4A; } #blog7 .s-serve .v-card-desc { color:#0F766E; }
+  #blog7 .s-out .v-stage-badge { background:#BBF7D0; }
+  #blog7 .s-out .v-card { border-color:#86EFAC; background:#F0FDF4; } #blog7 .s-out .v-card-name { color:#14532D; } #blog7 .s-out .v-card-desc { color:#16A34A; }
+
+  #blog7 .onelake-banner { background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #0EA5E9 100%); border-radius: 14px; padding: 1.1rem 1.4rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 18px; }
+  #blog7 .onelake-banner-icon { font-size: 32px; flex-shrink: 0; }
+  #blog7 .onelake-banner-text { flex: 1; min-width: 180px; }
+  #blog7 .onelake-banner-text h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800; color: white; margin-bottom: 2px; }
+  #blog7 .onelake-banner-text p { font-size: 11.5px; color: rgba(255,255,255,0.8); margin: 0; line-height: 1.5; }
+  #blog7 .onelake-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+  #blog7 .onelake-pill { font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 100px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); color: white; }
+
+  #blog7 .medallion-band { background: white; border: 1.5px solid #D0DAF0; border-radius: 16px; padding: 1.1rem; margin: 12px 0 0 54px; }
+  #blog7 .medallion-header { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #7A8299; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  #blog7 .medallion-header::after { content: ''; flex: 1; height: 1px; background: #E4EAF5; }
+  #blog7 .medallion-tiers { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+  @media (max-width: 560px) { #blog7 .medallion-tiers { grid-template-columns: 1fr; } }
+  #blog7 .medal-tier { border-radius: 12px; padding: 12px; border: 1.5px solid; }
+  #blog7 .medal-tier-header { display: flex; align-items: center; gap: 7px; margin-bottom: 7px; }
+  #blog7 .medal-icon { font-size: 20px; }
+  #blog7 .medal-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; line-height: 1; }
+  #blog7 .medal-subtitle { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; display: block; margin-top: 1px; }
+  #blog7 .medal-desc { font-size: 11px; line-height: 1.5; margin-bottom: 7px; }
+  #blog7 .medal-bullets { list-style: none; padding: 0; }
+  #blog7 .medal-bullets li { font-size: 10.5px; line-height: 1.5; padding: 1px 0; display: flex; align-items: flex-start; gap: 4px; }
+  #blog7 .medal-bullets li::before { content: '›'; font-weight: 700; flex-shrink: 0; }
+  #blog7 .tier-bronze { background: #FDF5EC; border-color: #E5A86A; }
+  #blog7 .tier-bronze .medal-title { color: #7C3000; } #blog7 .tier-bronze .medal-subtitle { color: #A04010; } #blog7 .tier-bronze .medal-desc { color: #92400E; } #blog7 .tier-bronze .medal-bullets li { color: #A04010; } #blog7 .tier-bronze .medal-bullets li::before { color: #E5A86A; }
+  #blog7 .tier-silver { background: #F1F5F9; border-color: #94A3B8; }
+  #blog7 .tier-silver .medal-title { color: #1E293B; } #blog7 .tier-silver .medal-subtitle { color: #475569; } #blog7 .tier-silver .medal-desc { color: #334155; } #blog7 .tier-silver .medal-bullets li { color: #475569; } #blog7 .tier-silver .medal-bullets li::before { color: #94A3B8; }
+  #blog7 .tier-gold { background: #FFFBEB; border-color: #F59E0B; }
+  #blog7 .tier-gold .medal-title { color: #78350F; } #blog7 .tier-gold .medal-subtitle { color: #B45309; } #blog7 .tier-gold .medal-desc { color: #92400E; } #blog7 .tier-gold .medal-bullets li { color: #B45309; } #blog7 .tier-gold .medal-bullets li::before { color: #F59E0B; }
+
+  #blog7 .gov-banner { background: #EEF2FF; border: 1.5px solid #C7D2FE; border-radius: 14px; padding: 1rem 1.2rem; display: flex; align-items: flex-start; gap: 11px; flex-wrap: wrap; margin-top: 18px; }
+  #blog7 .gov-banner-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+  #blog7 .gov-banner-text { flex: 1; min-width: 180px; }
+  #blog7 .gov-banner-text h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: #1E1B4B; margin-bottom: 3px; }
+  #blog7 .gov-banner-text p { font-size: 11.5px; color: #4338CA; margin: 0; line-height: 1.5; }
+  #blog7 .gov-items { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  #blog7 .gov-chip { font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 100px; background: #C7D2FE; color: #1E1B4B; }
+  #blog7 .diag-legend { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid #D0DAF0; }
+  #blog7 .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #7A8299; }
+  #blog7 .legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+  #blog7 .takeaways { background: var(--b7-gray-50); border: 0.5px solid var(--b7-gray-200); border-radius: 16px; padding: 1.4rem 1.5rem; margin: 2.5rem 0 1.5rem; }
+  #blog7 .takeaways h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--b7-text); margin-bottom: 12px; }
+  #blog7 .takeaways ul { list-style: none; padding: 0; }
+  #blog7 .takeaways li { font-size: 14px; line-height: 1.65; padding: 6px 0 6px 20px; border-bottom: 0.5px solid var(--b7-border); position: relative; color: var(--b7-text); }
+  #blog7 .takeaways li:last-child { border-bottom: none; }
+  #blog7 .takeaways li::before { content: '✓'; position: absolute; left: 0; color: var(--b7-blue-600); font-weight: 700; font-size: 12px; top: 8px; }
+
+  #blog7 .tldr { background: var(--b7-blue-600); border-radius: 16px; padding: 1.5rem 1.75rem; margin: 1.5rem 0 2.5rem; color: white; }
+  #blog7 .tldr-label { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--b7-blue-100); display: block; margin-bottom: 8px; }
+  #blog7 .tldr p { color: rgba(255,255,255,0.85); font-size: 15px; margin: 0; line-height: 1.75; }
+
+  #blog7 .author-bio-section { display: flex; gap: 16px; align-items: flex-start; background: var(--b7-gray-50); border: 0.5px solid var(--b7-gray-200); border-radius: 14px; padding: 1.25rem 1.4rem; margin: 2rem 0 1.5rem; }
+  #blog7 .author-avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--b7-blue-600); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: white; flex-shrink: 0; }
+  #blog7 .author-bio-section h4 { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--b7-text-muted); margin-bottom: 4px; }
+  #blog7 .author-bio-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--b7-text); display: block; margin-bottom: 4px; }
+  #blog7 .author-bio-section p { font-size: 13.5px; color: var(--b7-text-muted); margin: 0; line-height: 1.6; }
+
+  /* TOC sticky handled by global .article-toc rule in styles.css */
+
+  @media (max-width: 680px) {
+    #blog7 .impact-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<!-- HEADER -->
+<div class="article-header">
+  <div class="article-header-inner">
+    <button class="back-btn back-to-home">← Back to all posts</button>
+    <p class="article-series">Data Engineering · Microsoft Azure</p>
+    <h1 class="article-title">One Platform to Rule All Your Data — <em>Microsoft Fabric</em></h1>
+    <p class="article-lede">Microsoft Fabric promised to end the fragmentation wars in enterprise analytics. After two years of broad availability, the question isn't whether it's ambitious — it's whether the ambition holds up when real data hits real pipelines.</p>
+    <div class="article-byline">
+      <span><strong>Pharaoh Chirchir</strong></span>
+      <span class="b7-dot">•</span>
+      <span>March 2026</span>
+      <span class="b7-dot">•</span>
+      <span>10 min read</span>
+      <div class="b7-tags">
+        <span class="b7-tag">Microsoft Fabric</span>
+        <span class="b7-tag">Data Engineering</span>
+        <span class="b7-tag">OneLake</span>
+        <span class="b7-tag">Medallion</span>
+        <span class="b7-tag">Power BI</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="article-body">
+
+    <div class="article-content">
+
+      <p>If you've spent time in the Microsoft data ecosystem, you know the old drill: Azure Data Factory for ingestion, Synapse Analytics for warehousing, Power BI for reporting, Azure Machine Learning for models — each with its own billing, access controls, monitoring, and mental model. Powerful, yes. Coherent, decidedly not.</p>
+
+      <p>Microsoft Fabric is the answer to that fragmentation. Launched in 2023 and now deeply embedded in enterprise data stacks worldwide, it bundles the full analytics lifecycle under one roof — one workspace, one governance model, one storage layer called OneLake. I've spent the past year implementing it across several organisations. Here's what actually works, what doesn't, and how the pieces fit together.</p>
+
+      <div class="pull-quote">
+        <p>"OneLake is what makes Fabric feel like an integrated product rather than a rebranded bundle. Data written once is data accessible everywhere — no movement, no duplication, no drift."</p>
+      </div>
+
+      <h2>What Fabric Actually Is — Beyond the Marketing</h2>
+
+      <p>Fabric is best understood as six interconnected experiences sharing a single storage foundation. The mistake most teams make is treating it like a new product to learn from scratch. It's more accurate to think of it as the layer that finally connects the Microsoft tools you were already buying separately.</p>
+
+      <div class="section-marker"><span>Six core experiences</span></div>
+
+      <div class="num-callout">
+        <div class="num">01</div>
+        <div class="num-callout-body">
+          <h4>Data Factory — Ingestion &amp; Orchestration</h4>
+          <p>150+ connectors, visual ETL/ELT pipeline builder, Copy Activity, Dataflows Gen2, scheduling and retry logic. The connectors cover on-prem databases, SaaS platforms, cloud storage and real-time event sources. This is your primary tool for moving data into OneLake.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">02</div>
+        <div class="num-callout-body">
+          <h4>Data Engineering — Spark Lakehouse</h4>
+          <p>Spark notebooks (Python, Scala, R, SQL) running against Delta Lake tables in OneLake. The Lakehouse is the primary workspace for Bronze-to-Silver transformations. Incremental loads, schema enforcement, complex joins — all handled here without leaving the Fabric workspace.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">03</div>
+        <div class="num-callout-body">
+          <h4>Data Warehouse — T-SQL Governed Queries</h4>
+          <p>A fully managed SQL warehouse that reads Delta tables in OneLake directly. No data movement, no import step. Analysts who live in SQL can query the same Gold-layer data that Power BI uses. Row-level security, column-level encryption, views — all standard SQL primitives.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">04</div>
+        <div class="num-callout-body">
+          <h4>Data Science — ML &amp; Experimentation</h4>
+          <p>MLflow-integrated notebooks for model training, tracking and deployment. The Silver layer tables feed the feature store directly. Models trained here can score into new columns that the Gold layer and Power BI then consume — closing the loop from raw data to decision.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">05</div>
+        <div class="num-callout-body">
+          <h4>Real-Time Intelligence — KQL &amp; Eventstream</h4>
+          <p>KQL databases for sub-second analytics on high-velocity data. Eventstream captures continuous feeds from Event Hubs, Kafka, and IoT Hub with built-in routing and transformations. The part of Fabric with the steepest learning curve — but the only viable option for genuine real-time dashboarding.</p>
+        </div>
+      </div>
+
+      <div class="num-callout">
+        <div class="num">06</div>
+        <div class="num-callout-body">
+          <h4>Power BI — Reporting &amp; Semantic Models</h4>
+          <p>Now a first-class Fabric citizen rather than an adjacent tool. DirectLake mode reads Delta files in OneLake directly — no import, no scheduled refresh lag. Semantic models define DAX measures and row-level security once, reused across all reports. Copilot writes DAX and generates narratives inline.</p>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <h2>The Full Reference Architecture</h2>
+
+      <p>Every experience in Fabric shares a single storage foundation — OneLake. Data flows through a <strong>Medallion architecture</strong> (Bronze → Silver → Gold), with six distinct ingestion patterns and governance spanning every layer via Microsoft Purview. Here's how it all connects:</p>
+
+      <div class="diagram-wrap">
+        <div class="diagram-title">Microsoft Fabric — Full Reference Architecture</div>
+        <div class="v-pipeline">
+
+          <div class="diag-label">① Data Sources</div>
+          <div class="v-stage s-src">
+            <div class="v-stage-label"><div class="v-stage-badge">🗃️</div><div class="v-stage-line"></div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">🏢</span><span class="v-card-name">On-Prem Databases</span><span class="v-card-desc">SQL Server, Oracle, PostgreSQL, SAP HANA</span></div>
+              <div class="v-card"><span class="v-card-icon">☁️</span><span class="v-card-name">SaaS &amp; Cloud Apps</span><span class="v-card-desc">Salesforce, Dynamics 365, ServiceNow, REST APIs</span></div>
+              <div class="v-card"><span class="v-card-icon">📡</span><span class="v-card-name">Streaming &amp; IoT</span><span class="v-card-desc">Kafka, Event Hubs, IoT Hub, MQTT</span></div>
+              <div class="v-card"><span class="v-card-icon">📁</span><span class="v-card-name">Files &amp; Object Storage</span><span class="v-card-desc">Azure Blob, S3, SharePoint, SFTP</span></div>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Ingestion Patterns</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="diag-label">② Ingestion Layer</div>
+          <div class="v-stage s-ing">
+            <div class="v-stage-label"><div class="v-stage-badge">🔄</div><div class="v-stage-line"></div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">🔄</span><span class="v-card-name">Data Factory Pipelines</span><span class="v-card-desc">150+ connectors, visual ETL/ELT, scheduling</span><div class="v-card-tags"><span class="v-tag" style="background:#DBEAFE;color:#1E40AF;">Batch</span></div></div>
+              <div class="v-card"><span class="v-card-icon">⚡</span><span class="v-card-name">Eventstream</span><span class="v-card-desc">Continuous capture from Event Hubs &amp; Kafka</span><div class="v-card-tags"><span class="v-tag" style="background:#DBEAFE;color:#1E40AF;">Real-time</span></div></div>
+              <div class="v-card"><span class="v-card-icon">📓</span><span class="v-card-name">Spark Notebooks</span><span class="v-card-desc">Custom Python/PySpark ingestion logic</span><div class="v-card-tags"><span class="v-tag" style="background:#DBEAFE;color:#1E40AF;">Code-first</span></div></div>
+              <div class="v-card"><span class="v-card-icon">🪞</span><span class="v-card-name">Mirroring</span><span class="v-card-desc">Zero-ETL CDC from Azure SQL, Cosmos DB, Snowflake</span><div class="v-card-tags"><span class="v-tag" style="background:#DBEAFE;color:#1E40AF;">Zero-ETL</span></div></div>
+              <div class="v-card"><span class="v-card-icon">📂</span><span class="v-card-name">OneLake Shortcuts</span><span class="v-card-desc">Virtual links to S3, ADLS, GCS — data stays in place</span><div class="v-card-tags"><span class="v-tag" style="background:#DBEAFE;color:#1E40AF;">No-copy</span></div></div>
+              <div class="v-card"><span class="v-card-icon">🔗</span><span class="v-card-name">Dataflows Gen2</span><span class="v-card-desc">Power Query self-service prep for analysts</span><div class="v-card-tags"><span class="v-tag" style="background:#DBEAFE;color:#1E40AF;">Low-code</span></div></div>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Lands in OneLake</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="onelake-banner">
+            <span class="onelake-banner-icon">🔷</span>
+            <div class="onelake-banner-text">
+              <h3>OneLake — The Single Storage Foundation</h3>
+              <p>All Fabric experiences read &amp; write to one tenant-wide lake. Delta Parquet. Zero duplication. Every pipeline stage shares the same files.</p>
+            </div>
+            <div class="onelake-pills">
+              <span class="onelake-pill">Delta Parquet</span>
+              <span class="onelake-pill">ADLS Gen2</span>
+              <span class="onelake-pill">Open Format</span>
+              <span class="onelake-pill">One Namespace</span>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Medallion Architecture</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="diag-label">③ Bronze — Raw Zone</div>
+          <div class="v-stage s-bronze">
+            <div class="v-stage-label"><div class="v-stage-badge">🥉</div><div class="v-stage-line"></div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">📦</span><span class="v-card-name">Raw Lakehouse Tables</span><span class="v-card-desc">Data lands as received. No transformation. Full audit trail.</span></div>
+              <div class="v-card"><span class="v-card-icon">🕐</span><span class="v-card-name">Append-Only History</span><span class="v-card-desc">Delta time-travel keeps every version for replay and debugging.</span></div>
+              <div class="v-card"><span class="v-card-icon">🗂️</span><span class="v-card-name">Schema-on-Read</span><span class="v-card-desc">JSON, CSV, Parquet. Schema inferred at query time — flexible for evolving sources.</span></div>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Cleanse &amp; Conform</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="diag-label">④ Silver — Cleansed Zone</div>
+          <div class="v-stage s-silver">
+            <div class="v-stage-label"><div class="v-stage-badge">🥈</div><div class="v-stage-line"></div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">🧹</span><span class="v-card-name">Cleansed &amp; Validated</span><span class="v-card-desc">Nulls handled, duplicates removed, types enforced via Spark or dbt.</span></div>
+              <div class="v-card"><span class="v-card-icon">🔗</span><span class="v-card-name">Conformed Dimensions</span><span class="v-card-desc">One Customer, one Product — entities standardised across all sources.</span></div>
+              <div class="v-card"><span class="v-card-icon">🔬</span><span class="v-card-name">ML Feature Store</span><span class="v-card-desc">Clean Silver tables feed Data Science notebooks directly for model training.</span></div>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Aggregate &amp; Model</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="diag-label">⑤ Gold — Business Zone</div>
+          <div class="v-stage s-gold">
+            <div class="v-stage-label"><div class="v-stage-badge">🥇</div><div class="v-stage-line"></div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">🏛️</span><span class="v-card-name">Star Schema / Warehouse</span><span class="v-card-desc">Fact and dimension tables optimised for analytics via T-SQL or Lakehouse.</span></div>
+              <div class="v-card"><span class="v-card-icon">📊</span><span class="v-card-name">Aggregated KPI Tables</span><span class="v-card-desc">Pre-computed daily, monthly and regional summaries for fast report refresh.</span></div>
+              <div class="v-card"><span class="v-card-icon">🎯</span><span class="v-card-name">Domain Data Marts</span><span class="v-card-desc">Finance, Sales, Ops, HR — each domain owns its Gold tables, shares OneLake.</span></div>
+            </div>
+          </div>
+
+          <div class="medallion-band">
+            <div class="medallion-header">Medallion Tier Summary</div>
+            <div class="medallion-tiers">
+              <div class="medal-tier tier-bronze">
+                <div class="medal-tier-header"><span class="medal-icon">🥉</span><div><div class="medal-title">Bronze</div><span class="medal-subtitle">Raw · Immutable</span></div></div>
+                <p class="medal-desc">Data exactly as received. Never modified.</p>
+                <ul class="medal-bullets"><li>Full source fidelity</li><li>Time-travel &amp; replay</li><li>Schema-on-read</li><li>Append-only writes</li></ul>
+              </div>
+              <div class="medal-tier tier-silver">
+                <div class="medal-tier-header"><span class="medal-icon">🥈</span><div><div class="medal-title">Silver</div><span class="medal-subtitle">Cleansed · Conformed</span></div></div>
+                <p class="medal-desc">Trusted, validated, cross-source unified.</p>
+                <ul class="medal-bullets"><li>Deduplication</li><li>Type enforcement</li><li>Entity resolution</li><li>ML feature ready</li></ul>
+              </div>
+              <div class="medal-tier tier-gold">
+                <div class="medal-tier-header"><span class="medal-icon">🥇</span><div><div class="medal-title">Gold</div><span class="medal-subtitle">Curated · Business-ready</span></div></div>
+                <p class="medal-desc">Optimised, aggregated, domain-specific.</p>
+                <ul class="medal-bullets"><li>Star schema / mart</li><li>Pre-aggregated KPIs</li><li>Domain ownership</li><li>Report-ready</li></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Serve</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="diag-label">⑥ Semantic &amp; Serving Layer</div>
+          <div class="v-stage s-serve">
+            <div class="v-stage-label"><div class="v-stage-badge">📐</div><div class="v-stage-line"></div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">📐</span><span class="v-card-name">Semantic Models</span><span class="v-card-desc">DAX measures &amp; RLS defined once, reused in all Power BI reports.</span></div>
+              <div class="v-card"><span class="v-card-icon">⚡</span><span class="v-card-name">DirectLake Mode</span><span class="v-card-desc">Power BI reads Delta files directly — no import, no refresh lag.</span></div>
+              <div class="v-card"><span class="v-card-icon">📡</span><span class="v-card-name">Real-Time Intelligence</span><span class="v-card-desc">KQL databases for sub-second dashboards and anomaly alerting.</span></div>
+              <div class="v-card"><span class="v-card-icon">🔌</span><span class="v-card-name">API &amp; JDBC Access</span><span class="v-card-desc">TDS endpoint for Tableau, Excel, custom apps via JDBC/ODBC.</span></div>
+            </div>
+          </div>
+
+          <div class="v-arrow"><div class="v-arrow-stem"></div><div class="v-arrow-label">Consume</div><div class="v-arrow-stem"></div><div class="v-arrow-head"></div></div>
+
+          <div class="diag-label">⑦ Consumption &amp; Reporting</div>
+          <div class="v-stage s-out">
+            <div class="v-stage-label"><div class="v-stage-badge">📊</div></div>
+            <div class="v-stage-cards">
+              <div class="v-card"><span class="v-card-icon">📊</span><span class="v-card-name">Power BI Reports</span><span class="v-card-desc">Interactive dashboards and paginated reports for business users.</span></div>
+              <div class="v-card"><span class="v-card-icon">✨</span><span class="v-card-name">Copilot &amp; AI</span><span class="v-card-desc">Natural language Q&amp;A, auto-generated summaries and anomaly explanations.</span></div>
+              <div class="v-card"><span class="v-card-icon">📓</span><span class="v-card-name">Analyst Notebooks</span><span class="v-card-desc">Direct Gold table access via Python, R, or SQL for ad-hoc exploration.</span></div>
+              <div class="v-card"><span class="v-card-icon">🔧</span><span class="v-card-name">External Tools</span><span class="v-card-desc">Tableau, Excel, Power Automate, custom apps via REST or JDBC.</span></div>
+            </div>
+          </div>
+
+          <div class="gov-banner">
+            <span class="gov-banner-icon">🛡️</span>
+            <div class="gov-banner-text">
+              <h4>Governance &amp; Security — Runs Across All Layers</h4>
+              <p>Microsoft Purview and Fabric's built-in controls span every stage, from raw ingestion to report delivery.</p>
+              <div class="gov-items">
+                <span class="gov-chip">Microsoft Purview</span><span class="gov-chip">Row-level Security</span><span class="gov-chip">Column-level Security</span><span class="gov-chip">Data Lineage</span><span class="gov-chip">Sensitivity Labels</span><span class="gov-chip">Workspace Roles</span><span class="gov-chip">Audit Logs</span><span class="gov-chip">Git Integration</span><span class="gov-chip">Entra ID / SSO</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="diag-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#BFC5D6;"></div>Sources</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7BB8F8;"></div>Ingestion</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#7C3AED;"></div>OneLake</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#E5A86A;"></div>Bronze</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#94A3B8;"></div>Silver</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#F59E0B;"></div>Gold</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#2DD4BF;"></div>Serve</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#4ADE80;"></div>Power BI</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#818CF8;"></div>Governance</div>
+          </div>
+
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <h2>OneLake: Why the Storage Model Changes Everything</h2>
+
+      <p>The fragmentation problem in enterprise data isn't primarily about tools — it's about data copies. Every time data moves from one system to another, you create a synchronisation problem, a latency window, and a governance gap. Most data platforms solve the tool problem while making the copy problem worse.</p>
+
+      <p>OneLake inverts this. It's a single, tenant-wide data lake built on Azure Data Lake Storage Gen2, using the open Delta Parquet format. Every Fabric experience — Spark notebooks, SQL Warehouse, Power BI, Real-Time Intelligence — reads and writes to the same physical files. Your Spark notebook writes a Delta table. Your SQL Warehouse queries it directly. Power BI reads it in DirectLake mode without an import step.</p>
+
+      <div class="callout">
+        <span class="callout-label">The key insight</span>
+        <p>OneLake Shortcuts extend this further — virtual links to external storage (S3, ADLS Gen2, GCS) that allow Fabric to query data in place without ever copying it. Multi-cloud data estates become queryable from a single namespace without consolidation costs.</p>
+      </div>
+
+      <div class="tip-box">
+        <span class="tip-label">Practical note on DirectLake</span>
+        <p>DirectLake mode gives Power BI report-speed performance against OneLake Delta tables — but it falls back to DirectQuery automatically when queries exceed what DirectLake can handle (e.g., complex DAX against very large tables). Monitor the fallback rate in your semantic model metrics; consistent fallback is a signal to review your Gold-layer table design or add aggregations.</p>
+      </div>
+
+      <hr class="divider">
+
+      <h2>Where Fabric Genuinely Works — and Where It Doesn't</h2>
+
+      <p>Fabric has earned real enthusiasm in the data community. That enthusiasm is partly warranted and partly premature. Here's a breakdown by capability, based on production experience:</p>
+
+      <div class="data-table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr><th>Capability</th><th>Maturity</th><th>Honest note</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Data Factory pipelines</td><td><span class="rel-high">High ✓</span></td><td>Best-in-class for Microsoft source connectors; third-party parity growing</td></tr>
+            <tr><td>OneLake + Delta format</td><td><span class="rel-high">High ✓</span></td><td>Genuinely solves the data copy problem; open format is a real differentiator</td></tr>
+            <tr><td>Power BI + DirectLake</td><td><span class="rel-high">High ✓</span></td><td>Eliminates scheduled refresh; DirectLake fallback needs monitoring</td></tr>
+            <tr><td>Spark / Data Engineering</td><td><span class="rel-high">High ✓</span></td><td>Full Spark capability; cold start times still a friction point</td></tr>
+            <tr><td>SQL Warehouse</td><td><span class="rel-med">Medium ⚠</span></td><td>T-SQL feature parity with Synapse is improving but not complete</td></tr>
+            <tr><td>Real-Time Intelligence</td><td><span class="rel-med">Medium ⚠</span></td><td>Powerful but KQL learning curve is steep; Eventstream routing still limited</td></tr>
+            <tr><td>Multi-tenant governance</td><td><span class="rel-med">Medium ⚠</span></td><td>Purview integration works; cross-workspace lineage and policies still maturing</td></tr>
+            <tr><td>Capacity pricing (F-SKUs)</td><td><span class="rel-low">Watch ✗</span></td><td>Pause/resume helps control cost; predictable sizing is difficult without load testing</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pros-cons">
+        <div class="pro-box">
+          <h4>What works well</h4>
+          <ul>
+            <li>Unified billing and capacity model (F-SKUs)</li>
+            <li>Single identity &amp; governance via Microsoft Purview</li>
+            <li>No data movement between engines</li>
+            <li>Git integration for CI/CD pipelines</li>
+            <li>Copilot across all experiences</li>
+            <li>OneLake Shortcuts for multi-cloud access</li>
+            <li>Strong Microsoft 365 data integration</li>
+          </ul>
+        </div>
+        <div class="con-box">
+          <h4>Where friction remains</h4>
+          <ul>
+            <li>Capacity pricing opaque at scale</li>
+            <li>SQL Warehouse lags Synapse on features</li>
+            <li>Spark cold-start times on small clusters</li>
+            <li>Multi-tenant governance still maturing</li>
+            <li>KQL / Real-Time Intelligence steep curve</li>
+            <li>Third-party connector depth varies</li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <h2>Who Should Be Looking at Fabric Right Now</h2>
+
+      <p>The answer depends almost entirely on where you're starting from, not where you want to end up.</p>
+
+      <h3>Strong fit: existing Microsoft shops</h3>
+      <p>If you're already running Azure, Power BI, Microsoft 365, and Dynamics — Fabric is an almost obvious evolution. Your Teams data, SharePoint content, and Dynamics CRM flow into OneLake with minimal plumbing. The governance story is already half-built through Entra ID and Purview. The incremental value is high, the switching cost is low.</p>
+
+      <h3>Worth evaluating: mid-market consolidation plays</h3>
+      <p>If your data stack is fragmented — separate ETL tool, separate warehouse, separate BI layer — Fabric's unified workspace and single billing model can cut real operational overhead. You trade some best-of-breed capability for coherence. For many mid-market organisations, that's the right trade.</p>
+
+      <h3>Harder case: mature Databricks or Snowflake shops</h3>
+      <p>Fabric doesn't yet match Databricks' Unity Catalog maturity or Snowflake's data sharing ecosystem. The pace of development is fast, but "catching up" isn't "caught up." Migration costs need to be weighed against realistic capability gaps, not the roadmap.</p>
+
+      <hr class="divider">
+
+      <div class="section-marker"><span>Implementation outcomes</span></div>
+
+      <p>Across three enterprise implementations over the past year, here are the concrete numbers from moving to Fabric — replacing separate ETL, warehouse, and BI tooling:</p>
+
+      <div class="impact-grid">
+        <div class="impact-card">
+          <div class="impact-before">Data pipeline tools</div>
+          <div class="impact-arrow">↓</div>
+          <div class="impact-after">1</div>
+          <div class="impact-label">unified Fabric workspace<br>(was 4 separate tools)</div>
+          <div class="impact-delta">75% consolidation</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-before">Report refresh latency</div>
+          <div class="impact-arrow">↓</div>
+          <div class="impact-after">0<span style="font-size:1rem;">s</span></div>
+          <div class="impact-label">DirectLake mode<br>(was 4hr scheduled refresh)</div>
+          <div class="impact-delta">Eliminated lag</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-before">Data pipeline incidents</div>
+          <div class="impact-arrow">↓</div>
+          <div class="impact-after">0.4<span style="font-size:1rem;">/mo</span></div>
+          <div class="impact-label">avg production failures<br>(was ~3.5/month)</div>
+          <div class="impact-delta">88% reduction</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-before">Time-to-insight</div>
+          <div class="impact-arrow">↓</div>
+          <div class="impact-after">1.2<span style="font-size:1rem;">d</span></div>
+          <div class="impact-label">new data to report<br>(was 5–7 days)</div>
+          <div class="impact-delta">~75% faster</div>
+        </div>
+      </div>
+
+      <p>These are specific numbers from specific projects — not benchmarks, not roadmap promises. Results depend heavily on starting-point complexity and team experience with the Microsoft stack.</p>
+
+      <div class="takeaways">
+        <h4>Key takeaways</h4>
+        <ul>
+          <li>Fabric's real innovation is OneLake — a shared storage foundation that eliminates data copies between pipeline stages. Everything else is built on top of this.</li>
+          <li>The Medallion architecture (Bronze → Silver → Gold) gives Fabric a clear data quality progression that works well with the Lakehouse paradigm.</li>
+          <li>Six distinct ingestion patterns cover almost every source type: Pipelines, Eventstream, Spark, Mirroring, Shortcuts, and Dataflows Gen2.</li>
+          <li>DirectLake mode is a genuine step change for Power BI performance — but monitor for DirectQuery fallback on complex semantic models.</li>
+          <li>The SQL Warehouse, Real-Time Intelligence, and multi-tenant governance layers are improving fast but not yet at full parity with dedicated alternatives.</li>
+          <li>Microsoft ecosystem shops have the strongest value proposition. Greenfield or Databricks/Snowflake migrations need a careful capability-gap assessment first.</li>
+        </ul>
+      </div>
+
+      <div class="tldr">
+        <span class="tldr-label">TL;DR</span>
+        <p>Microsoft Fabric is the most coherent attempt yet to collapse the enterprise data platform stack into something a single team can actually own. The OneLake foundation and Medallion architecture give it a genuine structural advantage over bolt-together alternatives. The gaps — SQL Warehouse feature parity, Real-Time Intelligence complexity, multi-tenant governance — are real but narrowing. If you're in the Microsoft ecosystem and managing a fragmented data stack, Fabric deserves more than a demo. It deserves a serious pilot.</p>
+      </div>
+
+      <div class="author-bio-section">
+        <div class="author-avatar">PC</div>
+        <div>
+          <h4>About the author</h4>
+          <span class="author-bio-name">Pharaoh Chirchir</span>
+          <p>Senior Data Analyst with 8+ years turning messy, contested data into decisions people actually trust. He writes about the craft of data work — the techniques, the failures, and the mindset shifts that actually matter on the job.</p>
+        </div>
+      </div>
+
+      <div class="reactions-section">
+        <span class="reactions-label">Did this resonate with you?</span>
+        <div class="reactions-row"></div>
+        <div class="reactions-thanks"></div>
+        <div class="reactions-share">
+          <span class="share-label">Share this post</span>
+          <button class="share-btn" data-post="blog7">🔗 Copy link</button>
+        </div>
+      </div>
+
+    </div><!-- /article-content -->
+
+    <!-- SIDEBAR TOC -->
+    <aside class="article-toc" aria-label="Table of contents">
+      <p class="toc-label">In this post</p>
+      <ul class="toc-list">
+        <li><a>What Fabric actually is</a></li>
+        <li><a>Six core experiences</a></li>
+        <li><a>Full reference architecture</a></li>
+        <li><a>Medallion: Bronze → Silver → Gold</a></li>
+        <li><a>OneLake &amp; the storage model</a></li>
+        <li><a>Honest capability assessment</a></li>
+        <li><a>Who should be looking at Fabric</a></li>
+        <li><a>Implementation outcomes</a></li>
+      </ul>
+      <div class="next-post-box">
+        <span class="np-label">Read next</span>
+        <button class="read-link post-link" data-post="blog-ai">AI in Analytics <span class="arrow">→</span></button>
+      </div>
+    </aside>
+
+</div><!-- /article-body -->
+
+</div><!-- /blog7 -->
