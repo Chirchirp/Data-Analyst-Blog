@@ -154,7 +154,7 @@ document.addEventListener('components:ready', function () {
     { key: 'insightful', emoji: '💡', label: 'Insightful' },
     { key: 'helpful',    emoji: '🙌', label: 'Helpful'    },
     { key: 'inspiring',  emoji: '🔥', label: 'Inspiring'  },
-    { key: 'saved',      emoji: '🔖', label: 'Save'       },
+    
   ];
 
   const THANKS = [
@@ -167,6 +167,7 @@ document.addEventListener('components:ready', function () {
 
   // Seed counts so posts feel alive on first visit
   const SEEDS = {
+    'blog7':   { insightful:38, helpful:31, inspiring:27, saved:22 },
     'blog-ai': { insightful:41, helpful:28, inspiring:35, saved:19 },
     'blog5':   { insightful:29, helpful:37, inspiring:18, saved:22 },
     'blog6':   { insightful:33, helpful:44, inspiring:14, saved:27 },
