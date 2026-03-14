@@ -31,6 +31,7 @@
    * Add new posts here and in components/home.html.
    */
   const POSTS = [
+    'blog7',
     'blog-ai',
     'blog5',
     'blog6',
